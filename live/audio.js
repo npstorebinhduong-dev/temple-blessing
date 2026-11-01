@@ -1,10 +1,14 @@
 // Locally synthesized ambience/chimes; Thai speech arrives from Edge TTS.
 export class SceneAudio {
-  constructor({ preview = false } = {}) { this.preview = preview; this.settings = {}; this.queue = []; this.playing = null; }
+  constructor({ preview = false, onState = () => {} } = {}) {
+    this.preview = preview; this.onState = onState; this.settings = {}; this.queue = []; this.playing = null;
+  }
   async start() {
     if (this.preview) return;
     if (!this.ctx) {
-      this.ctx = new AudioContext(); this.master = this.ctx.createGain(); this.master.connect(this.ctx.destination);
+      this.ctx = new AudioContext();
+      this.ctx.onstatechange = () => this.onState(this.ctx.state);
+      this.master = this.ctx.createGain(); this.master.connect(this.ctx.destination);
       this.ambient = this.ctx.createGain(); this.ambient.connect(this.master);
       for (const [i, f] of [130.81, 196, 261.63, 392].entries()) {
         const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
@@ -14,7 +18,8 @@ export class SceneAudio {
         lfo.connect(depth); depth.connect(gain.gain); lfo.start();
       }
     }
-    await this.ctx.resume(); this.configure(this.settings); this.pump();
+    this.onState(this.ctx.state);
+    await this.ctx.resume(); this.configure(this.settings); this.pump(); this.onState(this.ctx.state);
     return this.ctx.state === 'running';
   }
   configure(s) {

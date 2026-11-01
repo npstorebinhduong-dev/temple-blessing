@@ -5,7 +5,11 @@ const $ = id => document.getElementById(id);
 const stage = $('stage'), canvas = $('scene'), ctx = canvas.getContext('2d');
 const preview = new URLSearchParams(location.search).has('preview');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const audio = new SceneAudio({ preview });
+const audio = new SceneAudio({ preview, onState: state => {
+  if (preview) return;
+  $('unmute').hidden = state === 'running';
+  if (state !== 'running') $('unmute').textContent = '♫ เปิดเสียง';
+} });
 const queue = new RitualQueue();
 const visitors = new Map(), ambience = new Map(), petals = [];
 const badgeCache = new Map(), spriteCache = new Map();
@@ -21,7 +25,10 @@ for (const [key, file] of Object.entries({ female: 'worshipper', male: 'worshipp
 function fit() { stage.style.transform = `translate(-50%,-50%) scale(${Math.min(innerWidth / 1080, innerHeight / 1920)})`; }
 addEventListener('resize', fit); fit();
 $('unmute').hidden = preview;
-$('unmute').onclick = async () => { try { if (await audio.start()) $('unmute').hidden = true; } catch { $('unmute').textContent = 'ลองเปิดเสียงอีกครั้ง'; } };
+$('unmute').onclick = async () => {
+  try { if (await audio.start()) { $('unmute').hidden = true; audio.bell(); } }
+  catch { $('unmute').hidden = false; $('unmute').textContent = 'ลองเปิดเสียงอีกครั้ง'; }
+};
 // OBS permits audio without a gesture; browsers show the explicit sound button.
 if (!preview) audio.start().then(r => { if (r) $('unmute').hidden = true; }).catch(() => {});
 function layout(size) {

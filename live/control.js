@@ -1,4 +1,7 @@
+import { SceneAudio } from './audio.js';
 const $ = id => document.getElementById(id);
+// A deliberate click tests this tab's output, even when no broadcast window is open.
+const soundCheck = new SceneAudio();
 const SETTINGS = ['title', 'subtitle', 'goal', 'seatMode', 'joinOnEnter', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'ambientAfterSec', 'ambientTarget'];
 let socket, mode = 'demo', bots = false, toastTimer;
 const people = new Map(), numbers = new Intl.NumberFormat('en-US');
@@ -53,7 +56,17 @@ for (const b of document.querySelectorAll('[data-fill]')) b.onclick = () => send
 $('bots').onclick = () => send('bots', { on: !bots, pace: $('botPace').value });
 $('settingsForm').onsubmit = e => { e.preventDefault(); send('settings', { settings: readSettings() }); };
 $('say').onclick = () => { send('settings', { settings: readSettings() }); send('say', { text: $('sayText').value }); };
-$('bell').onclick = () => send('bell');
+$('bell').onclick = async () => {
+  const volume = Number($('volume').value);
+  if (volume <= 0) { toast('Âm lượng tổng đang bằng 0. Tăng âm lượng rồi thử lại.'); return; }
+  soundCheck.configure({ music: false, voiceEnabled: false, volume });
+  try {
+    if (await soundCheck.start()) {
+      soundCheck.bell('aarti');
+      toast('Chuông thử phát ở bảng điều khiển này. Nếu vẫn im, kiểm tra tắt tiếng tab và Bộ trộn âm lượng Windows.');
+    } else toast('Trình duyệt chưa mở âm thanh. Bấm Thử loa / chuông một lần nữa.');
+  } catch { toast('Không mở được âm thanh trình duyệt. Tải lại trang rồi thử lại.'); }
+};
 $('clearScene').onclick = () => send('clear');
 $('resetSession').onclick = () => { if (confirm(`Xóa điểm và bảng xếp hạng của phiên ${mode.toUpperCase()} hiện tại để bắt đầu phiên mới?`)) send('reset'); };
 $('copyURL').onclick = async () => { try { await navigator.clipboard.writeText(obsURL); toast('Đã sao chép địa chỉ nguồn OBS.'); } catch { toast('Chọn và sao chép địa chỉ nguồn OBS bên trên.'); } };

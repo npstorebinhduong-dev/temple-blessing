@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.2
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.2.1
 
 1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
 2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
@@ -62,8 +62,12 @@ NẾU CÓ LỖI
 - Không kết nối: kiểm tra TikFinity đang mở, WebSocket server đã bật,
   đúng cổng và chạy cùng máy. Bấm Ngắt để dừng kết nối lại.
 - Cổng 3000 đang dùng: đóng cửa sổ CHAY-LIVE cũ trước khi mở lại.
-- Không có âm thanh: mở âm thanh overlay, kiểm tra âm lượng tổng và
-  nguồn âm trong OBS/LIVE Studio. Đóng hoặc tắt tiếng cửa sổ overlay dư.
+- Không có âm thanh: bấm Thử loa / chuông tại bảng điều khiển. Nút này
+  phát tiếng ngay ở tab đang mở. Nếu vẫn im, kiểm tra tắt tiếng tab,
+  Bộ trộn âm lượng Windows và thiết bị đầu ra.
+- Để có âm thanh LIVE: Lưu cấu hình, mở cửa sổ LIVE riêng và bấm
+  ♫ เปิดเสียง. Sẽ nghe một chuông xác nhận. Bản xem trước luôn tắt tiếng.
+  Kiểm tra nguồn âm OBS/LIVE Studio; đóng các cửa sổ overlay dư.
 - Không đọc tiếng Thái: kiểm tra bật giọng, Internet và nhật ký.
 - Bị chậm: thử 24 người, giảm nhịp mô phỏng và đóng các overlay dư.
 

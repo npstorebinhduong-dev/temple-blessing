@@ -2,7 +2,7 @@
 
 Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào và quỳ, bảng tên, xếp hạng, mục tiêu và sáu hiệu ứng dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy bản 0.2
+## Chạy bản 0.2.1
 
 Cài **Node.js 24 trở lên**. Trên Windows, giải nén toàn bộ gói và chạy `CHAY-LIVE.bat`. Hướng dẫn thao tác đầy đủ trong [HUONG-DAN-WINDOWS.txt](HUONG-DAN-WINDOWS.txt).
 
@@ -18,6 +18,14 @@ Bảng điều khiển: `http://localhost:3000/live/control.html`.
 Nguồn Browser Source cho OBS: `http://localhost:3000/live/overlay.html`, rộng **1080**, cao **1920**. Với LIVE Studio, dùng nguồn trình duyệt nếu có; hoặc chụp cửa sổ overlay và thu âm thanh của trình duyệt. Tắt tiếng các cửa sổ overlay dư để không phát âm thanh hai lần.
 
 Ứng dụng khởi động ở **DEMO** với 24 nhân vật. Dùng các nút quà hoặc chạy mô phỏng để kiểm tra. Bản xem trước trong bảng điều khiển luôn tắt tiếng. Cửa sổ overlay có nút mở âm thanh nếu trình duyệt chặn tự phát.
+
+## Kiểm tra khi không nghe tiếng
+
+1. Bấm **Thử loa / chuông**: từ v0.2.1, chuông thử phát ngay tại bảng điều khiển, không cần mở overlay. Tăng thanh âm lượng nếu đang bằng 0.
+2. Nếu chuông thử cũng im, kiểm tra tab trình duyệt có bị tắt tiếng; trên Windows, mở Bộ trộn âm lượng (Volume mixer), kiểm tra âm lượng Edge/Chrome và thiết bị đầu ra. Thử video YouTube trên cùng trình duyệt.
+3. Bấm **Lưu cấu hình**, mở **Mở màn hình LIVE**, bấm nút Thái **♫ เปิดเสียง**. Sẽ có một tiếng chuông xác nhận. Nút tự hiện lại nếu trình duyệt tạm dừng âm thanh. Khung xem trước trong bảng điều khiển luôn tắt tiếng.
+4. Nếu chuông/âm nền có tiếng nhưng giọng Thái im, bấm **Thử giọng Thái**, chờ tối đa 15 giây và xem Nhật ký phiên. Kiểm tra Internet nếu nhật ký báo lỗi Edge TTS.
+5. Trong OBS, âm thanh có thể vào mixer nhưng không phát ra loa máy; dùng Audio Monitoring để nghe thử và tránh thu trùng hai lần.
 
 ## Kết nối thật
 
@@ -66,7 +74,7 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 - Hình ảnh, font Thái, âm nền nhẹ và chuông chạy cục bộ. Âm nền được tổng hợp bằng Web Audio, không sử dụng nhạc của concept trước.
 - Edge TTS cần truy cập `speech.platform.bing.com`. File âm thanh tạm ở `live/tts/`, không đưa vào Git hay gói chia sẻ. Khi nâng dữ liệu v0.1 lên v0.2, giọng được bật một lần; các lần sau giữ lựa chọn của bạn.
 
-## Kiểm thử và giới hạn bản 0.2
+## Kiểm thử và giới hạn bản 0.2.1
 
 ```sh
 cd live
