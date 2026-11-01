@@ -4,8 +4,10 @@
 .ritual-name{font:700 54px var(--display);color:#ffe6a2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ritual-label{font:500 34px var(--display);color:#fff4dd;margin-top:12px}
 .ritual-aura{position:absolute;left:140px;top:630px;width:800px;height:800px;border-radius:50%;background:repeating-conic-gradient(from 0deg,transparent 0deg 12deg,#ffdc8033 16deg,transparent 20deg),radial-gradient(circle,#fff7bd99, #ffce5255 30%,transparent 68%);animation:aura-breathe 3s ease-in-out infinite}
-.ritual-incense-art{position:absolute;left:240px;top:700px;width:600px;height:640px}
-.ritual-offering-art{position:absolute;left:170px;top:850px;width:740px;height:550px}
+.ritual-incense .ritual-aura{left:350px;top:590px;width:380px;height:380px;opacity:.55}
+.ritual-offering .ritual-aura{left:300px;top:550px;width:480px;height:480px;opacity:.45}
+.ritual-incense-art{position:absolute;left:410px;top:645px;width:260px;height:277px}
+.ritual-offering-art{position:absolute;left:320px;top:615px;width:440px;height:327px}
 .ritual-incense .ritual-offering-art,.ritual-incense .petal-rain,.ritual-offering .ritual-incense-art{display:none}
 .incense-smoke{fill:none;stroke:#fff0d3;stroke-width:7;stroke-linecap:round;opacity:.6;stroke-dasharray:90 25;animation:smoke-rise 4s linear infinite}
 .ember{fill:#fff5b5;filter:drop-shadow(0 0 12px #ff781f);animation:ember-glow 1.5s ease-in-out infinite alternate}
@@ -13,10 +15,15 @@
 .petal-rain{position:absolute;inset:0;overflow:hidden}
 .ritual-petal{position:absolute;width:var(--size);height:calc(var(--size)*1.7);border-radius:90% 5% 90% 10%;background:linear-gradient(135deg,#fff2ef,#ffa8cf 45%,#df498b);box-shadow:0 0 9px #ffbad244;animation:petal-fall var(--fall) var(--delay) linear infinite}
 @keyframes petal-fall{0%{transform:translate(0,-1920px) rotate(0deg);opacity:0}10%,85%{opacity:.9}100%{transform:translate(var(--drift),1920px) rotate(420deg);opacity:0}}
-@keyframes lotus-open{from{transform:scale(.15,.05);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes lotus-open{from{transform:scale(.72,.4);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes aura-breathe{50%{transform:scale(1.13);opacity:.65}}
 @keyframes smoke-rise{to{stroke-dashoffset:-230}}
 @keyframes ember-glow{to{opacity:.55}}
 @keyframes ritual-reveal{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#ritual,#ritual *{animation:none!important}}
 #ritual.reduced-motion,#ritual.reduced-motion *{animation:none!important}
+
+.lotus-bloom .lotus-layer{transform-box:fill-box;transform-origin:50% 90%;animation:lotus-unfold 3.8s cubic-bezier(.2,.7,.3,1) both}
+.lotus-bloom .lotus-middle{animation-delay:.3s}
+.lotus-bloom .lotus-front{animation-delay:.65s}
+@keyframes lotus-unfold{from{transform:scaleX(.55) scaleY(.72);opacity:.2}to{transform:scale(1);opacity:1}}

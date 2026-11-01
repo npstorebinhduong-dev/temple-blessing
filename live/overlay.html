@@ -97,11 +97,64 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:var(-
       <text x="300" y="552" text-anchor="middle" font-size="44" fill="#fff0b4">❁</text>
     </svg>
     <svg class="ritual-offering-art" viewBox="0 0 740 550" aria-label="Giỏ lễ trái cây trên hoa sen đang nở">
-      <g class="lotus-bloom" stroke="#ffc4df" stroke-width="3">
-        <path d="M370 525Q110 530 55 340Q260 330 370 525" fill="#d64e96"/><path d="M370 525Q630 530 685 340Q480 330 370 525" fill="#d64e96"/>
-        <path d="M370 525Q150 425 185 250Q365 335 370 525" fill="#f586ba"/><path d="M370 525Q590 425 555 250Q375 335 370 525" fill="#f586ba"/>
-        <path d="M370 525Q255 365 370 210Q485 365 370 525" fill="#ffbed9"/>
+      <defs>
+        <linearGradient id="lotus-back" x1="0" y1="1" x2=".3" y2="0"><stop stop-color="#a74473"/><stop offset=".48" stop-color="#e889ae"/><stop offset=".86" stop-color="#ffe4e7"/><stop offset="1" stop-color="#fff6e9"/></linearGradient>
+        <linearGradient id="lotus-front" x1="0" y1="1" x2=".2" y2="0"><stop stop-color="#b74c7e"/><stop offset=".5" stop-color="#f4b2c8"/><stop offset="1" stop-color="#fff4e6"/></linearGradient>
+        <radialGradient id="lotus-heart"><stop stop-color="#fff6bf"/><stop offset=".55" stop-color="#ecca67"/><stop offset="1" stop-color="#a87732"/></radialGradient>
+        <linearGradient id="lotus-leaf" x2="0" y2="1"><stop stop-color="#73875a"/><stop offset="1" stop-color="#314f39"/></linearGradient>
+        <path id="lotus-petal" d="M350 465 C279 423 286 335 350 228 C414 335 421 423 350 465Z"/>
+        <path id="lotus-vein" d="M350 451Q336 345 350 247"/>
+      </defs>
+      <ellipse cx="350" cy="495" rx="250" ry="18" fill="#2d160b" opacity=".22"/>
+      <g class="lotus-bloom">
+        <g fill="url(#lotus-leaf)" stroke="#9b9b64" stroke-width="2"><path d="M350 480Q172 375 72 445Q184 525 350 480"/><path d="M350 480Q518 382 626 443Q520 528 350 480"/></g>
+        <g class="lotus-layer lotus-back" fill="url(#lotus-back)" stroke="#fbd8d7" stroke-width="2">
+          <use href="#lotus-petal" transform="rotate(-76 350 465)"/>
+          <use href="#lotus-petal" transform="rotate(-54 350 465)"/>
+          <use href="#lotus-petal" transform="rotate(-32 350 465)"/>
+          <use href="#lotus-petal" transform="rotate(0 350 465)"/>
+          <use href="#lotus-petal" transform="rotate(32 350 465)"/>
+          <use href="#lotus-petal" transform="rotate(54 350 465)"/>
+          <use href="#lotus-petal" transform="rotate(76 350 465)"/>
+        </g>
+        <g class="lotus-layer lotus-middle" fill="url(#lotus-front)" stroke="#ffe7df" stroke-width="2">
+          <use href="#lotus-petal" transform="translate(35 75) scale(.9 .84) rotate(-65 350 465)"/>
+          <use href="#lotus-petal" transform="translate(35 75) scale(.9 .84) rotate(-42 350 465)"/>
+          <use href="#lotus-petal" transform="translate(35 75) scale(.9 .84) rotate(-20 350 465)"/>
+          <use href="#lotus-petal" transform="translate(35 75) scale(.9 .84) rotate(20 350 465)"/>
+          <use href="#lotus-petal" transform="translate(35 75) scale(.9 .84) rotate(42 350 465)"/>
+          <use href="#lotus-petal" transform="translate(35 75) scale(.9 .84) rotate(65 350 465)"/>
+        </g>
+        <ellipse cx="350" cy="416" rx="63" ry="25" fill="url(#lotus-heart)"/>
+        <g stroke="#f8de8a" stroke-width="3" stroke-linecap="round">
+          <path d="M350 430L417.0 399.0"/><circle cx="417.0" cy="399.0" r="3" fill="#fff1bd"/>
+          <path d="M350 430L412.5 406.9"/><circle cx="412.5" cy="406.9" r="3" fill="#fff1bd"/>
+          <path d="M350 430L399.5 413.8"/><circle cx="399.5" cy="413.8" r="3" fill="#fff1bd"/>
+          <path d="M350 430L379.9 418.7"/><circle cx="379.9" cy="418.7" r="3" fill="#fff1bd"/>
+          <path d="M350 430L356.2 420.9"/><circle cx="356.2" cy="420.9" r="3" fill="#fff1bd"/>
+          <path d="M350 430L331.7 420.2"/><circle cx="331.7" cy="420.2" r="3" fill="#fff1bd"/>
+          <path d="M350 430L309.6 416.6"/><circle cx="309.6" cy="416.6" r="3" fill="#fff1bd"/>
+          <path d="M350 430L293.0 410.6"/><circle cx="293.0" cy="410.6" r="3" fill="#fff1bd"/>
+          <path d="M350 430L284.1 403.0"/><circle cx="284.1" cy="403.0" r="3" fill="#fff1bd"/>
+          <path d="M350 430L284.1 395.0"/><circle cx="284.1" cy="395.0" r="3" fill="#fff1bd"/>
+          <path d="M350 430L293.0 387.4"/><circle cx="293.0" cy="387.4" r="3" fill="#fff1bd"/>
+          <path d="M350 430L309.6 381.4"/><circle cx="309.6" cy="381.4" r="3" fill="#fff1bd"/>
+          <path d="M350 430L331.7 377.8"/><circle cx="331.7" cy="377.8" r="3" fill="#fff1bd"/>
+          <path d="M350 430L356.2 377.1"/><circle cx="356.2" cy="377.1" r="3" fill="#fff1bd"/>
+          <path d="M350 430L379.9 379.3"/><circle cx="379.9" cy="379.3" r="3" fill="#fff1bd"/>
+          <path d="M350 430L399.5 384.2"/><circle cx="399.5" cy="384.2" r="3" fill="#fff1bd"/>
+          <path d="M350 430L412.5 391.1"/><circle cx="412.5" cy="391.1" r="3" fill="#fff1bd"/>
+        </g>
+        <g class="lotus-layer lotus-front" fill="url(#lotus-front)" stroke="#ffe1dc" stroke-width="2">
+          <path d="M350 486C213 494 121 447 94 381C217 380 286 398 350 486Z"/>
+          <path d="M350 486C487 494 579 447 606 381C483 380 414 398 350 486Z"/>
+          <path d="M350 486C243 484 213 416 230 356C303 370 334 414 350 486Z"/>
+          <path d="M350 486C457 484 487 416 470 356C397 370 366 414 350 486Z"/>
+          <path d="M350 486C291 462 297 412 350 364C403 412 409 462 350 486Z"/>
+          <g fill="none" stroke="#d98aa5" stroke-width="1.5" opacity=".45"><path d="M350 480Q210 436 110 391M350 480Q490 436 590 391M350 478V382M339 474Q282 423 239 370M361 474Q418 423 461 370"/></g>
+        </g>
       </g>
+      <g transform="translate(445 20) scale(.42)">
       <path d="M225 250C205 30 535 30 515 250" fill="none" stroke="#e4b569" stroke-width="20"/>
       <g stroke="#fff0b3" stroke-width="3">
         <ellipse cx="292" cy="257" rx="63" ry="68" fill="#ed6656"/><ellipse cx="403" cy="216" rx="68" ry="66" fill="#f4ac39"/>
@@ -113,6 +166,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:var(-
       <path d="M200 307L240 430Q370 475 500 430L540 307Z" fill="#af702e" stroke="#ffe0a1" stroke-width="7"/>
       <g stroke="#e4ae63" stroke-width="5"><path d="M220 340H520M230 370H510M240 400H500M270 313L290 443M320 313L330 450M370 313V453M420 313L410 450M470 313L450 443"/></g>
       <path d="M195 307Q370 330 545 307" fill="none" stroke="#ffe0a1" stroke-width="14"/>
+      </g>
     </svg>
   </div>
   <button id="unmute">🔔 Bấm để bật âm thanh</button>
