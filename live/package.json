@@ -1,0 +1,16 @@
+{
+  "name": "chanh-dien-live",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TikTok LIVE overlay server for Ch\u00e1nh \u0110i\u1ec7n T\u1ecbnh T\u00e2m",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "msedge-tts": "2.1.1",
+    "tiktok-live-connector": "2.5.0",
+    "ws": "8.18.0"
+  }
+}

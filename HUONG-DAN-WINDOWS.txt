@@ -1,0 +1,29 @@
+﻿HƯỚNG DẪN CHẠY TRÊN WINDOWS
+
+1. Giải nén toàn bộ ZIP vào thư mục riêng. Không chạy trực tiếp trong ZIP.
+2. Cài Node.js 24 LTS từ https://nodejs.org/ nếu máy chưa có.
+   TikFinity và TikTok LIVE Studio không thay thế Node.js.
+3. Nhấp đúp CHAY-LIVE.bat. Lần đầu cần Internet để cài thư viện.
+   Giữ cửa sổ này mở trong suốt buổi live. Đóng cửa sổ để dừng server.
+4. Mở trình duyệt: http://localhost:3000/live/control.html
+5. Mở TikFinity Desktop, kết nối kênh đang LIVE và bật WebSocket server.
+6. Trong bảng điều khiển chọn TikFinity Desktop, dùng địa chỉ
+   ws://127.0.0.1:21213/ (sửa cổng nếu TikFinity hiển thị cổng khác), bấm Kết nối.
+   Trạng thái đã kết nối chỉ xác nhận kết nối ứng dụng TikFinity;
+   cần kiểm tra TikFinity đang nhận bình luận/quà từ phòng LIVE.
+7. Bấm Mở màn hình overlay 9:16 và bật âm thanh trong cửa sổ overlay.
+8. Trong TikTok LIVE Studio thêm nguồn Window Capture / Chụp cửa sổ,
+   chọn cửa sổ overlay. Cấu hình nguồn âm thanh để thu tiếng từ trình duyệt;
+   kiểm tra thanh âm lượng và tránh thu trùng âm thanh.
+9. Dùng nút Gửi bình luận và các nút quà để thử giao diện trước;
+   sau đó thử bình luận/quà thật trong LIVE.
+
+Nếu không kết nối: kiểm tra TikFinity đang mở, WebSocket server đã bật,
+đúng cổng, và cả hai chương trình chạy trên cùng máy. Bấm Ngắt để dừng
+thử kết nối lại. Username chỉ dùng cho chế độ TikTok trực tiếp.
+Nếu cổng 3000 đang bị chiếm, đóng phiên CHAY-LIVE.bat cũ trước khi mở lại.
+Giọng đọc Edge TTS cần Internet. Không bảo đảm tương thích mọi phiên bản
+TikFinity cho đến khi thử trên máy livestream thực tế.
+
+Gói này không chứa Node.js, node_modules, mật khẩu hay thông tin tài khoản.
+Giữ LICENSE khi chia sẻ lại. README.md và UPSTREAM.md có thông tin nguồn.
