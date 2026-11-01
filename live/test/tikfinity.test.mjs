@@ -41,7 +41,7 @@ test('server serves UI and forwards TikFinity chat/likes to overlay', async t =>
   const wss=new WebSocketServer({host:'127.0.0.1',port:0}); await once(wss,'listening');
   const dataDir=mkdtempSync(path.join(tmpdir(),'ganesha-test-'));
   t.after(()=>rmSync(dataDir,{recursive:true,force:true}));
-  const child=spawn(process.execPath,['server.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'31876',GANESHA_DATA_DIR:dataDir},stdio:'pipe'});
+  const child=spawn(process.execPath,['server.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'31876',GANESHA_DATA_DIR:dataDir,GANESHA_OFFLINE_AUDIO:"1"},stdio:'pipe'});
   t.after(()=>{child.kill(); for(const s of wss.clients)s.terminate(); wss.close();});
   let ready=false; child.stdout.on('data',()=>ready=true); await until(()=>ready);
   const response=await fetch('http://127.0.0.1:31876/'); assert.equal(response.status,200); assert.match(await response.text(),/TikFinity Desktop/);

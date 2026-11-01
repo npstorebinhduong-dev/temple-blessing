@@ -1,8 +1,9 @@
 export const DEFAULTS = Object.freeze({
   title: 'พระพิฆเนศ', subtitle: 'โอม ศรี คเณศายะ นะมะฮา',
-  voice: 'th-TH-PremwadeeNeural', voiceEnabled: false, pitch: -5, rate: -8,
+  voice: 'th-TH-PremwadeeNeural', voiceEnabled: true, pitch: -5, rate: -8,
   music: true, volume: 35, joinOnEnter: false, seatMode: 'auto',
-  goal: 4995, giftMap: '',
+  goal: 4995, giftMap: '', characterMode: 'mixed',
+  idlePrompts: true, idleEverySec: 10, ambientCrowd: true, ambientAfterSec: 10, ambientTarget: 36,
 });
 export const DEMO_NAMES = ['ศิริพร', 'น้องพลอย', 'มาลี', 'ธนกฤต', 'อรทัย', 'Mi Sirijan',
   'พิมพ์ชนก', 'ณัฐชา', 'สมพร', 'ดวงใจ', 'Kwan', 'น้ำฝน', 'มณีรัตน์', 'น้องแก้ม',
@@ -11,6 +12,17 @@ export const positive = (value, max = Number.MAX_SAFE_INTEGER) => Number.isFinit
   ? Math.max(1, Math.min(max, Math.floor(Number(value)))) : 1;
 const nonnegative = value => Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
 export const cleanName = value => Array.from(String(value || 'ผู้ร่วมบูชา').normalize('NFC')).slice(0, 48).join('');
+export function defaultSkin(id, mode = 'mixed') {
+  if (['male', 'female'].includes(mode)) return mode;
+  const hash = Array.from(String(id)).reduce((sum, c) => (sum * 31 + c.codePointAt(0)) >>> 0, 0);
+  return hash % 2 ? 'male' : 'female';
+}
+export function skinFromComment(text) {
+  const value = String(text || '').normalize('NFC').trim().toLocaleLowerCase();
+  if (['ชาย', 'ผู้ชาย', 'male', 'nam'].includes(value)) return 'male';
+  if (['หญิง', 'ผู้หญิง', 'female', 'nữ'].includes(value)) return 'female';
+  return null;
+}
 
 export class Room {
   constructor(saved = {}) {
@@ -22,13 +34,14 @@ export class Room {
         this.donors.set(d.id, { id: d.id, name: cleanName(d.name), coins: Math.floor(d.coins) });
     }
   }
-  join(id, name, { avatar = '', demo = false, limit = 60 } = {}) {
+  join(id, name, { avatar = '', demo = false, limit = 60, skin } = {}) {
     if (!id) return null;
     id = String(id);
     const existing = this.viewers.get(id);
     if (existing) {
       existing.lastAt = Date.now(); existing.name = cleanName(name);
       if (avatar) existing.avatar = avatar;
+      if (['male', 'female'].includes(skin)) existing.skin = skin;
       return { viewer: existing, isNew: false, removed: null };
     }
     let removed = null;
@@ -36,7 +49,7 @@ export class Room {
       const oldest = [...this.viewers.values()].sort((a, b) => a.lastAt - b.lastAt)[0];
       removed = oldest.id; this.viewers.delete(removed);
     }
-    const viewer = { id, name: cleanName(name), avatar, demo, coins: this.donors.get(id)?.coins || 0, lastAt: Date.now() };
+    const viewer = { id, name: cleanName(name), avatar, demo, skin: ['male', 'female'].includes(skin) ? skin : defaultSkin(id), coins: this.donors.get(id)?.coins || 0, lastAt: Date.now() };
     this.viewers.set(id, viewer);
     return { viewer, isNew: true, removed };
   }

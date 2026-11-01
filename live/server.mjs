@@ -2,12 +2,14 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
 import { connectTikFinity, createEventHandler } from './tikfinity.mjs';
-import { giftRitual, parseGiftMap } from './gift-rituals.mjs';
-import { DEFAULTS, DEMO_NAMES, Room, cleanName, positive } from './ganesha.mjs';
+import { RITUALS, giftRitual, parseGiftMap } from './gift-rituals.mjs';
+import { DEFAULTS, DEMO_NAMES, Room, cleanName, positive, defaultSkin, skinFromComment } from './ganesha.mjs';
+import { EngagementClock, SpeechQueue, blessingForGift } from './engagement.mjs';
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(DIR, '..');
@@ -26,6 +28,10 @@ const SETTING_RULES = {
   title: v => cleanName(v), subtitle: v => Array.from(String(v)).slice(0, 80).join(''),
   voice: v => ['th-TH-PremwadeeNeural', 'th-TH-NiwatNeural'].includes(v) ? v : settings.voice,
   voiceEnabled: Boolean, music: Boolean, joinOnEnter: Boolean,
+  idlePrompts: Boolean, ambientCrowd: Boolean,
+  characterMode: v => ['mixed', 'male', 'female'].includes(v) ? v : 'mixed',
+  idleEverySec: v => clamp(v, 10, 300), ambientAfterSec: v => clamp(v, 10, 300),
+  ambientTarget: v => [24, 36, 60].includes(Number(v)) ? Number(v) : 36,
   volume: v => clamp(v, 0, 100), pitch: v => clamp(v, -30, 30), rate: v => clamp(v, -30, 30),
   goal: v => clamp(v, 1, 99999999),
   seatMode: v => ['auto', '24', '36', '60'].includes(String(v)) ? String(v) : 'auto',
@@ -37,14 +43,17 @@ function applySettings(input = {}) {
   Object.assign(settings, changes);
 }
 try { applySettings(saved.settings); } catch { console.warn('Cấu hình lưu không hợp lệ; dùng cấu hình mặc định.'); }
+// v0.2 enables the requested spoken blessings once when upgrading a v0.1 session.
+if (saved.version === 1) settings.voiceEnabled = true;
 const rooms = { demo: new Room(), live: new Room(saved.live) };
+const engagement = new EngagementClock();
 let mode = 'demo', room = rooms.demo, source = null, sourceGeneration = 0;
 let tiktokState = { status: 'idle', source: 'tikfinity', error: '' };
 let botTimer = null, persistTimer = null;
 const capacity = () => settings.seatMode === 'auto' ? ([24, 36, 60].find(n => room.viewers.size <= n) || 60) : +settings.seatMode;
 const limit = () => settings.seatMode === 'auto' ? 60 : +settings.seatMode;
 const meta = () => ({ stats: room.stats, top: room.top(), mode, goal: settings.goal });
-const snapshot = () => ({ t: 'state', settings, viewers: [...room.viewers.values()], cap: capacity(), startedAt: room.startedAt, tiktok: tiktokState, ...meta() });
+const snapshot = () => ({ t: 'state', settings, viewers: [...room.viewers.values()], cap: capacity(), startedAt: room.startedAt, tiktok: tiktokState, engagement: engagement.snapshot(), ...meta() });
 function addLog(message) {
   const line = `[${new Date().toLocaleTimeString('vi-VN')}] ${message}`;
   log.push(line); if (log.length > 180) log.shift();
@@ -54,70 +63,96 @@ function persist() {
   clearTimeout(persistTimer); persistTimer = null;
   try {
     const file = path.join(DATA, 'session.json');
-    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 1, settings, live: rooms.live.serialize() }));
+    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 2, settings, live: rooms.live.serialize() }));
     fs.renameSync(file + '.tmp', file);
     return true;
   } catch (e) { addLog('Không lưu được phiên: ' + e.message); return false; }
 }
 function saveSoon() { if (!persistTimer) persistTimer = setTimeout(persist, 200); }
 function statsChanged() { broadcast({ t: 'stats', ...meta() }); if (mode === 'live') saveSoon(); }
-function seat(id, name, avatar = '') {
-  const result = room.join(id, name, { avatar, demo: mode === 'demo', limit: limit() });
+function seat(id, name, avatar = '', skin) {
+  const old = room.viewers.get(String(id));
+  const result = room.join(id, name, { avatar, demo: mode === 'demo', limit: limit(), skin: skin || old?.skin || defaultSkin(id, settings.characterMode) });
   if (!result) return null;
   if (result.removed) broadcast({ t: 'leave', id: result.removed });
   if (result.isNew) broadcast({ t: 'join', v: result.viewer, cap: capacity() });
+  else broadcast({ t: 'character', v: result.viewer });
   return result.viewer;
 }
-function onChat(id, name, text, avatar) {
-  const v = seat(id, name, avatar); if (!v) return;
+function onChat(id, name, text, avatar, skin) {
+  const v = seat(id, name, avatar, skinFromComment(text) || skin); if (!v) return;
   broadcast({ t: 'chat', id: String(id), name: v.name, text: String(text || '').slice(0, 160) });
 }
-function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '') {
+function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoKind, skin) {
   if (!id) return;
-  id = String(id); const v = seat(id, name, avatar);
+  id = String(id); const v = seat(id, name, avatar, skin);
   const values = room.gift(id, name, count, unitCoins);
-  const ritual = giftRitual(giftName, values.unitCoins, giftId, parseGiftMap(settings.giftMap));
-  const message = { t: 'gift', id, name: cleanName(name), giftName: String(giftName || 'ของขวัญ').slice(0, 80), giftId: String(giftId), ...values, ritual };
+  const ritual = mode === 'demo' && Object.hasOwn(RITUALS, demoKind || '') && RITUALS[demoKind].unitCoins === values.unitCoins
+    ? RITUALS[demoKind] : giftRitual(giftName, values.unitCoins, giftId, parseGiftMap(settings.giftMap));
+  engagement.gift(Date.now());
+  const blessing = blessingForGift(v?.name || name, ritual?.kind, room.stats.gifts);
+  const message = { t: 'gift', id, name: cleanName(name), skin: v?.skin, giftName: String(giftName || 'ของขวัญ').slice(0, 80), giftId: String(giftId), ...values, ritual, blessing, ...engagement.snapshot() };
   broadcast(message); statsChanged();
-  addLog(`${mode === 'demo' ? 'DEMO' : 'LIVE'} · ${message.name} · ${message.giftName} ×${values.count} · ${values.unitCoins} xu/quà · ID ${giftId || '—'} → ${ritual.kind}`);
-  if (v && settings.voiceEnabled) say(`ขอบคุณคุณ${v.name}ที่ร่วม${ritual.label} ขอให้วันนี้เป็นวันที่ดีของคุณ`);
+  addLog(`${mode === 'demo' ? 'DEMO' : 'LIVE'} · ${message.name} · ${message.giftName} ×${values.count} · ${values.unitCoins} xu/quà · ID ${giftId || '—'} → ${ritual?.kind || 'chưa gán hiệu ứng'}`);
+  say(blessing, 'gift');
 }
 function onLike(id, n) { n = positive(n, 100000); room.stats.likes += n; broadcast({ t: 'like', id, n }); statsChanged(); }
 function onFollow(id, name) { seat(id, name); broadcast({ t: 'follow', id, name: cleanName(name) }); }
 const eventHandler = () => createEventHandler({ chat: onChat, gift: onGift, like: onLike, follow: onFollow,
   member: (id, name, avatar) => { if (settings.joinOnEnter) seat(id, name, avatar); } });
 
-// TTS is opt-in. A failed/slow network request never blocks event accounting.
-let ttsBusy = false, ttsEpoch = 0;
-const ttsQueue = [];
+// Voice failures never block gifts. Idle speech yields immediately to a donor.
+let ttsBusy = false, ttsEpoch = 0, currentTTS = null, retrySpeechAt = 0, speechUntil = 0;
+const ttsQueue = new SpeechQueue();
+const offlineAudio = process.env.GANESHA_OFFLINE_AUDIO === '1';
 const esc = s => String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
-function say(text) {
-  if (!settings.voiceEnabled) return;
-  if (ttsQueue.length >= 5) { addLog('Giọng đọc đang bận; bỏ câu mới, điểm quà vẫn được tính.'); return; }
-  ttsQueue.push({ text: String(text).slice(0, 400), epoch: ttsEpoch }); pumpTTS();
+function say(text, tag = 'manual') {
+  if (!settings.voiceEnabled || offlineAudio || Date.now() < retrySpeechAt) return;
+  if (tag !== 'idle' && currentTTS?.tag === 'idle') currentTTS.cancel();
+  if (tag === 'idle' && Date.now() < speechUntil) return;
+  if (!ttsQueue.push({ text: String(text).slice(0, 400), tag, epoch: ttsEpoch }, currentTTS?.tag)) {
+    if (tag !== 'idle') addLog('Giọng đọc đang bận; bỏ câu mới, điểm quà vẫn được tính.');
+    return;
+  }
+  pumpTTS();
 }
 async function pumpTTS() {
   if (ttsBusy || !ttsQueue.length) return;
   ttsBusy = true;
-  const { text, epoch } = ttsQueue.shift(); const tts = new MsEdgeTTS(); let timer;
+  const job = ttsQueue.shift(), { text, epoch, tag } = job;
+  const tts = new MsEdgeTTS(); let timer, cancelReject;
+  const cancelled = new Promise((_, reject) => { cancelReject = reject; });
+  currentTTS = { tag, cancel: () => { job.cancelled = true; cancelReject(new Error('cancelled')); try { tts.close(); } catch {} } };
   try {
+    const cacheKey = createHash('sha256').update(JSON.stringify([text, settings.voice, settings.pitch, settings.rate])).digest('hex').slice(0, 20);
+    const cacheFile = path.join(TTS_DIR, `idle-${cacheKey}.mp3`);
     const operation = (async () => {
+      if (tag === 'idle' && fs.existsSync(cacheFile)) return fs.readFileSync(cacheFile);
       await tts.setMetadata(settings.voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
       const { audioStream } = tts.toStream(esc(text), { pitch: `${settings.pitch >= 0 ? '+' : ''}${settings.pitch}Hz`, rate: `${settings.rate >= 0 ? '+' : ''}${settings.rate}%` });
       const chunks = [];
       await new Promise((resolve, reject) => { audioStream.on('data', b => chunks.push(b)); audioStream.on('end', resolve); audioStream.on('error', reject); });
       const buffer = Buffer.concat(chunks); if (!buffer.length) throw new Error('Không có dữ liệu âm thanh'); return buffer;
     })();
-    const data = await Promise.race([operation, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('TTS quá 15 giây')), 15000); })]);
-    if (epoch === ttsEpoch && settings.voiceEnabled) {
-      const file = `voice-${Date.now()}.mp3`; fs.writeFileSync(path.join(TTS_DIR, file), data);
-      broadcast({ t: 'tts', url: '/live/tts/' + file });
-      const old = fs.readdirSync(TTS_DIR).filter(f => /^voice-\d+\.mp3$/.test(f)).sort();
-      while (old.length > 20) fs.unlinkSync(path.join(TTS_DIR, old.shift()));
+    const data = await Promise.race([operation, cancelled, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('TTS quá 15 giây')), 15000); })]);
+    if (epoch === ttsEpoch && settings.voiceEnabled && !job.cancelled) {
+      const file = tag === 'idle' ? `idle-${cacheKey}.mp3` : `voice-${Date.now()}.mp3`;
+      fs.writeFileSync(path.join(TTS_DIR, file), data);
+      speechUntil = Math.max(Date.now(), tag === 'idle' ? 0 : speechUntil) + data.length / 12000 * 1000;
+      broadcast({ t: 'tts', url: '/live/tts/' + file, tag });
+      const old = fs.readdirSync(TTS_DIR).filter(f => /^(voice-\d+|idle-[a-f0-9]+)\.mp3$/.test(f)).map(f => ({ f, at: fs.statSync(path.join(TTS_DIR, f)).mtimeMs })).sort((a, b) => a.at - b.at);
+      while (old.length > 50) fs.unlinkSync(path.join(TTS_DIR, old.shift().f));
     }
-  } catch (e) { addLog('Giọng Thái chưa phát được: ' + e.message); }
-  finally { clearTimeout(timer); try { tts.close(); } catch {} ttsBusy = false; setTimeout(pumpTTS, 50); }
+  } catch (e) {
+    if (!job.cancelled) { retrySpeechAt = Date.now() + 30000; ttsQueue.clear(); addLog('Giọng Thái chưa phát được: ' + e.message + ' · thử lại sau 30 giây'); }
+  }
+  finally { clearTimeout(timer); try { tts.close(); } catch {} ttsBusy = false; currentTTS = null; setTimeout(pumpTTS, 50); }
 }
+function resetSpeech() { ttsEpoch++; ttsQueue.clear(); currentTTS?.cancel(); speechUntil = 0; }
+setInterval(() => {
+  const prompt = engagement.tick(Date.now(), { enabled: settings.idlePrompts, intervalMs: settings.idleEverySec * 1000 });
+  if (prompt) { broadcast({ t: 'engagement', ...prompt }); say(prompt.text, 'idle'); }
+}, 250).unref();
 function stopBots() { clearInterval(botTimer); botTimer = null; broadcast({ t: 'bots', on: false }, 'control'); }
 function disconnectSource() {
   sourceGeneration++;
@@ -126,7 +161,7 @@ function disconnectSource() {
   broadcast({ t: 'tiktok', ...tiktokState });
 }
 function activate(nextMode) {
-  stopBots(); ttsEpoch++; ttsQueue.length = 0;
+  stopBots(); resetSpeech(); engagement.reset(Date.now());
   mode = nextMode; room = rooms[mode]; broadcast(snapshot());
 }
 async function connectSource(message) {
@@ -182,7 +217,10 @@ function setBots(on, pace) {
     const v = viewers[Math.floor(Math.random() * viewers.length)], r = Math.random();
     if (r < .45) onChat(v.id, v.name, ['สาธุ', 'ขอให้ครอบครัวมีความสุข', 'ขอบคุณค่ะ', 'โอม ศรี คเณศายะ นะมะฮา'][Math.floor(Math.random() * 4)]);
     else if (r < .7) onLike(v.id, 3);
-    else { const unit = [1, 10, 100, 500][Math.floor(Math.random() * 4)]; onGift(v.id, v.name, 'Demo', 1, unit, '', ''); }
+    else {
+      const [name, kind] = [['Rose', 'lotus'], ['Peach', 'incense'], ['OK', 'garland'], ['Clover', 'aarti'], ['Bouquet', 'marigold'], ['Love Balloon', 'royal']][Math.floor(Math.random() * 6)];
+      onGift(v.id, v.name, name, 1, RITUALS[kind].unitCoins, '', '', kind);
+    }
   }, { slow: 4500, mid: 2000, fast: 650 }[pace] || 2000);
   broadcast({ t: 'bots', on: true }, 'control');
 }
@@ -193,8 +231,8 @@ function onControl(m) {
     case 'disconnect': disconnectSource(); break;
     case 'demo': startDemo(); break;
     case 'live': disconnectSource(); activate('live'); break;
-    case 'chat': onChat('sim_' + cleanName(m.name), m.name, m.text || 'สาธุ'); break;
-    case 'gift': onGift('sim_' + cleanName(m.name), m.name, m.gift || 'Demo', m.count, m.diamonds, '', m.giftId); break;
+    case 'chat': onChat('sim_' + cleanName(m.name), m.name, m.text || 'สาธุ', '', m.skin); break;
+    case 'gift': onGift('sim_' + cleanName(m.name), m.name, m.gift || 'Demo', m.count, m.diamonds, '', m.giftId, m.kind, m.skin); break;
     case 'fill': fillDemo(positive(m.n, 60)); break;
     case 'bots': setBots(!!m.on, m.pace); break;
     case 'clear': stopBots(); room.viewers.clear(); broadcast(snapshot()); break;
@@ -208,9 +246,9 @@ function onControl(m) {
     case 'settings':
       applySettings(m.settings || {});
       while (room.viewers.size > limit()) room.viewers.delete(room.viewers.keys().next().value);
-      if (!settings.voiceEnabled) { ttsEpoch++; ttsQueue.length = 0; }
+      resetSpeech();
       if (!persist()) throw new Error('Cấu hình đã áp dụng nhưng chưa lưu được xuống đĩa. Kiểm tra quyền ghi thư mục live/data.');
-      broadcast(snapshot()); broadcast({ t: 'saved' }, 'control'); break;
+      broadcast({ ...snapshot(), t: 'settings' }); broadcast({ t: 'saved' }, 'control'); break;
   }
 }
 

@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.1
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.2
 
 1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
 2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
@@ -15,20 +15,42 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.1
    overlay và nguồn âm thanh trình duyệt. Tránh thu trùng hai lần.
 8. Mở TikFinity Desktop trên cùng máy. Kết nối kênh TikTok đang LIVE,
    bật WebSocket server. Trong Ganesha LIVE chọn TikFinity Desktop,
-   nhập địa chỉ thường là ws://127.0.0.1:21213/ rồi bấm Kết nối LIVE.
+   nhập địa chỉ thường là ws://127.0.0.2:21213/ rồi bấm Kết nối LIVE.
    Dữ liệu DEMO sẽ được thay bằng phiên LIVE thật, độc lập với demo.
 9. Thử bình luận và quà thật. Kiểm tra nhật ký có đúng người, số lượng,
    giá trị một quà và ID quà. Đã kết nối TikFinity không có nghĩa là kênh
    đã gửi sự kiện; phải kiểm tra tương tác thật.
-10. Giọng Thái mặc định tắt. Trong Cảnh & âm thanh, bật đọc lời cảm ơn,
-    chọn giọng, lưu cấu hình và thử giọng. Cần Internet.
+10. Giọng cầu chúc Thái đã bật sẵn. Chọn Premwadee (nữ) hoặc Niwat (nam),
+    lưu cấu hình rồi bấm Thử giọng Thái. Cần Internet; không cần cài tiếng
+    Thái trên Windows hoặc mở trình duyệt Edge. Kiểm tra nguồn âm OBS.
+11. Bấm thử cả Bó hoa và Bóng tình yêu; chờ lần lượt 20 và 24 giây để thấy
+    đủ bước đi lên bàn thờ, quỳ dâng và trở lại. Chọn nhân vật Nam/Nữ khi thử.
+12. Khi vắng quà 10 giây, lời nhắc thả tim/chia sẻ lặp mỗi 10 giây.
+    Nhân vật nền không tên tạo không khí đông vui, không cộng số liệu LIVE.
+    Có thể tắt hoặc điều chỉnh hai tính năng trong Cảnh & âm thanh.
 
-BẢNG QUÀ MẶC ĐỊNH
-1–9 xu/quà: hoa sen; 10–99: hương; 100–499: vòng hoa; từ 500: aarti.
-Combo không đổi loại hiệu ứng. Ví dụ 500 hoa hồng 1 xu vẫn là hoa sen.
-Muốn gắn theo quà cụ thể: dùng ID quà trong nhật ký, nhập ID=lotus,
-ID=incense, ID=garland hoặc ID=aarti trong Ánh xạ ID quà thật rồi lưu.
-Đây là cấu hình sản phẩm, không phải danh sách giá quà chính thức tại Thái.
+SÁU QUÀ ĐÃ CHỌN
+Hoa hồng 1 xu -> hoa sen (lotus).
+Quả đào 5 xu -> hương (incense).
+OK 5 xu -> vòng hoa (garland).
+Cỏ 4 lá 10 xu -> Aarti (aarti).
+Bó hoa 100 xu -> Golden Marigold Offering (marigold): dâng vòng vạn thọ.
+Bóng tình yêu 500 xu -> Royal Ganesha Offering (royal): dâng mâm đại lễ.
+Nhận bằng đúng tên + giá một món. Combo không đổi loại hiệu ứng.
+Nếu nhật ký báo chưa gán hiệu ứng, lấy ID quà thật rồi nhập ID=loại
+ở Ánh xạ ID quà thật, ví dụ ID_bo_hoa=marigold (thay ID bằng số thật).
+ID cũng cần đúng giá. Khi đã gán ID, tên không dùng để nhận diện loại đó.
+
+CHỌN NHÂN VẬT
+Mặc định có nam và nữ. Người xem gõ ชาย để chọn nam, หญิง để chọn nữ.
+Có thể dùng male/female hoặc nam/nữ. Không đoán giới tính từ tên người xem.
+
+NÂNG TỪ BẢN 0.1
+Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.2 vào thư mục riêng.
+Nếu muốn giữ điểm và cấu hình, sao chép thư mục live/data của bản cũ
+sang live/data của bản mới trước khi chạy. Giọng sẽ được bật một lần.
+Kiểm tra lại ID quà đã gán vì bảng giá và các loại hiệu ứng đã thay đổi.
+Không sao chép node_modules từ bản cũ.
 
 KHỞI ĐỘNG LẠI
 Điểm LIVE và cấu hình nằm ở live/data/session.json. Khi mở lại, ứng dụng
@@ -45,6 +67,6 @@ NẾU CÓ LỖI
 - Không đọc tiếng Thái: kiểm tra bật giọng, Internet và nhật ký.
 - Bị chậm: thử 24 người, giảm nhịp mô phỏng và đóng các overlay dư.
 
-Gửi lại clip khoảng 20–30 giây gồm cảnh và một lượt quà để đánh giá.
+Gửi lại clip khoảng 45–60 giây gồm cảnh và một lượt quà để đánh giá.
 Gói không chứa Node.js, node_modules, dữ liệu LIVE hay tài khoản.
 Giữ LICENSE và giấy phép font khi chia sẻ lại.

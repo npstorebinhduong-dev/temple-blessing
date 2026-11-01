@@ -1,19 +1,23 @@
 import { RitualQueue } from './ritual-queue.js';
 import { SceneAudio } from './audio.js';
+import { processionPose } from './procession.js';
 const $ = id => document.getElementById(id);
 const stage = $('stage'), canvas = $('scene'), ctx = canvas.getContext('2d');
 const preview = new URLSearchParams(location.search).has('preview');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const audio = new SceneAudio({ preview });
 const queue = new RitualQueue();
-const visitors = new Map(), petals = [];
+const visitors = new Map(), ambience = new Map(), petals = [];
 const badgeCache = new Map(), spriteCache = new Map();
 document.fonts.addEventListener('loadingdone', () => badgeCache.clear());
-let order = [], seats = [], cap = 24, mode = null, settings = {}, last = performance.now(), lastRitual = null;
+let order = [], seats = [], cap = 24, baseCap = 24, mode = null, settings = {}, last = performance.now(), lastRitual = null;
+let hero = null, ambientAlpha = 0, lastGiftAt = Date.now(), inviteUntil = 0, nextGolden = 0;
 const numbers = new Intl.NumberFormat('en-US');
-const sprite = new Image(); sprite.src = '/assets/ganesha/worshipper.png';
-const art = new Image(); art.src = '/assets/ganesha/shrine.png';
-for (const image of [sprite, art]) image.onerror = () => { $('assetError').hidden = false; $('assetError').textContent = 'โหลดภาพไม่สำเร็จ · กรุณารีเฟรชหน้าจอ'; };
+const images = {};
+for (const [key, file] of Object.entries({ female: 'worshipper', male: 'worshipper-male', carriers: 'ceremony-carriers', marigold: 'marigold-garland', royal: 'royal-offering', shrine: 'shrine' })) {
+  const image = new Image(); image.src = `/assets/ganesha/${file}.png`; images[key] = image;
+  image.onerror = () => { $('assetError').hidden = false; $('assetError').textContent = 'โหลดภาพไม่สำเร็จ · กรุณารีเฟรชหน้าจอ'; };
+}
 function fit() { stage.style.transform = `translate(-50%,-50%) scale(${Math.min(innerWidth / 1080, innerHeight / 1920)})`; }
 addEventListener('resize', fit); fit();
 $('unmute').hidden = preview;
@@ -37,13 +41,16 @@ function assignSeats() {
   order.forEach((id, index) => { const v = visitors.get(id); v.seat = seats[index]; if (v.seat && v.state === 'sit') { v.x = v.seat.x; v.y = v.seat.y; } });
 }
 function addViewer(p, instant = false) {
-  if (visitors.has(p.id)) { Object.assign(visitors.get(p.id), { name: p.name, coins: p.coins }); return; }
+  if (visitors.has(p.id)) { Object.assign(visitors.get(p.id), { name: p.name, coins: p.coins, skin: p.skin }); attendance(); return; }
   const v = { ...p, x: 540, y: 1990, state: instant || reduced ? 'sit' : 'walk', elapsed: 0, step: 0, glow: 0, phase: Math.random() * 6.28 };
   visitors.set(p.id, v); order.push(p.id); assignSeats();
   if (v.state === 'sit' && v.seat) { v.x = v.seat.x; v.y = v.seat.y; }
   attendance();
 }
-function attendance() { $('attendance').textContent = `${visitors.size} คนร่วมบูชา`; canvas.dataset.people = visitors.size; }
+function attendance() {
+  $('attendance').textContent = `${visitors.size} คนร่วมบูชา`; canvas.dataset.people = visitors.size;
+  canvas.dataset.male = [...visitors.values()].filter(v => v.skin === 'male').length;
+}
 function updateStats(m) {
   if (m.stats) {
     $('goalValue').textContent = `${numbers.format(m.stats.coins)} / ${numbers.format(m.goal || settings.goal || 4995)}`;
@@ -64,12 +71,23 @@ function updateStats(m) {
 }
 function state(m) {
   // Server snapshots are authoritative after reconnect, mode switches and operator edits.
-  visitors.clear(); order = []; petals.length = 0; queue.clear(); lastRitual = null; $('gift').hidden = true; audio.clear();
-  mode = m.mode; settings = m.settings; layout(m.cap);
+  visitors.clear(); ambience.clear(); order = []; petals.length = 0; queue.clear(); lastRitual = null; hero = null; ambientAlpha = 0;
+  $('gift').hidden = true; stage.classList.remove('ceremony'); audio.clear();
+  lastGiftAt = m.engagement?.lastGiftAt || Date.now(); inviteUntil = 0;
+  mode = m.mode; settings = m.settings; baseCap = m.cap; layout(m.cap);
   for (const person of m.viewers) addViewer(person, true);
   $('title').textContent = settings.title; $('subtitle').textContent = settings.subtitle;
   $('demoBadge').hidden = mode !== 'demo'; audio.configure(settings); updateStats(m); attendance();
   document.title = `${settings.title} · Ganesha LIVE`;
+}
+function updateSettings(m) {
+  settings = m.settings; baseCap = m.cap;
+  const ids = new Set(m.viewers.map(v => v.id));
+  for (const id of visitors.keys()) if (!ids.has(id)) visitors.delete(id);
+  for (const person of m.viewers) addViewer(person, true);
+  assignSeats(); attendance(); updateStats(m); audio.clear(); audio.configure(settings);
+  $('title').textContent = settings.title; $('subtitle').textContent = settings.subtitle;
+  if (!settings.idlePrompts) inviteUntil = 0;
 }
 function particles(x, y, count, heart = false) {
   const amount = Math.min(count, reduced ? 6 : 36);
@@ -83,15 +101,26 @@ function connect() {
   ws.onmessage = e => {
     let m; try { m = JSON.parse(e.data); } catch { return; }
     if (m.t === 'state') state(m);
+    if (m.t === 'settings') updateSettings(m);
     if (m.t === 'stats') updateStats(m);
-    if (m.t === 'join') { if (m.cap !== cap) layout(m.cap); addViewer(m.v); }
+    if (m.t === 'join') { baseCap = m.cap; if (baseCap > cap) layout(baseCap); addViewer(m.v); }
+    if (m.t === 'character') addViewer(m.v);
     if (m.t === 'leave') { visitors.delete(m.id); assignSeats(); attendance(); }
     if (m.t === 'chat') { const v = visitors.get(m.id); if (v) { v.bubble = { text: m.text, until: performance.now() + 4000 }; v.glow = .35; } }
-    if (m.t === 'gift') { const v = visitors.get(m.id); if (v) { v.coins = m.total; v.glow = 1; } queue.enqueue(m, performance.now()); }
+    if (m.t === 'gift') {
+      lastGiftAt = m.lastGiftAt || Date.now(); inviteUntil = 0; audio.giftPriority();
+      const v = visitors.get(m.id); if (v) { v.coins = m.total; v.glow = 1; }
+      if (m.ritual && !queue.enqueue(m, performance.now())) console.warn('Ritual queue full; gift totals are preserved.');
+    }
+    if (m.t === 'engagement') {
+      if (m.lastGiftAt < lastGiftAt) return;
+      inviteUntil = performance.now() + 6000; $('inviteText').textContent = 'กดหัวใจ ♥ และแชร์ไลฟ์';
+      $('inviteSub').textContent = m.text; canvas.dataset.prompts = Number(canvas.dataset.prompts || 0) + 1;
+    }
     if (m.t === 'like') { const v = visitors.get(m.id); particles(v?.x || 900, (v?.y || 1650) - 150, Math.min(4, m.n), true); }
     if (m.t === 'follow') { const v = visitors.get(m.id); if (v) { v.glow = 1; particles(v.x, v.y - 150, 8); } }
     if (m.t === 'bell') audio.bell('aarti');
-    if (m.t === 'tts') audio.speech(m.url);
+    if (m.t === 'tts') audio.speech(m.url, m.tag);
   };
 }
 function rounded(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
@@ -121,14 +150,17 @@ function nameTag(v, x, y, width, highlight) {
   }
   ctx.drawImage(badge, x - badge.width / 2, y - 42);
 }
-function spriteFrame(frame, height) {
-  const h = Math.ceil(height / 12) * 12, key = `${frame}:${h}`;
+function spriteFrame(frame, height, skin = 'female', carrier = false) {
+  const asset = carrier ? 'carriers' : skin === 'male' ? 'male' : 'female', sprite = images[asset];
+  if (!sprite.naturalWidth) return null;
+  if (carrier) frame = frame % 4 + (skin === 'male' ? 4 : 0);
+  const h = Math.ceil(height / 12) * 12, key = `${asset}:${frame}:${h}`;
   let cached = spriteCache.get(key);
   if (!cached) {
     cached = document.createElement('canvas'); cached.height = h; cached.width = Math.ceil(h * .75);
     const cw = sprite.naturalWidth / 4, ch = sprite.naturalHeight / 2;
     cached.getContext('2d').drawImage(sprite, frame % 4 * cw, Math.floor(frame / 4) * ch, cw, ch, 0, 0, cached.width, cached.height);
-    if (spriteCache.size >= 128) spriteCache.delete(spriteCache.keys().next().value);
+    if (spriteCache.size >= 384) spriteCache.delete(spriteCache.keys().next().value);
     spriteCache.set(key, cached);
   }
   return cached;
@@ -144,7 +176,7 @@ function lotus(x, y, scale, time) {
   ctx.fillStyle = '#ffdf86'; ctx.beginPath(); ctx.ellipse(0, 5, 23, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 }
 function ritualArt(active, t) {
-  if (!active) return;
+  if (!active || active.ritual.procession) return;
   const progress = (performance.now() - active.beganAt) / (active.until - active.beganAt);
   const fade = Math.min(1, progress * 7, (1 - progress) * 7); ctx.save(); ctx.globalAlpha = Math.max(0, fade);
   const x = 540, y = 1015, kind = active.ritual.kind;
@@ -178,7 +210,7 @@ function ritualArt(active, t) {
   ctx.restore();
 }
 function drawViewer(v, dt, t, active) {
-  if (!v.seat || !sprite.naturalWidth) return;
+  if (!v.seat || hero?.id === v.id) return;
   const seat = v.seat; let frame = 7;
   if (v.state === 'walk') {
     const target = Math.abs(v.y - seat.y) > 3 ? { x: 540, y: seat.y } : seat;
@@ -199,8 +231,10 @@ function drawViewer(v, dt, t, active) {
   ctx.fillStyle = '#25100745'; ctx.beginPath(); ctx.ellipse(v.x, v.y - 7, w * .28, 11 * seat.density, 0, 0, Math.PI * 2); ctx.fill();
   if (highlight) { ctx.strokeStyle = '#ffe8a5bb'; ctx.lineWidth = 2; ctx.shadowColor = '#ffc95d'; ctx.shadowBlur = 20; ctx.beginPath(); ctx.ellipse(v.x, v.y - 6, w * .32, 12, 0, 0, Math.PI * 2); ctx.stroke(); }
   ctx.shadowBlur = 0;
-  ctx.drawImage(spriteFrame(frame, h), v.x - w / 2, v.y - h + bob, w, h);
+  const sprite = spriteFrame(frame, h, v.skin);
+  if (sprite) ctx.drawImage(sprite, v.x - w / 2, v.y - h + bob, w, h);
   ctx.restore();
+  if (v.ambient) return;
   const tagY = v.y - h * (frame > 3 ? .89 : .99) - 4;
   nameTag(v, v.x, tagY, Math.max(80, seat.gap + 8), highlight || v.coins >= 100);
   if (v.bubble && performance.now() < v.bubble.until) {
@@ -209,6 +243,76 @@ function drawViewer(v, dt, t, active) {
     ctx.fillStyle = '#2b1913ed'; rounded(v.x - width / 2, tagY - 78, width, 33, 12); ctx.fill();
     ctx.fillStyle = '#ffe6b6'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, v.x, tagY - 62); ctx.restore();
   }
+}
+function crowd(dt) {
+  const quiet = settings.ambientCrowd && Date.now() - lastGiftAt >= (settings.ambientAfterSec || 10) * 1000 && !hero;
+  ambientAlpha = Math.max(0, Math.min(1, ambientAlpha + (quiet ? dt / 2 : -dt)));
+  const target = Math.min(settings.seatMode === 'auto' ? 60 : Number(settings.seatMode) || 60, settings.ambientTarget || 36);
+  const needed = quiet || ambientAlpha > 0 ? Math.max(visitors.size, target) : visitors.size;
+  const nextCap = Math.max(baseCap, [24, 36, 60].find(n => n >= needed) || 60);
+  if (nextCap !== cap) layout(nextCap);
+  const count = ambientAlpha > 0 ? Math.max(0, Math.min(target, cap) - visitors.size) : 0;
+  for (let i = 0; i < count; i++) {
+    const seat = seats[visitors.size + i];
+    if (!ambience.has(i)) ambience.set(i, { id: `ambient_${i}`, ambient: true, skin: i % 2 ? 'male' : 'female', x: 540, y: 1940 + i * 18, state: reduced ? 'sit' : 'walk', elapsed: 0, step: i * .3, glow: 0, phase: i * .8 });
+    const v = ambience.get(i); v.seat = seat;
+    if (v.state === 'sit') { v.x = seat.x; v.y = seat.y; }
+  }
+  for (const i of ambience.keys()) if (i >= count) ambience.delete(i);
+  $('ambientBadge').hidden = count === 0; canvas.dataset.ambient = count;
+}
+function finishHero() {
+  if (!hero) return;
+  const v = visitors.get(hero.id);
+  if (v?.seat) { v.x = v.seat.x; v.y = v.seat.y; v.state = 'sit'; v.elapsed = 0; }
+  hero = null; canvas.dataset.ceremonyPhase = ''; canvas.dataset.ceremonySkin = '';
+}
+function drawCeremony(active, now, t) {
+  if (!hero || !active?.ritual.procession) return;
+  const seat = visitors.get(hero.id)?.seat || hero.seat;
+  const pose = processionPose(active.ritual.kind, now - active.beganAt, hero.from, seat, hero.seated);
+  canvas.dataset.ceremonyPhase = pose.phase; canvas.dataset.ceremonySkin = hero.skin;
+  const h = 300 + Math.max(0, Math.min(1, (pose.y - 1230) / 480)) * 50, w = h * .75;
+  const royal = active.ritual.kind === 'royal';
+  ctx.save();
+  const beam = ctx.createLinearGradient(540, 900, 540, 1780);
+  beam.addColorStop(0, royal ? '#ffe8a43a' : '#ffc22f28'); beam.addColorStop(1, '#edbe4400');
+  ctx.fillStyle = beam; ctx.beginPath(); ctx.moveTo(500, 900); ctx.lineTo(580, 900); ctx.lineTo(710, 1780); ctx.lineTo(370, 1780); ctx.closePath(); ctx.fill();
+  if (pose.focus > 0) {
+    ctx.globalAlpha = pose.focus;
+    const glow = ctx.createRadialGradient(540, 850, 40, 540, 850, 430); glow.addColorStop(0, '#ffc55b00'); glow.addColorStop(.75, royal ? '#ffce6540' : '#ffc24925'); glow.addColorStop(1, '#ffdd8100');
+    ctx.fillStyle = glow; ctx.fillRect(90, 400, 900, 900);
+    ctx.strokeStyle = royal ? '#ffe6a080' : '#ffd17165'; ctx.lineWidth = royal ? 3 : 2;
+    ctx.beginPath(); ctx.ellipse(540, 1160, 125 + Math.sin(t * 2) * 5, 25, 0, 0, Math.PI * 2); ctx.stroke();
+    if (royal) {
+      for (const x of [365, 715]) {
+        ctx.fillStyle = '#d8a448'; ctx.beginPath(); ctx.ellipse(x, 1090, 32, 9, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffe8a6'; ctx.beginPath(); ctx.ellipse(x, 1074, 6, 20 + Math.sin(t * 8) * 3, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+  ctx.globalAlpha = 1; ctx.fillStyle = '#21100760'; ctx.beginPath(); ctx.ellipse(pose.x, pose.y - 4, 65, 14, 0, 0, Math.PI * 2); ctx.fill();
+  const sprite = spriteFrame(pose.carrier ? pose.carrierFrame : pose.frame, h, hero.skin, pose.carrier);
+  if (sprite) {
+    ctx.save(); ctx.translate(pose.x, pose.y); ctx.rotate(pose.bow);
+    ctx.drawImage(sprite, -w / 2, -h, w, h); ctx.restore();
+  }
+  const prop = images[active.ritual.kind];
+  if (pose.prop && prop?.naturalWidth) {
+    const ph = royal ? 110 : 128, pw = ph * prop.naturalWidth / prop.naturalHeight;
+    const px = pose.x + h * .24, py = pose.y - h * (pose.phase === 'offer' ? .47 + .23 * pose.lift : .60);
+    ctx.drawImage(prop, px - pw / 2, py - ph / 2, pw, ph);
+  } else if (['stand', 'return', 'to-seat', 'settle', 'done'].includes(pose.phase) && prop?.naturalWidth) {
+    const ph = royal ? 105 : 125, pw = ph * prop.naturalWidth / prop.naturalHeight;
+    ctx.drawImage(prop, 540 - pw / 2, 1000 - ph, pw, ph);
+  }
+  nameTag(hero, pose.x, pose.y - h - 6, 230, true);
+  if (!reduced && now > nextGolden && pose.focus > .5) {
+    nextGolden = now + (royal ? 110 : 190);
+    particles(360 + Math.random() * 360, 1110, royal ? 3 : 2);
+    for (const p of petals.slice(-(royal ? 3 : 2))) p.golden = true;
+  }
+  ctx.restore();
 }
 function frame(now) {
   requestAnimationFrame(frame); const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000;
@@ -221,22 +325,38 @@ function frame(now) {
   }
   const active = queue.tick(now);
   if (active !== lastRitual) {
+    finishHero();
     lastRitual = active; $('gift').hidden = !active;
+    stage.classList.toggle('ceremony', !!active?.ritual.procession);
     if (active) {
       $('giftIcon').textContent = active.ritual.icon; $('giftLabel').textContent = active.ritual.label;
       $('giftName').textContent = active.name; $('giftCount').textContent = '×' + active.count;
       $('gift').dataset.kind = active.ritual.kind; audio.bell(active.ritual.kind);
       const v = visitors.get(active.id); particles(v?.x || 540, (v?.y || 1400) - 160, active.ritual.kind === 'aarti' ? 36 : 16);
+      if (active.ritual.procession) {
+        const seat = v?.seat || { x: 620, y: 1710 };
+        hero = { id: active.id, name: active.name, skin: v?.skin || active.skin || 'female', from: { x: v?.x ?? 540, y: v?.y ?? 1870 }, seat: { ...seat }, seated: v?.state === 'sit' };
+      }
     }
   }
+  if (inviteUntil <= now) {
+    $('inviteText').textContent = 'พิมพ์ “สาธุ” เพื่อร่วมบูชา';
+    $('inviteSub').textContent = 'เลือกตัวละคร: พิมพ์ ชาย หรือ หญิง';
+  }
+  $('invitation').classList.toggle('call-to-action', inviteUntil > now && !hero);
+  canvas.dataset.queued = queue.pending.length;
+  crowd(dt);
   ritualArt(active, t);
-  for (const v of [...visitors.values()].sort((a, b) => a.y - b.y)) drawViewer(v, dt, t, active);
+  for (const v of [...visitors.values(), ...ambience.values()].sort((a, b) => a.y - b.y)) {
+    ctx.save(); ctx.globalAlpha = (v.ambient ? ambientAlpha * .82 : 1) * (hero ? .68 : 1); drawViewer(v, dt, t, active); ctx.restore();
+  }
+  drawCeremony(active, now, t);
   for (let i = petals.length - 1; i >= 0; i--) {
     const p = petals[i]; p.age += dt; if (p.age > p.life) { petals.splice(i, 1); continue; }
     p.x += (p.vx + Math.sin(t + p.phase) * 12) * dt; p.y += p.vy * dt;
     ctx.save(); ctx.translate(p.x, p.y); ctx.globalAlpha = Math.min(1, (p.life - p.age) * .7);
     if (p.heart) { ctx.fillStyle = '#fa9b9e'; ctx.font = '25px serif'; ctx.fillText('♥', 0, 0); }
-    else { ctx.rotate(t + p.phase); ctx.fillStyle = p.phase > 3 ? '#fbd7c7' : '#efb6ba'; ctx.beginPath(); ctx.ellipse(0, 0, p.size * .55, p.size, 0, 0, 6.28); ctx.fill(); }
+    else { ctx.rotate(t + p.phase); ctx.fillStyle = p.golden ? p.phase > 3 ? '#ffe29a' : '#f8b42f' : p.phase > 3 ? '#fbd7c7' : '#efb6ba'; ctx.beginPath(); ctx.ellipse(0, 0, p.size * .55, p.size, 0, 0, 6.28); ctx.fill(); }
     ctx.restore();
   }
 }

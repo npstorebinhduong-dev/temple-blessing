@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const SETTINGS = ['title', 'subtitle', 'goal', 'seatMode', 'joinOnEnter', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap'];
+const SETTINGS = ['title', 'subtitle', 'goal', 'seatMode', 'joinOnEnter', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'ambientAfterSec', 'ambientTarget'];
 let socket, mode = 'demo', bots = false, toastTimer;
 const people = new Map(), numbers = new Intl.NumberFormat('en-US');
 const obsURL = location.origin + '/live/overlay.html'; $('obsURL').textContent = obsURL;
@@ -24,7 +24,7 @@ function connect() {
   socket.onclose = () => { $('srv').textContent = 'Mất kết nối máy chủ'; $('srv').className = 'status-pill bad'; setTimeout(connect, 2000); };
   socket.onmessage = e => {
     let m; try { m = JSON.parse(e.data); } catch { return; }
-    if (m.t === 'state') {
+    if (m.t === 'state' || m.t === 'settings') {
       mode = m.mode; $('mode').textContent = mode === 'demo' ? 'DEMO' : 'LIVE'; $('mode').className = 'mode ' + (mode === 'live' ? 'real' : '');
       $('simulation').disabled = mode !== 'demo'; $('demoHint').textContent = mode === 'demo' ? 'Quà thử và người mẫu được tách khỏi số liệu LIVE thật.' : 'Đang dùng dữ liệu LIVE. Bấm “Mở cảnh demo” để thử tương tác riêng.';
       people.clear(); for (const p of m.viewers) people.set(p.id, p); $('count').textContent = people.size;
@@ -46,9 +46,9 @@ $('source').onchange = () => { const direct = $('source').value === 'direct'; $(
 $('connect').onclick = () => send('connect', { source: $('source').value, url: $('tikfinityURL').value, uniqueId: $('username').value });
 $('disconnect').onclick = () => send('disconnect');
 $('demo').onclick = () => send('demo'); $('showLive').onclick = () => send('live');
-$('chat').onclick = () => send('chat', { name: $('simName').value, text: $('simText').value });
+$('chat').onclick = () => send('chat', { name: $('simName').value, text: $('simText').value, skin: $('simSkin').value });
 $('simText').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('chat').click(); } };
-for (const b of document.querySelectorAll('[data-gift]')) b.onclick = () => send('gift', { name: $('simName').value, gift: 'Demo ' + b.dataset.gift, count: +$('repeat').value, diamonds: +b.dataset.unit });
+for (const b of document.querySelectorAll('[data-gift]')) b.onclick = () => send('gift', { name: $('simName').value, gift: b.dataset.name, kind: b.dataset.gift, skin: $('simSkin').value, count: +$('repeat').value, diamonds: +b.dataset.unit });
 for (const b of document.querySelectorAll('[data-fill]')) b.onclick = () => send('fill', { n: +b.dataset.fill });
 $('bots').onclick = () => send('bots', { on: !bots, pace: $('botPace').value });
 $('settingsForm').onsubmit = e => { e.preventDefault(); send('settings', { settings: readSettings() }); };

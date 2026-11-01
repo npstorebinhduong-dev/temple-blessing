@@ -1,4 +1,4 @@
-// Locally synthesized ambience/chimes; Thai speech arrives from the opt-in TTS service.
+// Locally synthesized ambience/chimes; Thai speech arrives from Edge TTS.
 export class SceneAudio {
   constructor({ preview = false } = {}) { this.preview = preview; this.settings = {}; this.queue = []; this.playing = null; }
   async start() {
@@ -26,7 +26,8 @@ export class SceneAudio {
   bell(kind = 'lotus') {
     if (this.ctx?.state !== 'running') return;
     const now = this.ctx.currentTime;
-    for (const [i, f] of (kind === 'aarti' ? [196, 392, 588, 784] : [523.25, 783.99, 1046.5]).entries()) {
+    const notes = kind === 'royal' ? [130.81, 196, 261.63, 392, 523.25] : ['aarti', 'marigold'].includes(kind) ? [196, 392, 588, 784] : [523.25, 783.99, 1046.5];
+    for (const [i, f] of notes.entries()) {
       const osc = this.ctx.createOscillator(), gain = this.ctx.createGain(); osc.frequency.value = f;
       gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(.18 / (i + 1), now + .015);
       gain.gain.exponentialRampToValueAtTime(.0001, now + 3 + i * .2);
@@ -34,17 +35,25 @@ export class SceneAudio {
       osc.onended = () => { osc.disconnect(); gain.disconnect(); };
     }
   }
-  speech(url) {
+  giftPriority() {
+    this.queue = this.queue.filter(item => item.tag !== 'idle');
+    if (this.playingTag === 'idle') this.stopPlaying();
+  }
+  speech(url, tag = 'gift') {
     // Do not build a stale speech backlog while sound is disabled.
-    if (this.preview || this.ctx?.state !== 'running' || this.queue.length >= 5) return;
-    this.queue.push(url); this.pump();
+    if (this.preview || !this.settings.voiceEnabled || this.ctx?.state !== 'running') return;
+    if (tag === 'idle' && (this.playing || this.queue.length)) return;
+    if (tag !== 'idle') this.giftPriority();
+    if (this.queue.length >= 5) return;
+    this.queue.push({ url, tag }); this.pump();
   }
   pump() {
     if (this.playing || !this.queue.length || this.ctx?.state !== 'running') return;
-    const el = new Audio(this.queue.shift()); this.playing = el;
+    const job = this.queue.shift(), el = new Audio(job.url); this.playing = el; this.playingTag = job.tag;
     const source = this.ctx.createMediaElementSource(el); this.playingSource = source; source.connect(this.master); this.configure({});
-    const finish = () => { if (this.playing !== el) return; source.disconnect(); this.playingSource = null; this.playing = null; this.configure({}); this.pump(); };
+    const finish = () => { if (this.playing !== el) return; source.disconnect(); this.playingSource = null; this.playing = null; this.playingTag = ''; this.configure({}); this.pump(); };
     el.onended = finish; el.onerror = finish; el.play().catch(finish);
   }
-  clear() { this.queue.length = 0; if (this.playing) { this.playing.pause(); this.playing.onended = null; this.playing.onerror = null; this.playing = null; } this.playingSource?.disconnect(); this.playingSource = null; this.configure({}); }
+  stopPlaying() { if (this.playing) { this.playing.pause(); this.playing.onended = null; this.playing.onerror = null; this.playing = null; } this.playingTag = ''; this.playingSource?.disconnect(); this.playingSource = null; this.configure({}); }
+  clear() { this.queue.length = 0; this.stopPlaying(); }
 }
