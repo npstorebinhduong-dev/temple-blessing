@@ -1,0 +1,67 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { once } from 'node:events';
+import { spawn } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { get } from 'node:http';
+import WebSocket, { WebSocketServer } from 'ws';
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function until(fn) { for (let i = 0; i < 100; i++) { const result = fn(); if (result) return result; await sleep(40); } throw Error('Expected event was not received'); }
+
+test('real bridge: streak accounting, isolation, capacity, persisted restore and local-only endpoints', async t => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'ganesha-session-'));
+  const mock = new WebSocketServer({ host: '127.0.0.1', port: 0 }); await once(mock, 'listening');
+  const sockets = []; let child;
+  async function start() {
+    child = spawn(process.execPath, ['server.mjs'], { cwd: new URL('..', import.meta.url), env: { ...process.env, PORT: '31877', GANESHA_DATA_DIR: dir }, stdio: 'pipe' });
+    let ready = false, error = ''; child.stdout.on('data', () => { ready = true; }); child.stderr.on('data', b => { error += b; });
+    await until(() => { if (child.exitCode !== null) throw Error(error); return ready; });
+  }
+  async function stop() { const exit = once(child, 'exit'); child.kill(); await exit; }
+  async function client(role) {
+    const ws = new WebSocket(`ws://127.0.0.1:31877/ws?role=${role}`), messages = [];
+    sockets.push(ws); ws.on('message', b => messages.push(JSON.parse(b))); await once(ws, 'open');
+    return { ws, messages, send: (cmd, extra = {}) => ws.send(JSON.stringify({ t: 'ctl', cmd, ...extra })) };
+  }
+  t.after(async () => { for (const ws of sockets) ws.terminate(); for (const ws of mock.clients) ws.terminate(); mock.close(); if (child?.exitCode === null) await stop(); rmSync(dir, { recursive: true, force: true }); });
+  await start(); const control = await client('control'), overlay = await client('overlay');
+  const initial = await until(() => control.messages.find(m => m.t === 'state'));
+  assert.equal(initial.mode, 'demo'); assert.equal(initial.settings.voiceEnabled, false); assert.equal(initial.viewers.length, 24);
+  control.send('settings', { settings: { giftMap: '9001=garland', goal: 900 } });
+  const connected = once(mock, 'connection');
+  control.send('connect', { source: 'tikfinity', url: `ws://127.0.0.1:${mock.address().port}/` });
+  const [source] = await connected;
+  await until(() => overlay.messages.some(m => m.t === 'state' && m.mode === 'live' && m.stats.coins === 0));
+  const gift = { event: 'gift', data: { uniqueId: 'thai', nickname: 'น้องพลอย', giftName: 'กุหลาบ', giftId: 9001, giftType: 1, repeatEnd: false, repeatCount: 3, diamondCount: 1, msgId: 'one' } };
+  source.send(JSON.stringify(gift)); gift.data.repeatEnd = true; source.send(JSON.stringify(gift)); source.send(JSON.stringify(gift));
+  const result = await until(() => overlay.messages.find(m => m.t === 'gift'));
+  assert.equal(result.coins, 3); assert.equal(result.ritual.kind, 'garland'); assert.equal(result.giftId, '9001');
+  await until(() => overlay.messages.some(m => m.t === 'stats' && m.stats.coins === 3));
+  control.send('gift', { name: 'fake', diamonds: 500, count: 99 });
+  await until(() => control.messages.some(m => m.t === 'error' && /Demo/.test(m.message)));
+  for (let i = 0; i < 80; i++) source.send(JSON.stringify({ event: 'chat', data: { uniqueId: `v${i}`, nickname: `User ${i}`, comment: 'สาธุ' } }));
+  await until(() => overlay.messages.some(m => m.t === 'chat' && m.id === 'v79'));
+  const observer = await client('overlay'); const full = await until(() => observer.messages.find(m => m.t === 'state'));
+  assert.equal(full.viewers.length, 60); assert.equal(full.stats.coins, 3); assert.equal(full.top[0].name, 'น้องพลอย');
+  // Overlays cannot issue control commands.
+  observer.send('reset'); observer.send('gift', { name: 'fake', diamonds: 500, count: 1 });
+  control.send('demo'); await until(() => control.messages.filter(m => m.t === 'state' && m.mode === 'demo').length >= 2);
+  control.send('gift', { name: 'Demo', diamonds: 500, count: 2 });
+  await until(() => overlay.messages.some(m => m.t === 'gift' && m.name === 'Demo'));
+  control.send('live');
+  await until(() => control.messages.filter(m => m.t === 'state' && m.mode === 'live' && m.stats.coins === 3).length >= 1);
+  for (const p of ['/live/server.mjs', '/live/data/session.json', '/live/test/live-session.test.mjs', '/assets/../live/package.json']) assert.equal((await fetch(`http://127.0.0.1:31877${p}`)).status, 404);
+  const rejected = await new Promise((resolve, reject) => {
+    get('http://127.0.0.1:31877/', { headers: { Host: 'untrusted.example' } }, res => { res.resume(); resolve(res.statusCode); }).on('error', reject);
+  }); assert.equal(rejected, 421);
+  assert.equal((await fetch('http://127.0.0.1:31877/assets/ganesha/fonts/NotoSansThai-Regular.ttf')).status, 200);
+  for (const ws of sockets) ws.terminate(); await stop(); await start();
+  const restored = await client('control'); restored.send('live');
+  const stored = await until(() => restored.messages.find(m => m.t === 'state' && m.mode === 'live'));
+  assert.equal(stored.stats.coins, 3); assert.equal(stored.settings.goal, 900); assert.equal(stored.settings.giftMap, '9001=garland');
+  assert.equal(stored.top[0].name, 'น้องพลอย');
+  restored.send('clear'); await sleep(50);
+  restored.send('reset'); await until(() => restored.messages.some(m => m.t === 'state' && m.mode === 'live' && m.stats.coins === 0));
+});

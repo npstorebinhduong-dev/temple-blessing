@@ -1,5 +1,7 @@
 node_modules/
 live/tts/
+live/data/
+artifacts/
 *.log
 .env
 .env.*

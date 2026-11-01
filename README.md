@@ -1,41 +1,72 @@
-# Temple Blessing · Chánh điện online
+# Ganesha LIVE · พระพิฆเนศ
 
-Phát triển từ [kentjuno/chanh-dien-online](https://github.com/kentjuno/chanh-dien-online), commit `bee578d267c52940da08bc16171cfe8392b69d17`. Giữ giấy phép MIT và bản quyền Kent Juno trong LICENSE. Hướng dẫn gốc: [UPSTREAM.md](UPSTREAM.md).
+Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào và quỳ, bảng tên, xếp hạng, mục tiêu và bốn hiệu ứng dâng lễ. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy trên máy livestream
+## Chạy bản đầu
 
-Cài Node.js 24, mở terminal tại thư mục dự án:
+Cài **Node.js 24 trở lên**. Trên Windows, giải nén toàn bộ gói và chạy `CHAY-LIVE.bat`. Hướng dẫn thao tác đầy đủ trong [HUONG-DAN-WINDOWS.txt](HUONG-DAN-WINDOWS.txt).
+
+Hoặc từ thư mục dự án:
 
 ```sh
 cd live
-npm ci
+npm ci --no-audit --no-fund
 npm start
 ```
 
-Mở bảng điều khiển tại `http://localhost:3000/live/control.html`.
+Bảng điều khiển: `http://localhost:3000/live/control.html`.
+Nguồn Browser Source cho OBS: `http://localhost:3000/live/overlay.html`, rộng **1080**, cao **1920**. Với LIVE Studio, dùng nguồn trình duyệt nếu có; hoặc chụp cửa sổ overlay và thu âm thanh của trình duyệt. Tắt tiếng các cửa sổ overlay dư để không phát âm thanh hai lần.
 
-1. Mở TikFinity Desktop trên **cùng máy**, kết nối kênh TikTok đang LIVE và bật WebSocket server của TikFinity.
-2. Trong bảng điều khiển, chọn **TikFinity Desktop**, kiểm tra địa chỉ `ws://127.0.0.1:21213/` theo cổng được TikFinity cung cấp rồi bấm **Kết nối**. Không cần nhập username trong chế độ này.
-3. Thêm Browser Source trong OBS với `http://localhost:3000/live/overlay.html`, kích thước 1080 × 1920. Bật âm thanh trong overlay nếu trình duyệt yêu cầu. LIVE Studio có thể dùng Window Capture.
-4. Bình luận đưa người xem vào chánh điện; quà cập nhật công đức và hiệu ứng; lượt thích tạo hiệu ứng tim. Tùy chọn “Người vào phòng cũng được ngồi” áp dụng cho sự kiện vào phòng.
+Ứng dụng khởi động ở **DEMO** với 24 nhân vật. Dùng các nút quà hoặc chạy mô phỏng để kiểm tra. Bản xem trước trong bảng điều khiển luôn tắt tiếng. Cửa sổ overlay có nút mở âm thanh nếu trình duyệt chặn tự phát.
 
-Tự thử lại sau 2 giây nếu mất kết nối TikFinity; bấm **Ngắt** để dừng. Trạng thái “đã kết nối” chỉ xác nhận kết nối tới TikFinity Desktop; cần kiểm tra TikFinity đang nhận sự kiện LIVE. Chế độ **TikTok trực tiếp** giữ cách kết nối của dự án gốc.
+## Kết nối thật
 
-## Kiểm thử
+1. Mở TikFinity Desktop trên **cùng máy** chạy Ganesha LIVE.
+2. Kết nối TikFinity với kênh đang LIVE và bật WebSocket server.
+3. Chọn TikFinity Desktop, dùng địa chỉ nó cung cấp (thường `ws://127.0.0.1:21213/`), bấm **Kết nối LIVE**.
+4. Ứng dụng đổi sang dữ liệu LIVE riêng, bỏ nhân vật demo khỏi màn hình. Bình luận tạo nhân vật; quà kích hoạt hiệu ứng và cộng xu. Lượt thích tạo tim; lượt theo dõi tạo điểm sáng. Có thể bật cho người vừa vào phòng xuất hiện.
+5. Thử một bình luận và một quà thật. “Đã kết nối nguồn” chỉ xác nhận kết nối tới TikFinity, chưa xác nhận kênh đang phát sự kiện.
+
+TikFinity tự kết nối lại sau 2 giây khi mất socket. Chế độ TikTok trực tiếp là lựa chọn thử nghiệm, phụ thuộc thư viện và dịch vụ bên ngoài; cần kết nối lại thủ công khi bị ngắt. Không nhập hoặc lưu cookie, mật khẩu TikTok trong ứng dụng.
+
+## Quy tắc quà
+
+| Giá trị **một quà** | Hiệu ứng |
+| --- | --- |
+| 1–9 xu | `lotus` · ถวายดอกบัว |
+| 10–99 xu | `incense` · ถวายกำยาน |
+| 100–499 xu | `garland` · ถวายพวงมาลัย |
+| Từ 500 xu | `aarti` · อารตีบูชา |
+
+Đây là cấu hình mặc định của sản phẩm, không phải bảng giá quà TikTok tại Thái. Combo 500 hoa hồng 1 xu vẫn tạo **hoa sen**, cộng đủ 500 xu. Nhận diện combo bằng `giftType`, `repeatEnd`, `repeatCount`; các gói cùng `msgId` được lọc trùng trong 5 phút. Không có `msgId` thì không thể đảm bảo chống phát lại. Bộ nhớ chống trùng không giữ qua lần khởi động server mới.
+
+Để gắn một quà cụ thể, lấy ID từ nhật ký rồi vào **Cảnh & âm thanh → Ánh xạ ID quà thật**. Ví dụ cú pháp `123456=garland` (ID minh họa). Ánh xạ ID được ưu tiên trước mức xu; đổi tên/ngôn ngữ quà không ảnh hưởng. Bấm **Lưu cấu hình** để áp dụng.
+
+Hàng đợi hình ảnh có tối đa 8 mục chờ, gộp các mục cùng người/cùng loại đang chờ và bỏ hiệu ứng chờ quá 40 giây; khi đầy, bỏ hiệu ứng chờ cũ nhất. **Điểm quà luôn được tính độc lập**, kể cả khi không phát lại mọi hiệu ứng trong đợt quà dồn dập.
+
+## Dữ liệu và âm thanh
+
+- Demo và LIVE có nhân vật, điểm và bảng xếp hạng riêng. Các nút thử quà bị khóa trong chế độ LIVE.
+- Cấu hình và số liệu LIVE được lưu tại `live/data/session.json`; không đưa file này lên Git hay chia sẻ trong gói phát hành. Có thể đổi thư mục bằng `GANESHA_DATA_DIR`.
+- Khi khởi động lại, chọn **Xem phiên LIVE đã lưu** hoặc kết nối nguồn để phục hồi điểm. Kết nối nguồn và âm thanh phải khởi động lại. Nhân vật quay lại khi có sự kiện mới; bảng xếp hạng đã lưu vẫn còn.
+- **Dọn nhân vật** giữ nguyên điểm. **Bắt đầu phiên mới** xóa số liệu của chế độ đang chọn và chỉ cho phép khi đã ngắt nguồn.
+- Cảnh hiện tối đa 60 người; khi đầy, nhân vật ít tương tác lâu nhất nhường vị trí. Điểm và bảng xếp hạng của họ được giữ.
+- Hình ảnh, font Thái, âm nền nhẹ và chuông chạy cục bộ. Âm nền được tổng hợp bằng Web Audio, không sử dụng nhạc của concept trước.
+- Giọng cảm ơn tiếng Thái dùng Edge TTS, **mặc định tắt**, cần Internet tới `speech.platform.bing.com`. Chọn Premwadee hoặc Niwat, bật giọng và thử trước khi phát. Có giới hạn hàng đợi/timeout; lỗi giọng không chặn quà.
+
+## Kiểm thử và giới hạn bản 0.1
 
 ```sh
 cd live
 npm test
 ```
 
-Kiểm thử dùng WebSocket giả lập với gói `{ "event": "chat", "data": { "uniqueId": "an", "nickname": "An", "comment": "Bình an" } }`. Hỗ trợ `chat`, `gift`, `member`, `like` của TikFinity Desktop; quà dùng `giftType`, `repeatEnd`, `repeatCount`, `diamondCount`. Quà combo chỉ tính ở gói kết thúc; các gói có cùng `msgId` được lọc trùng trong 5 phút. Nếu nguồn không cung cấp `msgId`, không bảo đảm loại được các gói phát lại.
+Bộ kiểm thử dùng TikFinity giả lập để kiểm tra combo, ánh xạ ID, reconnect, demo/LIVE, giới hạn nhân vật, lưu/khôi phục phiên và HTTP/WebSocket cục bộ. Không chứng minh tương thích phiên bản TikFinity trên máy người dùng hoặc giọng Edge TTS qua Internet.
 
-Kiểm thử tự động chưa xác nhận tương thích với phiên bản TikFinity thực tế của bạn. Cloud không truy cập được localhost máy livestream. Giọng đọc Edge TTS cần Internet và được kiểm tra riêng trên máy livestream; kiểm thử tự động không gọi dịch vụ giọng đọc.
+Bộ hình mới và sprite 8 tư thế tạo bằng AI. Đây là bản 2.5D đầu tiên, chưa khớp mọi chuyển động/hiệu ứng của video tham chiếu. Nội dung tiếng Thái và âm thanh cần được nghe/đọc duyệt trong lần chạy thử. Kiểm tra hiệu năng với OBS/LIVE Studio đang encode trên máy phát thực tế.
 
-## Nghi lễ quà tặng
+Các bước kiểm tra trước LIVE trong [TEST-LIVE.md](TEST-LIVE.md).
 
-- **Bó hoa · 100 xu/quà**: thắp đúng 3 cây hương lớn, khói hương và hào quang vàng.
-- **Bong bóng tình yêu · 500 xu/quà**: dâng giỏ trái cây trên hoa sen nở, cánh sen bay khắp màn hình.
-- Nhận diện theo tên quà (tiếng Việt hoặc Bouquet / Flower Bouquet, Love Balloon / Love Balloons) và giá trị **một quà**, không theo tổng công đức hoặc tổng xu combo. 100 hoa hồng 1 xu không kích hoạt lễ thắp hương.
-- Combo được phát một nghi lễ khi chuỗi kết thúc. Các nghi lễ đến liên tiếp xếp hàng, mỗi nghi lễ hiển thị 12 giây; làm trống bồ đoàn sẽ xóa hàng đợi. Chế độ giảm chuyển động giữ nghi lễ tĩnh và làm cánh sen bay chậm hơn.
-- Trong bảng điều khiển có nút thử **Bó hoa · 100 · Thắp hương** và **Bong bóng tình yêu · 500 · Dâng lễ**. Cần thử quà thực tế để xác nhận tên/giá mà phiên bản TikFinity của bạn gửi.
+## Nguồn
+
+Nền kết nối và các nguyên lý tương tác phát triển từ `kentjuno/chanh-dien-online`, theo MIT. Giữ nguyên [LICENSE](LICENSE) và thông tin [UPSTREAM.md](UPSTREAM.md). Concept và giao diện hiện tại đã chuyển sang Ganesha. Font Noto có giấy phép đi kèm trong `assets/ganesha/fonts/LICENSE.txt`.

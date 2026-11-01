@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 
 // TikFinity Desktop WebSocket API: { event, data }.
-export function createEventHandler({ chat, gift, member, like }) {
+export function createEventHandler({ chat, gift, member, like, follow }) {
   const seen = new Map();
   return raw => {
     let message;
@@ -10,21 +10,22 @@ export function createEventHandler({ chat, gift, member, like }) {
     const { event, data: d } = message;
     if (!d || typeof d !== 'object') return;
     const id = d.uniqueId || d.userId || d.user?.uniqueId || d.user?.userId;
-    if (!id || !['chat', 'gift', 'member', 'like'].includes(event)) return;
+    if (!id || !['chat', 'gift', 'member', 'like', 'follow'].includes(event)) return;
     const name = String(d.nickname || d.user?.nickname || id);
     const avatar = typeof d.profilePictureUrl === 'string' ? d.profilePictureUrl : '';
     // Streak updates are cumulative; apply only the final count.
-    if (event === 'gift' && Number(d.giftType) === 1 && ![true, 1].includes(d.repeatEnd)) return;
+    if (event === 'gift' && Number(d.giftType) === 1 && ![true, 1, '1', 'true'].includes(d.repeatEnd)) return;
     const now = Date.now();
     for (const [key, time] of seen) if (now - time > 300000) seen.delete(key);
     const key = d.msgId ? `${event}:${id}:${d.msgId}` : null;
     if (key && seen.has(key)) return;
     if (key) { seen.set(key, now); if (seen.size > 10000) seen.delete(seen.keys().next().value); }
     const positive = (v, max) => Number.isFinite(Number(v)) ? Math.max(1, Math.min(max, Math.floor(Number(v)))) : 1;
-    if (event === 'chat') chat(String(id), name, String(d.comment || ''), avatar);
-    if (event === 'gift') gift(String(id), name, String(d.giftName || 'quà'), positive(d.repeatCount, 9999), positive(d.diamondCount, 50000), avatar);
-    if (event === 'member') member(String(id), name, avatar);
-    if (event === 'like') like(String(id), positive(d.likeCount, 100000));
+    if (event === 'chat') chat?.(String(id), name, String(d.comment || ''), avatar);
+    if (event === 'gift') gift?.(String(id), name, String(d.giftName || 'ของขวัญ'), positive(d.repeatCount, 9999), positive(d.diamondCount, 50000), avatar, String(d.giftId ?? d.gift?.id ?? ''));
+    if (event === 'member') member?.(String(id), name, avatar);
+    if (event === 'like') like?.(String(id), positive(d.likeCount, 100000));
+    if (event === 'follow') follow?.(String(id), name);
   };
 }
 

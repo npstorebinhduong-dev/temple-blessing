@@ -1,29 +1,50 @@
-﻿HƯỚNG DẪN CHẠY TRÊN WINDOWS
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.1
 
-1. Giải nén toàn bộ ZIP vào thư mục riêng. Không chạy trực tiếp trong ZIP.
-2. Cài Node.js 24 LTS từ https://nodejs.org/ nếu máy chưa có.
-   TikFinity và TikTok LIVE Studio không thay thế Node.js.
+1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
+2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
 3. Nhấp đúp CHAY-LIVE.bat. Lần đầu cần Internet để cài thư viện.
-   Giữ cửa sổ này mở trong suốt buổi live. Đóng cửa sổ để dừng server.
-4. Mở trình duyệt: http://localhost:3000/live/control.html
-5. Mở TikFinity Desktop, kết nối kênh đang LIVE và bật WebSocket server.
-6. Trong bảng điều khiển chọn TikFinity Desktop, dùng địa chỉ
-   ws://127.0.0.1:21213/ (sửa cổng nếu TikFinity hiển thị cổng khác), bấm Kết nối.
-   Trạng thái đã kết nối chỉ xác nhận kết nối ứng dụng TikFinity;
-   cần kiểm tra TikFinity đang nhận bình luận/quà từ phòng LIVE.
-7. Bấm Mở màn hình overlay 9:16 và bật âm thanh trong cửa sổ overlay.
-8. Trong TikTok LIVE Studio thêm nguồn Window Capture / Chụp cửa sổ,
-   chọn cửa sổ overlay. Cấu hình nguồn âm thanh để thu tiếng từ trình duyệt;
-   kiểm tra thanh âm lượng và tránh thu trùng âm thanh.
-9. Dùng nút Gửi bình luận và các nút quà để thử giao diện trước;
-   sau đó thử bình luận/quà thật trong LIVE.
+   Giữ cửa sổ này mở trong suốt buổi phát.
+4. Mở http://localhost:3000/live/control.html bằng trình duyệt.
+5. Ban đầu là DEMO, có sẵn 24 nhân vật. Thử các nút quà, combo và
+   Chạy mô phỏng. Chọn 36 hoặc 60 để kiểm tra khi đông người.
+6. Bấm Mở màn hình LIVE. Nếu có nút mở âm thanh ở dưới cảnh, bấm một lần.
+   Bản xem trước trong bảng điều khiển không phát tiếng.
+7. OBS: thêm Browser Source, URL http://localhost:3000/live/overlay.html,
+   Width 1080, Height 1920. Thu âm thanh nguồn trình duyệt trong OBS.
+   LIVE Studio: dùng nguồn trình duyệt nếu có, hoặc Window Capture cửa sổ
+   overlay và nguồn âm thanh trình duyệt. Tránh thu trùng hai lần.
+8. Mở TikFinity Desktop trên cùng máy. Kết nối kênh TikTok đang LIVE,
+   bật WebSocket server. Trong Ganesha LIVE chọn TikFinity Desktop,
+   nhập địa chỉ thường là ws://127.0.0.1:21213/ rồi bấm Kết nối LIVE.
+   Dữ liệu DEMO sẽ được thay bằng phiên LIVE thật, độc lập với demo.
+9. Thử bình luận và quà thật. Kiểm tra nhật ký có đúng người, số lượng,
+   giá trị một quà và ID quà. Đã kết nối TikFinity không có nghĩa là kênh
+   đã gửi sự kiện; phải kiểm tra tương tác thật.
+10. Giọng Thái mặc định tắt. Trong Cảnh & âm thanh, bật đọc lời cảm ơn,
+    chọn giọng, lưu cấu hình và thử giọng. Cần Internet.
 
-Nếu không kết nối: kiểm tra TikFinity đang mở, WebSocket server đã bật,
-đúng cổng, và cả hai chương trình chạy trên cùng máy. Bấm Ngắt để dừng
-thử kết nối lại. Username chỉ dùng cho chế độ TikTok trực tiếp.
-Nếu cổng 3000 đang bị chiếm, đóng phiên CHAY-LIVE.bat cũ trước khi mở lại.
-Giọng đọc Edge TTS cần Internet. Không bảo đảm tương thích mọi phiên bản
-TikFinity cho đến khi thử trên máy livestream thực tế.
+BẢNG QUÀ MẶC ĐỊNH
+1–9 xu/quà: hoa sen; 10–99: hương; 100–499: vòng hoa; từ 500: aarti.
+Combo không đổi loại hiệu ứng. Ví dụ 500 hoa hồng 1 xu vẫn là hoa sen.
+Muốn gắn theo quà cụ thể: dùng ID quà trong nhật ký, nhập ID=lotus,
+ID=incense, ID=garland hoặc ID=aarti trong Ánh xạ ID quà thật rồi lưu.
+Đây là cấu hình sản phẩm, không phải danh sách giá quà chính thức tại Thái.
 
-Gói này không chứa Node.js, node_modules, mật khẩu hay thông tin tài khoản.
-Giữ LICENSE khi chia sẻ lại. README.md và UPSTREAM.md có thông tin nguồn.
+KHỞI ĐỘNG LẠI
+Điểm LIVE và cấu hình nằm ở live/data/session.json. Khi mở lại, ứng dụng
+vào DEMO; bấm Xem phiên LIVE đã lưu hoặc Kết nối LIVE để tiếp tục số liệu.
+Cần kết nối TikFinity và bật âm thanh lại. Dọn nhân vật chỉ dọn cảnh;
+Bắt đầu phiên mới sẽ xóa điểm của chế độ đang chọn sau xác nhận.
+
+NẾU CÓ LỖI
+- Không kết nối: kiểm tra TikFinity đang mở, WebSocket server đã bật,
+  đúng cổng và chạy cùng máy. Bấm Ngắt để dừng kết nối lại.
+- Cổng 3000 đang dùng: đóng cửa sổ CHAY-LIVE cũ trước khi mở lại.
+- Không có âm thanh: mở âm thanh overlay, kiểm tra âm lượng tổng và
+  nguồn âm trong OBS/LIVE Studio. Đóng hoặc tắt tiếng cửa sổ overlay dư.
+- Không đọc tiếng Thái: kiểm tra bật giọng, Internet và nhật ký.
+- Bị chậm: thử 24 người, giảm nhịp mô phỏng và đóng các overlay dư.
+
+Gửi lại clip khoảng 20–30 giây gồm cảnh và một lượt quà để đánh giá.
+Gói không chứa Node.js, node_modules, dữ liệu LIVE hay tài khoản.
+Giữ LICENSE và giấy phép font khi chia sẻ lại.

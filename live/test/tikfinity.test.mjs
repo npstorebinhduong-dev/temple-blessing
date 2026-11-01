@@ -2,6 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { spawn } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import WebSocket, { WebSocketServer } from 'ws';
 import { createEventHandler, connectTikFinity } from '../tikfinity.mjs';
 
@@ -15,7 +18,7 @@ test('normalizes events, counts final streak once and rejects malformed data', (
   const gift = {event:'gift',data:{uniqueId:'an',nickname:'An',msgId:'1',giftType:1,repeatCount:3,diamondCount:5}};
   handle(JSON.stringify(gift)); assert.equal(calls.length,0);
   gift.data.repeatEnd=true; handle(JSON.stringify(gift)); handle(JSON.stringify(gift));
-  assert.deepEqual(calls[0],['gift','an','An','quà',3,5,'']);
+  assert.deepEqual(calls[0],['gift','an','An','ของขวัญ',3,5,'','']);
   handle(JSON.stringify({event:'chat',data:{uniqueId:'an',comment:'bình an'}}));
   handle(JSON.stringify({event:'member',data:{userId:'2'}}));
   handle(JSON.stringify({event:'like',data:{uniqueId:'an',likeCount:4}}));
@@ -36,7 +39,9 @@ test('reconnects after socket closure; manual disconnect stops retries', async t
 
 test('server serves UI and forwards TikFinity chat/likes to overlay', async t => {
   const wss=new WebSocketServer({host:'127.0.0.1',port:0}); await once(wss,'listening');
-  const child=spawn(process.execPath,['server.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'31876'},stdio:'pipe'});
+  const dataDir=mkdtempSync(path.join(tmpdir(),'ganesha-test-'));
+  t.after(()=>rmSync(dataDir,{recursive:true,force:true}));
+  const child=spawn(process.execPath,['server.mjs'],{cwd:new URL('..',import.meta.url),env:{...process.env,PORT:'31876',GANESHA_DATA_DIR:dataDir},stdio:'pipe'});
   t.after(()=>{child.kill(); for(const s of wss.clients)s.terminate(); wss.close();});
   let ready=false; child.stdout.on('data',()=>ready=true); await until(()=>ready);
   const response=await fetch('http://127.0.0.1:31876/'); assert.equal(response.status,200); assert.match(await response.text(),/TikFinity Desktop/);
