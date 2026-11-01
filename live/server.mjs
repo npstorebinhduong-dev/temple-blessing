@@ -6,6 +6,7 @@
 //   cd live && npm install && node server.mjs        → http://localhost:3000/live/control.html
 //
 import { connectTikFinity, createEventHandler } from './tikfinity.mjs';
+import { giftRitual } from './gift-rituals.mjs';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -94,8 +95,9 @@ function onGift(id, name, giftName, count, diamonds, avatar){
   v.coins += coins;
   const prayer = (v.lastText && Date.now() - v.lastTextAt < 90_000 && v.lastText.length > 6) ? v.lastText : pickPrayer();
   const tier = coins >= 99 ? 3 : coins >= 10 ? 2 : 1;
+  const ritual = giftRitual(giftName, diamonds);
   const line = `Nam mô A Di Đà Phật. Phật tử ${spoken(v.name)} thành tâm dâng ${giftName}${count > 1 ? ', ' + count + ' lần' : ''}. ${prayer}.`;
-  broadcast({ t:'gift', id, name: v.name, giftName, count, coins, total: v.coins, tier, prayer });
+  broadcast({ t:'gift', id, name: v.name, giftName, count, coins, total: v.coins, tier, prayer, ritual });
   if (settings.gifts.readAll || coins >= settings.gifts.minDiamonds) say(line, { tag:'gift', id });
 }
 

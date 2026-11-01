@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Overlay 9:16 · Chánh Điện Tịnh Tâm</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,500;0,700;1,400&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/live/rituals.css">
 <style>
 /* Overlay for TikTok LIVE Studio / OBS window capture. Everything sits on a 1080×1920 stage scaled to the window. */
 :root{
@@ -73,17 +74,55 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:var(-
   <div id="guide" class="card ui">
     <div>💬 <b>Bình luận bất kỳ</b> để vào thiền</div>
     <div>Gõ <b>nam · nữ · sư · ni · tiểu · bà · cao tăng</b> để đổi hình</div>
+    <div>💐 <b>Bó hoa · 100 xu</b><br>Thắp 3 nén hương · hào quang</div>
+    <div>🎈 <b>Bong bóng tình yêu · 500 xu</b><br>Dâng trái cây · sen nở</div>
     <div>🎁 Tặng quà được <b>xướng tên hồi hướng</b></div>
   </div>
   <div id="merit" class="card ui"><h3>✦ Công Đức ✦</h3><ol id="meritList"><li class="empty">Chưa có</li></ol></div>
   <div id="chant" class="ui"><h4>✦ TỤNG KINH ĐỊNH KỲ ✦</h4><p id="chantText"></p></div>
   <div id="gift" class="ui"><div class="who" id="giftWho"></div><div class="what" id="giftWhat"></div><div class="pray" id="giftPray"></div></div>
+  <div id="ritual" hidden aria-live="polite">
+    <div class="ritual-aura"></div>
+    <div class="petal-rain"></div>
+    <div class="ritual-caption"><div class="ritual-name"></div><div class="ritual-label"></div></div>
+    <svg class="ritual-incense-art" viewBox="0 0 600 640" aria-label="Ba cây hương lớn tỏa khói và hào quang">
+      <defs><linearGradient id="urn" x2="1" y2="1"><stop stop-color="#fff1ae"/><stop offset=".45" stop-color="#b77824"/><stop offset="1" stop-color="#ffce61"/></linearGradient></defs>
+      <g class="incense-smoke"><path d="M220 215 C170 165 260 130 210 70 S250 20 225 0"/><path d="M300 180 C350 130 260 90 310 40 S280 0 300 -30"/><path d="M380 215 C430 160 340 120 390 70 S360 20 385 0"/></g>
+      <g stroke="#ae4d26" stroke-width="15"><path d="M220 220V505"/><path d="M300 185V505"/><path d="M380 220V505"/></g>
+      <g stroke="#f4bc5e" stroke-width="15"><path d="M220 365V505"/><path d="M300 330V505"/><path d="M380 365V505"/></g>
+      <g class="ember"><ellipse cx="220" cy="218" rx="9" ry="14"/><ellipse cx="300" cy="183" rx="9" ry="14"/><ellipse cx="380" cy="218" rx="9" ry="14"/></g>
+      <path d="M155 470 Q145 580 225 590H375Q455 580 445 470Z" fill="url(#urn)" stroke="#ffe6a1" stroke-width="5"/>
+      <ellipse cx="300" cy="470" rx="150" ry="25" fill="#87502a" stroke="#ffe6a1" stroke-width="7"/>
+      <path d="M225 590L205 620H395L375 590" fill="url(#urn)"/>
+      <text x="300" y="552" text-anchor="middle" font-size="44" fill="#fff0b4">❁</text>
+    </svg>
+    <svg class="ritual-offering-art" viewBox="0 0 740 550" aria-label="Giỏ lễ trái cây trên hoa sen đang nở">
+      <g class="lotus-bloom" stroke="#ffc4df" stroke-width="3">
+        <path d="M370 525Q110 530 55 340Q260 330 370 525" fill="#d64e96"/><path d="M370 525Q630 530 685 340Q480 330 370 525" fill="#d64e96"/>
+        <path d="M370 525Q150 425 185 250Q365 335 370 525" fill="#f586ba"/><path d="M370 525Q590 425 555 250Q375 335 370 525" fill="#f586ba"/>
+        <path d="M370 525Q255 365 370 210Q485 365 370 525" fill="#ffbed9"/>
+      </g>
+      <path d="M225 250C205 30 535 30 515 250" fill="none" stroke="#e4b569" stroke-width="20"/>
+      <g stroke="#fff0b3" stroke-width="3">
+        <ellipse cx="292" cy="257" rx="63" ry="68" fill="#ed6656"/><ellipse cx="403" cy="216" rx="68" ry="66" fill="#f4ac39"/>
+        <ellipse cx="478" cy="275" rx="57" ry="62" fill="#a3bd4d"/>
+        <path d="M285 236Q355 180 380 260Q358 296 319 290Z" fill="#f5d160"/>
+        <g fill="#a66cc8"><circle cx="358" cy="263" r="24"/><circle cx="392" cy="275" r="24"/><circle cx="343" cy="297" r="24"/><circle cx="376" cy="310" r="24"/><circle cx="355" cy="337" r="24"/></g>
+      </g>
+      <path d="M280 202Q255 145 320 165" fill="#6c9e42"/><path d="M404 153Q423 111 449 139" fill="#6c9e42"/>
+      <path d="M200 307L240 430Q370 475 500 430L540 307Z" fill="#af702e" stroke="#ffe0a1" stroke-width="7"/>
+      <g stroke="#e4ae63" stroke-width="5"><path d="M220 340H520M230 370H510M240 400H500M270 313L290 443M320 313L330 450M370 313V453M420 313L410 450M470 313L450 443"/></g>
+      <path d="M195 307Q370 330 545 307" fill="none" stroke="#ffe0a1" stroke-width="14"/>
+    </svg>
+  </div>
   <button id="unmute">🔔 Bấm để bật âm thanh</button>
   <div id="conn">đang kết nối…</div>
 </div></div>
 
+<script src="/live/rituals.js"></script>
 <script>
 /* ======================= stage fit ======================= */
+const ritualPlayer = createRitualPlayer(document.getElementById('ritual'), { reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches });
 const stage = document.getElementById('stage');
 function fit(){ const s = Math.min(innerWidth/1080, innerHeight/1920); stage.style.transform = `translate(-50%,-50%) scale(${s})`; }
 addEventListener('resize', fit); fit();
@@ -224,13 +263,13 @@ function connect(){
     switch(m.t){
       case 'state':
         Object.assign(settings,m.settings); applySettings(); startedAt=m.startedAt;
-        visitors.clear(); order=[]; layout(m.cap); for (const p of m.viewers) addVisitor(p,true); updateCount(); renderMerit(); break;
+        visitors.clear(); ritualPlayer.clear(); order=[]; layout(m.cap); for (const p of m.viewers) addVisitor(p,true); updateCount(); renderMerit(); break;
       case 'settings': Object.assign(settings,m.settings); applySettings(); if (m.cap!==cap){ layout(m.cap); updateCount(); } break;
       case 'join': if (m.cap!==cap) layout(m.cap); addVisitor(m.v, m.v.demo && visitors.size>8); updateCount(); break;
       case 'leave': removeVisitor(m.id); updateCount(); renderMerit(); break;
       case 'skin': { const v=visitors.get(m.id); if(v){ v.skin=m.skin; v.glow=.8; if(v.state!=='sit'){ v.state='sit'; v.frame=7; } } } break;
       case 'chat': { const v=visitors.get(m.id); if(v){ v.bubble={text:m.text, until:performance.now()+6000}; v.bow=.6; } } break;
-      case 'gift': { const v=visitors.get(m.id); if(v){ v.coins=m.total; giftFx(v,m.tier); } renderMerit(); showGift(m); } break;
+      case 'gift': { const v=visitors.get(m.id); if(v){ v.coins=m.total; if (m.ritual) { v.glow=1; v.bow=1; } else giftFx(v,m.tier); } renderMerit(); if (m.ritual) { document.getElementById('gift').classList.remove('show'); document.getElementById('chant').classList.remove('show'); ritualPlayer.enqueue(m); } else showGift(m); } break;
       case 'like': { const v=visitors.get(m.id); if(v) hearts(v,m.n); } break;
       case 'tts': queueTTS(m.url); break;
       case 'chant': showChant(m.text); bell(); break;
@@ -270,7 +309,7 @@ function bubble(text,x,y,s){
 }
 let last=performance.now();
 function frame(now){
-  requestAnimationFrame(frame); const dt=Math.min((now-last)/1000,.05); last=now; const t=now/1000;
+  requestAnimationFrame(frame); const dt=Math.min((now-last)/1000,.05); last=now; ritualPlayer.tick(dt*1000); const t=now/1000;
   ctx.clearRect(0,0,1080,1920);
   if (A.hall.naturalWidth) ctx.drawImage(A.hall,0,0,1080,1920);
   // light: halo pulse behind the Buddha, candle flicker, incense smoke

@@ -31,3 +31,11 @@ npm test
 Kiểm thử dùng WebSocket giả lập với gói `{ "event": "chat", "data": { "uniqueId": "an", "nickname": "An", "comment": "Bình an" } }`. Hỗ trợ `chat`, `gift`, `member`, `like` của TikFinity Desktop; quà dùng `giftType`, `repeatEnd`, `repeatCount`, `diamondCount`. Quà combo chỉ tính ở gói kết thúc; các gói có cùng `msgId` được lọc trùng trong 5 phút. Nếu nguồn không cung cấp `msgId`, không bảo đảm loại được các gói phát lại.
 
 Kiểm thử tự động chưa xác nhận tương thích với phiên bản TikFinity thực tế của bạn. Cloud không truy cập được localhost máy livestream. Giọng đọc Edge TTS cần Internet và được kiểm tra riêng trên máy livestream; kiểm thử tự động không gọi dịch vụ giọng đọc.
+
+## Nghi lễ quà tặng
+
+- **Bó hoa · 100 xu/quà**: thắp đúng 3 cây hương lớn, khói hương và hào quang vàng.
+- **Bong bóng tình yêu · 500 xu/quà**: dâng giỏ trái cây trên hoa sen nở, cánh sen bay khắp màn hình.
+- Nhận diện theo tên quà (tiếng Việt hoặc Bouquet / Flower Bouquet, Love Balloon / Love Balloons) và giá trị **một quà**, không theo tổng công đức hoặc tổng xu combo. 100 hoa hồng 1 xu không kích hoạt lễ thắp hương.
+- Combo được phát một nghi lễ khi chuỗi kết thúc. Các nghi lễ đến liên tiếp xếp hàng, mỗi nghi lễ hiển thị 12 giây; làm trống bồ đoàn sẽ xóa hàng đợi. Chế độ giảm chuyển động của hệ điều hành giữ hình tĩnh.
+- Trong bảng điều khiển có nút thử **Bó hoa · 100 · Thắp hương** và **Bong bóng tình yêu · 500 · Dâng lễ**. Cần thử quà thực tế để xác nhận tên/giá mà phiên bản TikFinity của bạn gửi.
