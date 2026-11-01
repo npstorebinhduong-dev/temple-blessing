@@ -13,8 +13,7 @@
 .ember{fill:#fff5b5;filter:drop-shadow(0 0 12px #ff781f);animation:ember-glow 1.5s ease-in-out infinite alternate}
 .lotus-bloom{transform-box:fill-box;transform-origin:50% 100%;animation:lotus-open 2.4s cubic-bezier(.2,.8,.3,1) both}
 .petal-rain{position:absolute;inset:0;overflow:hidden}
-.ritual-petal{position:absolute;width:var(--size);height:calc(var(--size)*1.7);border-radius:90% 5% 90% 10%;background:linear-gradient(135deg,#fff2ef,#ffa8cf 45%,#df498b);box-shadow:0 0 9px #ffbad244;animation:petal-fall var(--fall) var(--delay) linear infinite}
-@keyframes petal-fall{0%{transform:translate(0,-1920px) rotate(0deg);opacity:0}10%,85%{opacity:.9}100%{transform:translate(var(--drift),1920px) rotate(420deg);opacity:0}}
+.ritual-petal{position:absolute;left:0;top:0;width:var(--size);height:calc(var(--size)*1.7);border-radius:90% 5% 90% 10%;background:linear-gradient(135deg,#fff2ef,#ffa8cf 45%,#df498b);box-shadow:0 0 9px #ffbad244;will-change:transform;backface-visibility:hidden}
 @keyframes lotus-open{from{transform:scale(.72,.4);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes aura-breathe{50%{transform:scale(1.13);opacity:.65}}
 @keyframes smoke-rise{to{stroke-dashoffset:-230}}

@@ -37,5 +37,5 @@ Kiểm thử tự động chưa xác nhận tương thích với phiên bản Ti
 - **Bó hoa · 100 xu/quà**: thắp đúng 3 cây hương lớn, khói hương và hào quang vàng.
 - **Bong bóng tình yêu · 500 xu/quà**: dâng giỏ trái cây trên hoa sen nở, cánh sen bay khắp màn hình.
 - Nhận diện theo tên quà (tiếng Việt hoặc Bouquet / Flower Bouquet, Love Balloon / Love Balloons) và giá trị **một quà**, không theo tổng công đức hoặc tổng xu combo. 100 hoa hồng 1 xu không kích hoạt lễ thắp hương.
-- Combo được phát một nghi lễ khi chuỗi kết thúc. Các nghi lễ đến liên tiếp xếp hàng, mỗi nghi lễ hiển thị 12 giây; làm trống bồ đoàn sẽ xóa hàng đợi. Chế độ giảm chuyển động của hệ điều hành giữ hình tĩnh.
+- Combo được phát một nghi lễ khi chuỗi kết thúc. Các nghi lễ đến liên tiếp xếp hàng, mỗi nghi lễ hiển thị 12 giây; làm trống bồ đoàn sẽ xóa hàng đợi. Chế độ giảm chuyển động giữ nghi lễ tĩnh và làm cánh sen bay chậm hơn.
 - Trong bảng điều khiển có nút thử **Bó hoa · 100 · Thắp hương** và **Bong bóng tình yêu · 500 · Dâng lễ**. Cần thử quà thực tế để xác nhận tên/giá mà phiên bản TikFinity của bạn gửi.

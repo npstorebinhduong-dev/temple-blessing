@@ -32,3 +32,21 @@ test('ceremonies queue, escape viewer names as text, and clear on reset', () => 
   player.tick(12000); assert.equal(root.hidden,true);
   player.enqueue({name:'An',ritual:giftRitual('Bó hoa',100)}); player.clear(); player.tick(12000); assert.equal(root.hidden,true);
 });
+
+
+test('petals glide, turn and flutter over time even with reduced motion', () => {
+  for (const reducedMotion of [false,true]) {
+    const petals=[];
+    const elements={'.ritual-name':{},'.ritual-label':{},'.petal-rain':{append:p=>petals.push(p)}};
+    const root={querySelector:k=>elements[k],hidden:true,offsetWidth:1080};
+    const context={window:{},document:{createElement:()=>({style:{}})}};
+    vm.runInNewContext(readFileSync(new URL('../rituals.js',import.meta.url),'utf8'),context);
+    const player=context.window.createRitualPlayer(root,{reducedMotion});
+    player.enqueue({name:'An',ritual:giftRitual('Love Balloon',500)});
+    const before=petals.map(p=>p.style.transform);
+    player.tick(1000);
+    assert.equal(petals.length,48);
+    assert.ok(petals.every((p,i)=>p.style.transform !== before[i]));
+    assert.ok(petals.every(p=>p.style.transform.includes('rotate(') && p.style.transform.includes('scaleX(')));
+  }
+});
