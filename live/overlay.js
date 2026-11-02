@@ -1,6 +1,7 @@
 import { seatLayout, exitPose } from './seating.js';
 import { actorPhase, devotionPose } from './devotion.js';
 import { ShrineArms } from './shrine-arms.js';
+import { CharacterSprites } from './character-sprites.js';
 import { SceneAudio } from './audio.js';
 import { processionPose } from './procession.js';
 import { ceremonyCamera } from './ceremony-camera.js';
@@ -26,7 +27,7 @@ const audio = new SceneAudio({ preview, onState: state => {
   if (status.state === 'error') $('audioError').textContent = 'โหลดเพลงไม่สำเร็จ · กรุณารีเฟรช';
 } });
 const visitors = new Map(), petals = [];
-const badgeCache = new Map(), spriteCache = new Map();
+const badgeCache = new Map();
 document.fonts.addEventListener('loadingdone', () => badgeCache.clear());
 const seats = seatLayout(), cap = 60;
 let mode = null, settings = {}, last = performance.now(), lastRitual = null, remoteRitual = null;
@@ -34,6 +35,7 @@ let hero = null, lastGiftAt = Date.now(), inviteUntil = 0, nextGolden = 0, waiti
 let renderedFrames = 0;
 const numbers = new Intl.NumberFormat('en-US');
 const images = {};
+const characterSprites = new CharacterSprites(images);
 for (const [key, file] of Object.entries({ female: 'worshipper', male: 'worshipper-male', bows: 'worshipper-bows', carriers: 'ceremony-carriers', marigold: 'marigold-garland', royal: 'royal-offering', shrine: 'shrine' })) {
   const image = new Image(); image.src = `/assets/ganesha/${file}.png`; images[key] = image;
   image.onerror = () => { $('assetError').hidden = false; $('assetError').textContent = 'โหลดภาพไม่สำเร็จ · กรุณารีเฟรชหน้าจอ'; };
@@ -191,24 +193,6 @@ function nameTag(v, x, y, width, highlight) {
   }
   ctx.drawImage(badge, x - badge.width / 2, y - 42);
 }
-function spriteFrame(frame, height, skin = 'female', carrier = false, bow = false) {
-  const asset = bow ? 'bows' : carrier ? 'carriers' : skin === 'male' ? 'male' : 'female', sprite = images[asset];
-  if (!sprite.naturalWidth) return null;
-  if (carrier || bow) frame = frame % 4 + (skin === 'male' ? 4 : 0);
-  const h = Math.ceil(height / 12) * 12, key = `${asset}:${frame}:${h}`;
-  let cached = spriteCache.get(key);
-  if (!cached) {
-    cached = document.createElement('canvas'); cached.height = h; cached.width = Math.ceil(h * .75);
-    const cw = sprite.naturalWidth / 4, ch = sprite.naturalHeight / 2;
-    const bottoms = bow ? [480,483,479,486,467,467,464,467] : carrier ? null : skin === 'male' ? [500,499,500,502,448,443,444,444] : [505,506,506,507,462,450,447,443];
-    const scale = bow ? .87 : 1, dh = h * scale, dw = cached.width * scale;
-    const y = bottoms ? h - dh * bottoms[frame] / 512 : 0;
-    cached.getContext('2d').drawImage(sprite, frame % 4 * cw, Math.floor(frame / 4) * ch, cw, ch, (cached.width - dw) / 2, y, dw, dh);
-    if (spriteCache.size >= 512) spriteCache.delete(spriteCache.keys().next().value);
-    spriteCache.set(key, cached);
-  }
-  return cached;
-}
 function lotus(x, y, scale, time) {
   ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
   const glow = ctx.createRadialGradient(0, -10, 0, 0, -10, 90); glow.addColorStop(0, '#ffdf9a70'); glow.addColorStop(1, '#ffbb5500'); ctx.fillStyle = glow; ctx.fillRect(-90, -100, 180, 180);
@@ -278,18 +262,19 @@ function drawViewer(v, dt, t, active) {
   ctx.fillStyle = '#25100745'; ctx.beginPath(); ctx.ellipse(v.x, v.y - 7, w * .28, 11 * seat.density, 0, 0, Math.PI * 2); ctx.fill();
   if (highlight) { ctx.strokeStyle = '#ffe8a5bb'; ctx.lineWidth = 2; ctx.shadowColor = '#ffc95d'; ctx.shadowBlur = 20; ctx.beginPath(); ctx.ellipse(v.x, v.y - 6, w * .32, 12, 0, 0, Math.PI * 2); ctx.stroke(); }
   ctx.shadowBlur = 0;
-  if (v.state === 'sit' && images.bows.naturalWidth) {
+  if (v.state === 'sit' && characterSprites.ready('bows')) {
     const pose = devotionPose(t - v.bowAt, 0, reduced);
     const heights = v.skin === 'male' ? [455,356,244,436] : [448,345,208,415];
     const bodyHeight = heights[pose.from] * (1 - pose.mix) + heights[pose.to] * pose.mix;
     // Warp one opaque pose toward the next height: a crossfade leaves ghost
     // heads/hands against the bright floor, especially on the front row.
     const f = pose.mix < .5 ? pose.from : pose.to, sy = bodyHeight / heights[f];
-    const sprite = spriteFrame(f, h, v.skin, false, true);
+    const sprite = characterSprites.get(f, h, v.skin, false, true);
     if (sprite) ctx.drawImage(sprite, v.x - w / 2, v.y - h * sy, w, h * sy);
     v.bowing = pose.bow > 0;
   } else {
-    const sprite = spriteFrame(frame, h, v.skin);
+    // Keep the original kneeling pose until the bow sheet has loaded fully.
+    const sprite = characterSprites.get(frame, h, v.skin);
     if (sprite) ctx.drawImage(sprite, v.x - w / 2, v.y - h + bob, w, h);
     v.bowing = false;
   }
@@ -333,7 +318,8 @@ function drawCeremony(active, now, t, pose) {
     }
   }
   ctx.globalAlpha = 1; ctx.fillStyle = '#21100760'; ctx.beginPath(); ctx.ellipse(pose.x, pose.y - 4, 65, 14, 0, 0, Math.PI * 2); ctx.fill();
-  const sprite = spriteFrame(pose.carrier ? pose.carrierFrame : pose.frame, h, hero.skin, pose.carrier);
+  const sprite = characterSprites.get(pose.carrier ? pose.carrierFrame : pose.frame, h, hero.skin, pose.carrier)
+    || characterSprites.get(pose.frame, h, hero.skin);
   if (sprite) {
     ctx.save(); ctx.translate(pose.x, pose.y); ctx.rotate(pose.bow);
     ctx.drawImage(sprite, -w / 2, -h, w, h); ctx.restore();

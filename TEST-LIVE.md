@@ -1,9 +1,9 @@
-# Phiếu chạy thử Ganesha LIVE 0.5
+# Phiếu chạy thử Ganesha LIVE 0.5.1
 
 Ghi cấu hình máy, phiên bản TikFinity, OBS/LIVE Studio và số nhân vật khi thử.
 
 1. **Hình:** mở overlay 1080 × 1920, kiểm tra tượng, nền, chữ Thái, bảng tên. Ban đầu phải có 10 nhân vật nền và 0 người tương tác. Tay sen/búa phải nhìn thấy chuyển động ở cửa sổ rộng bằng điện thoại; thử Nhẹ / Rõ / Mạnh và bật/tắt. Khớp vai không rời thân, không che mặt ở hai đầu chuyển động và lúc zoom 100/500 xu. Ghi lại chỗ chữ hoặc nhân vật bị che.
-2. **Chuyển động:** dùng tên mới gửi quà; nhân vật đi lên lối giữa, vào chỗ 11 rồi quỳ chắp tay, cúi lạy và ngẩng lên. Quan sát cả nam/nữ, nhịp lệch nhau. Mặc định bình luận chưa tạo người mới; thử tùy chọn cho bình luận vào hàng chờ, chọn nam/nữ và bình luận dài.
+2. **Chuyển động:** dùng tên mới gửi quà; nhân vật đi lên lối giữa, vào chỗ 11 rồi quỳ chắp tay, cúi lạy và ngẩng lên. Quan sát cả nam/nữ, nhịp lệch nhau. Quan sát ít nhất 35 giây: cả nam/nữ phải hiện liên tục khi quỳ, cúi xuống và ngẩng lên, kể cả sau khi tải lại trang với bộ nhớ đệm trống. Mặc định bình luận chưa tạo người mới; thử tùy chọn cho bình luận vào hàng chờ, chọn nam/nữ và bình luận dài.
 3. **Quà demo:** sáu nút Hoa hồng (1), Quả đào (5), OK (5), Cỏ 4 lá (10), Bó hoa (100), Bóng tình yêu (500). Combo 3 quà phải cộng đúng 3 × giá trị một quà và chỉ phát một lượt hiệu ứng có ×3.
 4. **Nghi lễ lớn:** Bó hoa phải đi lên, quỳ nâng vòng vạn thọ và trở về trong 20 giây; Bóng tình yêu mang mâm lễ, hiệu ứng vàng/đèn, trở về trong 24 giây. Thử với nam và nữ, gửi thêm quà cơ bản khi đang làm lễ, lưu cấu hình giữa nghi lễ. Zoom phải đi theo nhân vật và về toàn cảnh khi xong; quà 500 có mưa hoa phủ các góc màn hình. Thử tắt zoom và chọn mưa hoa Nhẹ.
 5. **Nguồn thật:** kết nối TikFinity vào LIVE; kiểm tra nhãn DEMO biến mất và số liệu demo không chuyển sang LIVE. Bình luận/quà thật phải xuất hiện trong nhật ký.

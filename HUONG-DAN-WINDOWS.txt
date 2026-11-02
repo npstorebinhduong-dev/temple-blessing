@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.5
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.5.1
 
 1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
 2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
@@ -67,8 +67,8 @@ CHỌN NHÂN VẬT
 Mặc định có nam và nữ. Người xem gõ ชาย để chọn nam, หญิง để chọn nữ.
 Có thể dùng male/female hoặc nam/nữ. Không đoán giới tính từ tên người xem.
 
-NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3 / 0.4
-Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.5 vào thư mục riêng.
+NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3 / 0.4 / 0.5
+Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.5.1 vào thư mục riêng.
 Nếu muốn giữ điểm và cấu hình, sao chép thư mục live/data của bản cũ
 sang live/data của bản mới trước khi chạy. Chỉ bản 0.1 được bật giọng
 một lần khi nâng cấp; bản 0.2 trở lên giữ cài đặt giọng của bạn.
@@ -79,6 +79,8 @@ Chế độ vào cảnh khi bình luận/vào phòng được tắt một lần 
 Từ bản 0.4 lên 0.5, giữ nguyên quy tắc vào cảnh khi tặng quà và các cài đặt
 âm thanh. Chuyển động tay mới mặc định Rõ; nhạc đổi sang bản 4:40. Nếu đã
 tắt Lặp nhạc ở bản cũ, bật lại và Lưu cấu hình để nhạc phát liên tục.
+Bản 0.5.1 sửa lỗi nhân vật mất hình vài giây khi quỳ/lạy. Sau khi chạy bản
+mới, tải lại cửa sổ LIVE bằng Ctrl+F5 hoặc làm mới nguồn trình duyệt OBS.
 Không sao chép node_modules từ bản cũ.
 
 KHỞI ĐỘNG LẠI
