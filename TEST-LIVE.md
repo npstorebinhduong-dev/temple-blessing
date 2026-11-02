@@ -1,4 +1,4 @@
-# Phiếu test Ganesha LIVE 0.10 trên máy phát
+# Phiếu test Ganesha LIVE 0.10.1 trên máy phát
 
 Chạy bằng `CHAY-LIVE.bat`, mở cửa sổ LIVE 1080 × 1920, bật tiếng. Các nút thử chỉ dùng DEMO. Đóng overlay có tiếng dư để tránh thu trùng.
 
@@ -17,4 +17,6 @@ Chạy bằng `CHAY-LIVE.bat`, mở cửa sổ LIVE 1080 × 1920, bật tiếng.
 13. **Giữ phiên:** ngắt nguồn, mở lại app, Xem phiên LIVE đã lưu: giữ điểm/ghế/nhân vật chờ/lượt chờ; lượt dở chạy từ đầu, không cộng lại xu. Hai chế độ tách biệt.
 14. **Hiệu năng:** bật OBS/LIVE Studio đang encode, chạy 500 người chờ + đủ ghế và lặp quà lớn. Nếu máy chậm chọn Nhẹ; tên/chữ vẫn rõ. Theo dõi tiếng trễ, CPU/GPU và dropped frames trong OBS. Không lấy số đo Chromium cloud làm cam kết FPS trên máy phát.
 
-Ghi lại tên bản 0.10, thiết bị/trình duyệt, chế độ hiệu ứng, tên+ID+giá quà và thời điểm lỗi trong nhật ký để đối chiếu.
+Ghi lại tên bản 0.10.1, thiết bị/trình duyệt, chế độ hiệu ứng, tên+ID+giá quà và thời điểm lỗi trong nhật ký để đối chiếu.
+
+Camera 0.10.1: kiểm tra cả cảnh zoom đồng bộ theo người tặng, bảng UI đứng yên. Gửi xen quà thường/Corgi/Galaxy; không tranh focus. Reset giữa zoom phải về toàn cảnh. Chi tiết và clip: `docs/SUA-CAMERA-V0.10.1.md`.

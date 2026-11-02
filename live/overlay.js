@@ -4,15 +4,15 @@ import { ShrineArms } from './shrine-arms.js';
 import { CharacterSprites } from './character-sprites.js';
 import { SceneAudio } from './audio.js';
 import { processionPose } from './procession.js';
-import { ceremonyCamera } from './ceremony-camera.js';
+import { CameraController } from './camera-controller.js';
 import { RoyalPetals, PetalPainter } from './royal-petals.js';
 import { entrancePosition } from './entrance-line.js';
 import { ShoulderCrowd } from './shoulder-crowd.js';
 import { InfoPanel } from './info-panel.js';
-import { SCENE_VIEW, sceneCamera, screenRect } from './scene-layout.js';
+import { screenRect } from './scene-layout.js';
 import { Nameplates } from './nameplates.js';
 import { SpecialArt } from './special-art.js';
-import { specialPose, specialCamera, smooth, MUSHIKA } from './special-rituals.js';
+import { specialPose, smooth, MUSHIKA } from './special-rituals.js';
 const $ = id => document.getElementById(id);
 const setText = (id, text) => { const el = $(id); if (el.textContent !== text) el.textContent = text; };
 const stage = $('stage'), canvas = $('scene'), ctx = canvas.getContext('2d');
@@ -20,6 +20,7 @@ const nameCanvas = $('nameScene'), nameCtx = nameCanvas.getContext('2d');
 const entranceCanvas = $('entranceScene'), entranceCtx = entranceCanvas.getContext('2d');
 const shrine = document.querySelector('.shrine'), celebration = $('celebration'), celebrationCtx = celebration.getContext('2d');
 const royalPetals = new RoyalPetals(), petalPainter = new PetalPainter();
+const cameraController = new CameraController();
 const shrineArms = new ShrineArms(() => { $('assetError').hidden = false; $('assetError').textContent = 'โหลดภาพไม่สำเร็จ · กรุณารีเฟรชหน้าจอ'; });
 const preview = new URLSearchParams(location.search).has('preview');
 let actorResolution = preview ? .5 : 1;
@@ -145,6 +146,9 @@ function giftGuide() {
   const desiredResolution = preview ? .5 : settings.petalMode === 'light' ? .65 : 1;
   if (actorResolution !== desiredResolution) {
     actorResolution = desiredResolution; canvas.width = Math.round(1080 * actorResolution); canvas.height = Math.round(1920 * actorResolution);
+    // Resizing a canvas resets its matrix to identity. Keep the viewport
+    // coherent even between this settings event and the next animation frame.
+    applyCamera(cameraController.current);
   }
   infoPanel.configure(settings, mode);
   infoPanel.tick(performance.now(), false);
@@ -170,7 +174,7 @@ function updateStats(m) {
 function state(m) {
   // Server snapshots are authoritative after reconnect, mode switches and operator edits.
   visitors.clear(); entrance.clear(); crowd.reset(); petals.length = 0; remoteRitual = null; lastRitual = null; hero = null;
-  royalPetals.reset(); canvas.dataset.zoom = '1.000';
+  royalPetals.reset(); applyCamera(cameraController.reset());
   nameplates.clear(); lastSpecialPhase = ''; $('blessingBanner').hidden = true; $('ritualWait').hidden = true;
   canvas.dataset.ceremonyPhase = ''; canvas.dataset.ceremonySkin = '';
   $('gift').hidden = true; stage.classList.remove('ceremony'); audio.clear();
@@ -205,7 +209,7 @@ function connect() {
   const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws?role=overlay${preview ? '&preview=1' : ''}`);
   overlaySocket = ws;
   ws.onopen = () => { $('connection').hidden = true; audio.reportSpeech(); };
-  ws.onclose = () => { overlaySocket = null; audio.clear(); $('connection').hidden = false; setTimeout(connect, 2000); };
+  ws.onclose = () => { overlaySocket = null; remoteRitual = null; applyCamera(cameraController.reset()); audio.clear(); $('connection').hidden = false; setTimeout(connect, 2000); };
   ws.onmessage = e => {
     let m; try { m = JSON.parse(e.data); } catch { return; }
     if (m.t === 'state') state(m);
@@ -430,8 +434,18 @@ function drawCeremony(active, now, t, pose) {
   }
   ctx.restore();
 }
-function frame(now) {
-  requestAnimationFrame(frame);
+function applyCamera(camera) {
+  // The only writer of the scene viewport. The shrine, articulated arms,
+  // mouse, actors and props all consume this SAME matrix in this same frame.
+  shrine.style.transform = `translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`;
+  ctx.setTransform(camera.scale*actorResolution,0,0,camera.scale*actorResolution,camera.x*actorResolution,camera.y*actorResolution);
+  canvas.dataset.zoom = cameraController.relative.scale.toFixed(3);
+  canvas.dataset.shrineScale = camera.scale.toFixed(3);
+  canvas.dataset.cameraX = camera.x; canvas.dataset.cameraY = camera.y; canvas.dataset.cameraScale = camera.scale;
+  canvas.dataset.cameraOwner = cameraController.owner || ''; canvas.dataset.zoomTarget = cameraController.target;
+  canvas.dataset.cameraState = cameraController.reason;
+}
+function renderFrame(now) {
   // 30 fps suits the broadcast; the small operator preview needs only 15 fps.
   if (now - last < 1000 / (preview ? 15 : 30) - .7) return;
   frameMs.push(now - last); if (frameMs.length > 240) frameMs.shift();
@@ -440,7 +454,9 @@ function frame(now) {
   canvas.dataset.rendered = ++renderedFrames;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, 1080, 1920);
-  const active = remoteRitual && now < remoteRitual.until ? remoteRitual : null;
+  const requested = remoteRitual && now < remoteRitual.until ? remoteRitual : null;
+  const target = requested && visitors.get(requested.id);
+  const active = cameraController.accept(requested, target) ? requested : null;
   if (active !== lastRitual) {
     if (['royal', 'galaxy'].includes(lastRitual?.ritual.kind)) royalPetals.stop();
     audio.endSpecial(); lastSpecialPhase = '';
@@ -457,8 +473,7 @@ function frame(now) {
       if (active.ritual.kind === 'galaxy') audio.beginSpecial();
       const v = visitors.get(active.id); particles(v?.x || 540, (v?.y || 1400) - 160, active.ritual.kind === 'aarti' ? 36 : 16);
       if (active.ritual.procession) {
-        const seat = v?.seat || { x: 620, y: 1710 };
-        hero = { id: active.id, name: active.name, skin: v?.skin || active.skin || 'female', from: { x: v?.x ?? 540, y: v?.y ?? 1870 }, seat: { ...seat }, seated: v?.state === 'sit' };
+        hero = { id: active.id, name: active.name, skin: v.skin || active.skin || 'female', from: { x: v.x, y: v.y }, seat: { ...v.seat }, seated: v.state === 'sit' };
       }
       if (['royal', 'galaxy'].includes(active.ritual.kind)) royalPetals.start(now, { reduced, light: settings.petalMode === 'light', galaxy: active.ritual.kind === 'galaxy' });
     }
@@ -469,16 +484,8 @@ function frame(now) {
     : processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
   const donor = active && visitors.get(active.id);
   const focus = pose || (donor && { x: donor.x, y: donor.y, bodyHeight: donor.renderHeight || 200 });
-  const foregroundCamera = special ? specialCamera(active.ritual.kind, now - active.beganAt, active.until - active.beganAt, { enabled: settings.cinematicZoom !== false, reduced }) : ceremonyCamera(active?.ritual.kind, active ? now - active.beganAt : 0, focus,
-    { enabled: settings.cinematicZoom !== false, reduced, durationMs: active ? active.until - active.beganAt : 0 });
-  const camera = sceneCamera(foregroundCamera);
-  const fixed = SCENE_VIEW;
-  const statueTransform = `translate(${fixed.x}px,${fixed.y}px) scale(${fixed.scale})`;
-  if (shrine.style.transform !== statueTransform) shrine.style.transform = statueTransform;
-  ctx.setTransform(fixed.scale*actorResolution,0,0,fixed.scale*actorResolution,fixed.x*actorResolution,fixed.y*actorResolution);
-  canvas.dataset.zoom = foregroundCamera.scale.toFixed(3);
-  canvas.dataset.shrineScale = fixed.scale.toFixed(3);
-  canvas.dataset.zoomTarget = active && focus ? active.id : '';
+  const camera = active ? cameraController.sample(active, now, focus, { enabled: settings.cinematicZoom !== false, reduced }) : cameraController.current;
+  applyCamera(camera);
   canvas.dataset.ritualKind = active?.ritual.kind || '';
   shrine.classList.toggle('articulated', settings.statueMotion !== false && shrineArms.ready);
   if (!special) statueTime += dt;
@@ -491,7 +498,6 @@ function frame(now) {
   const dim = galaxy ? smooth(elapsed/1800) * (1-smooth((now-active.until+3200)/3200)) * (specialArt.standingReady() ? .80 : .28) : 0;
   canvas.dataset.dimmer = dim.toFixed(3);
   specialArt.mouse(ctx, reduced ? 0 : t, active?.ritual.kind === 'mushika' ? elapsed : null);
-  ctx.setTransform(camera.scale*actorResolution,0,0,camera.scale*actorResolution,camera.x*actorResolution,camera.y*actorResolution);
   for (let i = 0; i < 24; i++) {
     const x = (i * 137 + Math.sin(t * .15 + i) * 30) % 1080;
     const y = (i * 83 - t * (reduced ? 2 : 7) + 20000) % 1660;
@@ -548,7 +554,7 @@ function frame(now) {
     ctx.restore();
   }
   nameCtx.setTransform(textResolution, 0, 0, textResolution, 0, 0); nameCtx.clearRect(0,0,1080,1920);
-  const exclusions = [screenRect({x:MUSHIKA.x,y:MUSHIKA.y-12,w:MUSHIKA.width,h:MUSHIKA.height+24})];
+  const exclusions = [screenRect({x:MUSHIKA.x,y:MUSHIKA.y-12,w:MUSHIKA.width,h:MUSHIKA.height+24},camera)];
   if (active?.ritual.kind === 'mushika' && pose?.side) {
     // The other guests' labels must not run across the mouse or whispering hand.
     for (const r of [{ x:pose.x-90, y:pose.y-pose.height, w:190, h:pose.height }]) {
@@ -569,5 +575,19 @@ function frame(now) {
   }
   petalPainter.draw(celebrationCtx, galaxy ? shower.filter(p=>p.depth>=.55) : shower, now, { exclusions: galaxy ? [specialArt.faceRect()] : [] });
   celebration.dataset.petals = royalPetals.items.length;
+}
+let reportedRenderError = '';
+function frame(now) {
+  requestAnimationFrame(frame);
+  try { renderFrame(now); }
+  catch (error) {
+    // Discard partial darkness and any unbalanced save() left by a failed draw.
+    if (ctx.reset) ctx.reset(); else canvas.width = canvas.width;
+    applyCamera(cameraController.cancel('render-error')); finishHero(); royalPetals.reset(); audio.clear();
+    $('gift').hidden = true; $('blessingBanner').hidden = true; infoPanel.tick(now, false);
+    stage.classList.remove('ceremony', 'any-ritual', 'blessing-visible');
+    $('assetError').hidden = false; $('assetError').textContent = 'การแสดงผลขัดข้อง · กลับสู่มุมกว้างแล้ว กรุณารีเฟรช';
+    if (reportedRenderError !== String(error)) { reportedRenderError = String(error); console.error(error); }
+  }
 }
 connect(); requestAnimationFrame(frame);

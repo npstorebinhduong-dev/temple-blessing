@@ -24,7 +24,7 @@ if not exist "node_modules\.ganesha-v010-installed" (
   echo installed>"node_modules\.ganesha-v010-installed"
 )
 echo.
-echo GANESHA LIVE v0.10 - Thai interactive scene
+echo GANESHA LIVE v0.10.1 - Thai interactive scene
 echo Keep this window open while streaming.
 echo Open http://localhost:3000/live/control.html in your browser.
 echo.

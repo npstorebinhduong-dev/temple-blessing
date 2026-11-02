@@ -1,0 +1,1895 @@
+{
+  "source": "4bf9b79:live/ceremony-camera.js",
+  "rows": [
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.250763281090983,
+        "x": 0,
+        "y": -302.0374421301498
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.55,
+        "x": 0,
+        "y": -1056
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.55,
+        "x": 0,
+        "y": -1056
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 2250,
+      "camera": {
+        "scale": 1.55,
+        "x": 0,
+        "y": -1056
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3800,
+      "camera": {
+        "scale": 1.4805898491083678,
+        "x": 0,
+        "y": -897.1606834060606
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 4500,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.250763281090983,
+        "x": -61.738909995451486,
+        "y": 0
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.55,
+        "x": -297,
+        "y": -245.5
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.55,
+        "x": -297,
+        "y": -245.5
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 2250,
+      "camera": {
+        "scale": 1.55,
+        "x": -297,
+        "y": -245.5
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3800,
+      "camera": {
+        "scale": 1.4805898491083678,
+        "x": -226.76721028298545,
+        "y": -153.260756132854
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 4500,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.250763281090983,
+        "x": -270.8243435782616,
+        "y": -129.24728252459886
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.55,
+        "x": -594,
+        "y": -667.1000000000001
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.55,
+        "x": -594,
+        "y": -667.1000000000001
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 2250,
+      "camera": {
+        "scale": 1.55,
+        "x": -594,
+        "y": -667.1000000000001
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3800,
+      "camera": {
+        "scale": 1.4805898491083678,
+        "x": -519.0370370370372,
+        "y": -505.1577652081795
+      }
+    },
+    {
+      "kind": "lotus",
+      "duration": 4500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 4500,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.2735599430083453,
+        "x": 0,
+        "y": -318.5115452181618
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.6,
+        "x": 0,
+        "y": -1152.0000000000002
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": 0,
+        "y": -1152.0000000000002
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 2750,
+      "camera": {
+        "scale": 1.6,
+        "x": 0,
+        "y": -1152.0000000000002
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 4800,
+      "camera": {
+        "scale": 1.5242798353909466,
+        "x": 0,
+        "y": -957.6701157795508
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 5500,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.2735599430083453,
+        "x": -67.3515381768562,
+        "y": 0
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.6,
+        "x": -324,
+        "y": -296
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": -324,
+        "y": -296
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 2750,
+      "camera": {
+        "scale": 1.6,
+        "x": -324,
+        "y": -296
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 4800,
+      "camera": {
+        "scale": 1.5242798353909466,
+        "x": -247.3824112178023,
+        "y": -191.81881714056692
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 5500,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.2735599430083453,
+        "x": -295.4447384490129,
+        "y": -142.57207757748935
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.6,
+        "x": -648.0000000000001,
+        "y": -731.2000000000003
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": -648.0000000000001,
+        "y": -731.2000000000003
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 2750,
+      "camera": {
+        "scale": 1.6,
+        "x": -648.0000000000001,
+        "y": -731.2000000000003
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 4800,
+      "camera": {
+        "scale": 1.5242798353909466,
+        "x": -566.2222222222223,
+        "y": -554.0997792793559
+      }
+    },
+    {
+      "kind": "incense",
+      "duration": 5500,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 5500,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.2735599430083453,
+        "x": 0,
+        "y": -318.5115452181618
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.6,
+        "x": 0,
+        "y": -1152.0000000000002
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": 0,
+        "y": -1152.0000000000002
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": 0,
+        "y": -1152.0000000000002
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 5300,
+      "camera": {
+        "scale": 1.5242798353909466,
+        "x": 0,
+        "y": -957.6701157795508
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 6000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.2735599430083453,
+        "x": -67.3515381768562,
+        "y": 0
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.6,
+        "x": -324,
+        "y": -296
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": -324,
+        "y": -296
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": -324,
+        "y": -296
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 5300,
+      "camera": {
+        "scale": 1.5242798353909466,
+        "x": -247.3824112178023,
+        "y": -191.81881714056692
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 6000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.2735599430083453,
+        "x": -295.4447384490129,
+        "y": -142.57207757748935
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.6,
+        "x": -648.0000000000001,
+        "y": -731.2000000000003
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": -648.0000000000001,
+        "y": -731.2000000000003
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.6,
+        "x": -648.0000000000001,
+        "y": -731.2000000000003
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 5300,
+      "camera": {
+        "scale": 1.5242798353909466,
+        "x": -566.2222222222223,
+        "y": -554.0997792793559
+      }
+    },
+    {
+      "kind": "garland",
+      "duration": 6000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 6000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.3191532668430694,
+        "x": 0,
+        "y": -351.4597513941856
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.7,
+        "x": 0,
+        "y": -1344
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.7,
+        "x": 0,
+        "y": -1344
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 4000,
+      "camera": {
+        "scale": 1.7,
+        "x": 0,
+        "y": -1344
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 7300,
+      "camera": {
+        "scale": 1.6116598079561042,
+        "x": 0,
+        "y": -1078.6889805265307
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 8000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.3191532668430694,
+        "x": -78.57679453966554,
+        "y": -5.628404418025757
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.7,
+        "x": -378,
+        "y": -397
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.7,
+        "x": -378,
+        "y": -397
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 4000,
+      "camera": {
+        "scale": 1.7,
+        "x": -378,
+        "y": -397
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 7300,
+      "camera": {
+        "scale": 1.6116598079561042,
+        "x": -288.61281308743594,
+        "y": -268.93493915599294
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 8000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1.3191532668430694,
+        "x": -343.21295570403134,
+        "y": -169.22166768327003
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.7,
+        "x": -756,
+        "y": -859.4000000000001
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.7,
+        "x": -756,
+        "y": -859.4000000000001
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 4000,
+      "camera": {
+        "scale": 1.7,
+        "x": -756,
+        "y": -859.4000000000001
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 7300,
+      "camera": {
+        "scale": 1.6116598079561042,
+        "x": -660.5925925925925,
+        "y": -651.9838074217081
+      }
+    },
+    {
+      "kind": "aarti",
+      "duration": 8000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 8000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.0114674441205054,
+        "x": 0,
+        "y": -11.027022943010326
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.2728862973760933,
+        "x": 0,
+        "y": -507.33160502851695
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 11500,
+      "camera": {
+        "scale": 1.45,
+        "x": 0,
+        "y": -863.9999999999999
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 22300,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 23000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.0114674441205054,
+        "x": -0.1578027295882948,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.2728862973760933,
+        "x": -89.36031755476033,
+        "y": -82.78876998529527
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 11500,
+      "camera": {
+        "scale": 1.45,
+        "x": -243,
+        "y": -312.75
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 22300,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 23000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.0114674441205054,
+        "x": -11.498994760413613,
+        "y": -3.603697250106483
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.2728862973760933,
+        "x": -294.71720116618076,
+        "y": -285.0255386786118
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 11500,
+      "camera": {
+        "scale": 1.45,
+        "x": -485.99999999999994,
+        "y": -692.6499999999999
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 22300,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "marigold",
+      "duration": 23000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 23000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.0157995896771408,
+        "x": 0,
+        "y": -11.197586263694964
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.3759766763848396,
+        "x": 0,
+        "y": -603.917972953446
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 14000,
+      "camera": {
+        "scale": 1.62,
+        "x": 0,
+        "y": -1190.4
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 27300,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 100,
+        "y": 1710,
+        "bodyHeight": 250
+      },
+      "elapsed": 28000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.0157995896771408,
+        "x": -0.21741709409943083,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.3759766763848396,
+        "x": -123.11865974211422,
+        "y": -144.99164123791948
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 14000,
+      "camera": {
+        "scale": 1.62,
+        "x": -334.80000000000007,
+        "y": -481.9000000000001
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 27300,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 540,
+        "y": 1160,
+        "bodyHeight": 300
+      },
+      "elapsed": 28000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 0,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 400,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 1000,
+      "camera": {
+        "scale": 1.0157995896771408,
+        "x": -11.60718379230419,
+        "y": -3.742466243051849
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 3000,
+      "camera": {
+        "scale": 1.3759766763848396,
+        "x": -406.0548104956267,
+        "y": -363.60745743695213
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 14000,
+      "camera": {
+        "scale": 1.62,
+        "x": -669.6000000000001,
+        "y": -906.3400000000001
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 27300,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "kind": "royal",
+      "duration": 28000,
+      "pose": {
+        "x": 980,
+        "y": 1422,
+        "bodyHeight": 280
+      },
+      "elapsed": 28000,
+      "camera": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      }
+    }
+  ]
+}

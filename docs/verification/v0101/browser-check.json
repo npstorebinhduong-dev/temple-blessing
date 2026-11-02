@@ -1,0 +1,545 @@
+{
+  "reference": "4bf9b79 v0.8; unchanged ceremony-camera.js",
+  "turns": [
+    {
+      "kind": "lotus",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-1"
+    },
+    {
+      "kind": "incense",
+      "id": "sim_น้องพลอย",
+      "turn": "turn-2"
+    },
+    {
+      "kind": "garland",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-3"
+    },
+    {
+      "kind": "aarti",
+      "id": "sim_สมชาย",
+      "turn": "turn-4"
+    },
+    {
+      "kind": "marigold",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-5"
+    },
+    {
+      "kind": "royal",
+      "id": "sim_น้องพลอย",
+      "turn": "turn-6"
+    },
+    {
+      "kind": "mushika",
+      "id": "sim_สมชาย",
+      "turn": "turn-7"
+    },
+    {
+      "kind": "galaxy",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-8"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_นิดา",
+      "turn": "turn-9"
+    },
+    {
+      "kind": "mushika",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-10"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-11"
+    },
+    {
+      "kind": "galaxy",
+      "id": "sim_น้องพลอย",
+      "turn": "turn-12"
+    },
+    {
+      "kind": "incense",
+      "id": "sim_สมชาย",
+      "turn": "turn-13"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-14"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_น้องพลอย",
+      "turn": "turn-15"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_สมชาย",
+      "turn": "turn-16"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_นิดา",
+      "turn": "turn-17"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-18"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_น้องพลอย",
+      "turn": "turn-19"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_สมชาย",
+      "turn": "turn-20"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_นิดา",
+      "turn": "turn-21"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_ศิริพร ทดสอบ",
+      "turn": "turn-22"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_น้องพลอย",
+      "turn": "turn-23"
+    },
+    {
+      "kind": "lotus",
+      "id": "sim_สมชาย",
+      "turn": "turn-24"
+    }
+  ],
+  "ordinaryFocuses": 20,
+  "specialHolds": 4,
+  "sampledFrames": 4959,
+  "matrixMismatches": 0,
+  "before": {
+    "music": "off",
+    "rendered": "35",
+    "zoom": "1.000",
+    "shrineScale": "0.840",
+    "cameraX": "86.4",
+    "cameraY": "270",
+    "cameraScale": "0.84",
+    "cameraOwner": "",
+    "zoomTarget": "",
+    "cameraState": "wide",
+    "ritualKind": "",
+    "armLotus": "0.1946",
+    "armHammer": "0.0816",
+    "dimmer": "0.000",
+    "bowing": "7",
+    "apparition": "0",
+    "blessingArm": "0",
+    "transferPhase": "",
+    "transferProgress": "0",
+    "namesRendered": "0",
+    "crowdRendered": "49",
+    "crowdSprites": "8",
+    "crowdLabels": "49",
+    "avatarRequests": "0",
+    "ceremonyPhase": "",
+    "ceremonySkin": "",
+    "standing": "88",
+    "standingMale": "44",
+    "people": "0",
+    "ambient": "10",
+    "waiting": "0",
+    "male": "0",
+    "entryWaiting": "12",
+    "entryTotal": "100",
+    "entryReal": "0",
+    "entryDemo": "100",
+    "departing": "0",
+    "queued": "0",
+    "frameMeanMs": "61.84",
+    "spriteCache": "16",
+    "nameCache": "0",
+    "fxNodes": "0"
+  },
+  "after": {
+    "music": "off",
+    "rendered": "5078",
+    "zoom": "1.000",
+    "shrineScale": "0.840",
+    "cameraX": "86.4",
+    "cameraY": "270",
+    "cameraScale": "0.84",
+    "cameraOwner": "",
+    "zoomTarget": "",
+    "cameraState": "wide",
+    "ritualKind": "",
+    "armLotus": "-0.2177",
+    "armHammer": "-0.1475",
+    "dimmer": "0.000",
+    "bowing": "8",
+    "apparition": "0",
+    "blessingArm": "0",
+    "transferPhase": "",
+    "transferProgress": "0",
+    "namesRendered": "4",
+    "crowdRendered": "49",
+    "crowdSprites": "8",
+    "crowdLabels": "145",
+    "avatarRequests": "0",
+    "ceremonyPhase": "",
+    "ceremonySkin": "",
+    "standing": "88",
+    "standingMale": "44",
+    "people": "4",
+    "ambient": "10",
+    "waiting": "0",
+    "male": "0",
+    "entryWaiting": "12",
+    "entryTotal": "100",
+    "entryReal": "0",
+    "entryDemo": "100",
+    "departing": "0",
+    "queued": "0",
+    "frameMeanMs": "59.93",
+    "spriteCache": "97",
+    "nameCache": "8",
+    "fxNodes": "0"
+  },
+  "resetAndFault": {
+    "reset": {
+      "music": "off",
+      "rendered": "5111",
+      "zoom": "1.000",
+      "shrineScale": "0.840",
+      "cameraX": "86.4",
+      "cameraY": "270",
+      "cameraScale": "0.84",
+      "cameraOwner": "",
+      "zoomTarget": "",
+      "cameraState": "wide",
+      "ritualKind": "",
+      "armLotus": "0.0109",
+      "armHammer": "0.0513",
+      "dimmer": "0.000",
+      "bowing": "7",
+      "apparition": "0",
+      "blessingArm": "0",
+      "transferPhase": "",
+      "transferProgress": "0",
+      "namesRendered": "0",
+      "crowdRendered": "0",
+      "crowdSprites": "8",
+      "crowdLabels": "145",
+      "avatarRequests": "0",
+      "ceremonyPhase": "",
+      "ceremonySkin": "",
+      "standing": "0",
+      "standingMale": "0",
+      "people": "0",
+      "ambient": "10",
+      "waiting": "0",
+      "male": "0",
+      "entryWaiting": "0",
+      "entryTotal": "0",
+      "entryReal": "0",
+      "entryDemo": "0",
+      "departing": "0",
+      "queued": "0",
+      "frameMeanMs": "61.39",
+      "spriteCache": "97",
+      "nameCache": "8",
+      "fxNodes": "0"
+    },
+    "missingTarget": {
+      "music": "off",
+      "rendered": "5281",
+      "zoom": "1.000",
+      "shrineScale": "0.840",
+      "cameraX": "86.4",
+      "cameraY": "270",
+      "cameraScale": "0.84",
+      "cameraOwner": "",
+      "zoomTarget": "",
+      "cameraState": "missing-target",
+      "ritualKind": "",
+      "armLotus": "0.1167",
+      "armHammer": "0.2032",
+      "dimmer": "0.000",
+      "bowing": "6",
+      "apparition": "0",
+      "blessingArm": "0",
+      "transferPhase": "",
+      "transferProgress": "0",
+      "namesRendered": "0",
+      "crowdRendered": "0",
+      "crowdSprites": "8",
+      "crowdLabels": "145",
+      "avatarRequests": "0",
+      "ceremonyPhase": "",
+      "ceremonySkin": "",
+      "standing": "0",
+      "standingMale": "0",
+      "people": "0",
+      "ambient": "10",
+      "waiting": "0",
+      "male": "0",
+      "entryWaiting": "0",
+      "entryTotal": "0",
+      "entryReal": "0",
+      "entryDemo": "0",
+      "departing": "0",
+      "queued": "0",
+      "frameMeanMs": "54.86",
+      "spriteCache": "97",
+      "nameCache": "8",
+      "fxNodes": "4"
+    },
+    "render": {
+      "music": "off",
+      "rendered": "5502",
+      "zoom": "1.000",
+      "shrineScale": "0.840",
+      "cameraX": "86.4",
+      "cameraY": "270",
+      "cameraScale": "0.84",
+      "cameraOwner": "",
+      "zoomTarget": "",
+      "cameraState": "render-error",
+      "ritualKind": "",
+      "armLotus": "0.0102",
+      "armHammer": "-0.1608",
+      "dimmer": "0.000",
+      "bowing": "7",
+      "apparition": "0",
+      "blessingArm": "0",
+      "transferPhase": "",
+      "transferProgress": "0",
+      "namesRendered": "1",
+      "crowdRendered": "0",
+      "crowdSprites": "8",
+      "crowdLabels": "145",
+      "avatarRequests": "0",
+      "ceremonyPhase": "",
+      "ceremonySkin": "",
+      "standing": "0",
+      "standingMale": "0",
+      "people": "1",
+      "ambient": "10",
+      "waiting": "0",
+      "male": "0",
+      "entryWaiting": "0",
+      "entryTotal": "0",
+      "entryReal": "0",
+      "entryDemo": "0",
+      "departing": "0",
+      "queued": "0",
+      "frameMeanMs": "53.05",
+      "spriteCache": "97",
+      "nameCache": "8",
+      "fxNodes": "4"
+    }
+  },
+  "pageErrors": [],
+  "videos": {
+    "old-v08-rose": 60,
+    "fixed-rose": 147
+  },
+  "nodeTests": {
+    "passed": 55,
+    "failed": 0,
+    "legacyReferenceSamples": 126,
+    "ownershipRestoreCycles": 40
+  },
+  "resolutionSwitch": {
+    "modes": [
+      "full",
+      "light"
+    ],
+    "matrixMismatches": 0
+  },
+  "viewport": {
+    "width": 1080,
+    "height": 1920
+  },
+  "audio": "muted; GANESHA_OFFLINE_AUDIO=1",
+  "recording": "Chromium CDP screencast, real frame timestamps; MP4 30fps contains repeated frames",
+  "cameraTurns": [
+    {
+      "kind": "lotus",
+      "turn": "turn-1",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 70,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "incense",
+      "turn": "turn-2",
+      "target": "sim_น้องพลอย",
+      "frames": 145,
+      "maxRelativeZoom": 1.6
+    },
+    {
+      "kind": "garland",
+      "turn": "turn-3",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 159,
+      "maxRelativeZoom": 1.6
+    },
+    {
+      "kind": "aarti",
+      "turn": "turn-4",
+      "target": "sim_สมชาย",
+      "frames": 211,
+      "maxRelativeZoom": 1.7
+    },
+    {
+      "kind": "marigold",
+      "turn": "turn-5",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 397,
+      "maxRelativeZoom": 1.45
+    },
+    {
+      "kind": "royal",
+      "turn": "turn-6",
+      "target": "sim_น้องพลอย",
+      "frames": 588,
+      "maxRelativeZoom": 1.62
+    },
+    {
+      "kind": "mushika",
+      "turn": "turn-7",
+      "target": "sim_สมชาย",
+      "frames": 326,
+      "maxRelativeZoom": 1.0
+    },
+    {
+      "kind": "galaxy",
+      "turn": "turn-8",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 406,
+      "maxRelativeZoom": 1.0
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-9",
+      "target": "sim_นิดา",
+      "frames": 113,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "mushika",
+      "turn": "turn-10",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 382,
+      "maxRelativeZoom": 1.0
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-11",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 119,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "galaxy",
+      "turn": "turn-12",
+      "target": "sim_น้องพลอย",
+      "frames": 358,
+      "maxRelativeZoom": 1.0
+    },
+    {
+      "kind": "incense",
+      "turn": "turn-13",
+      "target": "sim_สมชาย",
+      "frames": 144,
+      "maxRelativeZoom": 1.6
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-14",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 104,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-15",
+      "target": "sim_น้องพลอย",
+      "frames": 99,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-16",
+      "target": "sim_สมชาย",
+      "frames": 116,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-17",
+      "target": "sim_นิดา",
+      "frames": 120,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-18",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 97,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-19",
+      "target": "sim_น้องพลอย",
+      "frames": 67,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-20",
+      "target": "sim_สมชาย",
+      "frames": 94,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-21",
+      "target": "sim_นิดา",
+      "frames": 94,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-22",
+      "target": "sim_ศิริพร ทดสอบ",
+      "frames": 101,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-23",
+      "target": "sim_น้องพลอย",
+      "frames": 110,
+      "maxRelativeZoom": 1.55
+    },
+    {
+      "kind": "lotus",
+      "turn": "turn-24",
+      "target": "sim_สมชาย",
+      "frames": 56,
+      "maxRelativeZoom": 1.55
+    }
+  ]
+}

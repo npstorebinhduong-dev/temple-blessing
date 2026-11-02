@@ -2,11 +2,11 @@
 
 Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào, quỳ chắp tay và cúi lạy, bảng tên, xếp hạng, mục tiêu và tám nghi thức dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy bản 0.10
+## Chạy bản 0.10.1
 
-[Tải ZIP bản 0.10](https://github.com/npstorebinhduong-dev/temple-blessing/archive/refs/heads/codex/ganesha-live-v0.10.zip) · giải nén toàn bộ trước khi chạy.
+[Tải ZIP bản 0.10.1](https://github.com/npstorebinhduong-dev/temple-blessing/archive/refs/heads/codex/ganesha-live-v0.10.1.zip) · giải nén toàn bộ trước khi chạy.
 
-Bản 0.10 gộp quà/công đức trong khung kính mờ ở vùng trên, thay hàng avatar bằng đám đông nam/nữ từ vai trở lên, nâng chuỗi truyền lời Mushika và dùng **asset Ganesha đứng mới** cho Galaxy. Tượng ngồi giữ cố định, ban phước có giọng/banner tiếng Thái, FIFO và dữ liệu LIVE được giữ.
+Bản 0.10.1 sửa camera; [nguyên nhân, đối chiếu v0.8 và video](docs/SUA-CAMERA-V0.10.1.md). Giữ các nâng cấp v0.10: gộp quà/công đức trong khung kính mờ ở vùng trên, thay hàng avatar bằng đám đông nam/nữ từ vai trở lên, nâng chuỗi truyền lời Mushika và dùng **asset Ganesha đứng mới** cho Galaxy. Trong hai nghi thức đặc biệt, tượng ngồi giữ cố định; ban phước có giọng/banner tiếng Thái, FIFO và dữ liệu LIVE được giữ.
 
 **Corgi 299 xu, ID 6267** thay “Bạn đồng hành” và kích hoạt Mushika. **Galaxy 1.000 xu, ID 11046** giữ nguyên. ID/giá/icon trùng nhau ở hai danh mục công khai; chưa xác nhận danh mục của tài khoản Thái cụ thể. Khi nâng cấu hình cũ, các ánh xạ Mushika cũ được thay bằng Corgi một lần; sáu quà cũ/Galaxy và các lần sửa thủ công sau đó được giữ. [Nguồn đối chiếu](docs/QUA-MOI.md).
 
@@ -58,7 +58,7 @@ TikFinity tự kết nối lại sau 2 giây khi mất socket. Chế độ TikTo
 | Corgi · ID công khai 6267 | 299 | `mushika` · Ghé tai Mushika · 16 giây |
 | Galaxy · ID công khai 11046 | 1.000 | `galaxy` · Ganesha hiển linh · khoảng 20 giây, theo độ dài âm thanh |
 
-Với Bó hoa, nhân vật mang vòng hoa vạn thọ vàng cam lên bàn thờ, quỳ nâng hoa, rồi trở về chỗ. Với Bóng tình yêu, nhân vật mang mâm vàng/đỏ gồm Modak, trái cây, dừa, hoa vạn thọ và đèn lễ; có ánh sáng, cánh hoa vàng, đèn hai bên và chuông trầm riêng. Nghi lễ hoạt động cho cả nhân vật nam và nữ. Từ v0.3, góc nhìn phóng theo nhân vật khi đi lên (1,45× với 100 xu; 1,62× với 500 xu), giữ cảnh cận khi dâng rồi trở về toàn cảnh. Từ v0.10, zoom chỉ tác động nhân vật/lễ vật phía trước; tượng ngồi và nền luôn giữ vị trí/kích thước. Bảng thông tin giữ vị trí. Bốn quà cơ bản cũng zoom theo đúng nhân vật đang đi vào hoặc đang ngồi. Thời lượng v0.7: Hoa hồng 4,5 giây (1,55×), Đào 5,5 giây (1,6×), OK 6 giây (1,6×), Cỏ bốn lá 8 giây (1,7×). Mỗi lượt gồm chuyển vào và thu về; quà 100/500 kéo dài thành 23/28 giây. Thời gian tăng thêm nằm ở đoạn giữ cận cảnh; nhịp đi lên và trở về giữ nguyên. Khi có nhiều quà, camera theo hàng đợi hiệu ứng, không nhảy qua người khác giữa lượt. Có thể tắt zoom. Thiết lập Giảm chuyển động của trình duyệt sẽ tắt zoom và giảm mưa hoa.
+Với Bó hoa, nhân vật mang vòng hoa vạn thọ vàng cam lên bàn thờ, quỳ nâng hoa, rồi trở về chỗ. Với Bóng tình yêu, nhân vật mang mâm vàng/đỏ gồm Modak, trái cây, dừa, hoa vạn thọ và đèn lễ; có ánh sáng, cánh hoa vàng, đèn hai bên và chuông trầm riêng. Nghi lễ hoạt động cho cả nhân vật nam và nữ. Từ v0.3, góc nhìn phóng theo nhân vật khi đi lên (1,45× với 100 xu; 1,62× với 500 xu), giữ cảnh cận khi dâng rồi trở về toàn cảnh. Bản 0.10.1 khôi phục camera của v0.8: nền, tượng, Mushika và nhân vật cùng một viewport; không scale riêng vật thể. Hai nghi thức 299/1.000 giữ góc rộng hiện tại. Bảng thông tin giữ vị trí. Bốn quà cơ bản cũng zoom theo đúng nhân vật đang đi vào hoặc đang ngồi. Thời lượng v0.7: Hoa hồng 4,5 giây (1,55×), Đào 5,5 giây (1,6×), OK 6 giây (1,6×), Cỏ bốn lá 8 giây (1,7×). Mỗi lượt gồm chuyển vào và thu về; quà 100/500 kéo dài thành 23/28 giây. Thời gian tăng thêm nằm ở đoạn giữ cận cảnh; nhịp đi lên và trở về giữ nguyên. Khi có nhiều quà, camera theo hàng đợi hiệu ứng, không nhảy qua người khác giữa lượt. Có thể tắt zoom. Thiết lập Giảm chuyển động của trình duyệt sẽ tắt zoom và giảm mưa hoa.
 
 Quà 500 xu có mưa hoa vàng/hồng phủ toàn màn hình, cùng một đợt hoa bung khi nâng mâm. Giới hạn 320 cánh hoa để giữ tài nguyên ổn định; chế độ Nhẹ và thiết lập giảm chuyển động của trình duyệt giảm số cánh hoa. Khi kết thúc, hoa mờ hết trong khoảng 2 giây; đổi DEMO/LIVE hoặc tải lại sẽ xóa toàn bộ hiệu ứng.
 

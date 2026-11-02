@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN 0.10
+GANESHA LIVE — BẢN 0.10.1
 
 CHẠY VÀ THỬ
 1. Đóng cửa sổ CHAY-LIVE của bản cũ. Giải nén toàn bộ ZIP vào thư mục
@@ -124,3 +124,9 @@ LƯU VÀ XỬ LÝ LỖI
 Gói có đầy đủ artwork/nhạc/font; không chứa Node.js, node_modules,
 dữ liệu LIVE hay tài khoản. Giữ LICENSE và giấy phép font/nhạc.
 Báo cáo kiểm thử: docs/BAN-GIAO-V0.10.md .
+
+SỬA CAMERA 0.10.1
+Khôi phục camera v0.8 cho sáu quà thường: cả cảnh cùng một viewport,
+UI giữ nguyên. Corgi/Galaxy giữ góc rộng. Không thay scale riêng nhân vật.
+Sau cập nhật Ctrl+F5 cả hai tab và làm mới bộ nhớ đệm nguồn OBS.
+Video/kiểm thử: docs/SUA-CAMERA-V0.10.1.md .
