@@ -28,6 +28,7 @@ const SETTING_RULES = {
   title: v => cleanName(v), subtitle: v => Array.from(String(v)).slice(0, 80).join(''),
   voice: v => ['th-TH-PremwadeeNeural', 'th-TH-NiwatNeural'].includes(v) ? v : settings.voice,
   voiceEnabled: Boolean, music: Boolean, joinOnEnter: Boolean, joinOnChat: Boolean, statueMotion: Boolean,
+  statueMotionLevel: v => ['soft', 'clear', 'strong'].includes(v) ? v : 'clear',
   musicLoop: Boolean, cinematicZoom: Boolean,
   musicVolume: v => clamp(v, 0, 100),
   petalMode: v => v === 'light' ? 'light' : 'full',

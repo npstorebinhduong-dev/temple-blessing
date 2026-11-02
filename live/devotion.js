@@ -21,9 +21,12 @@ export function devotionPose(seconds, phase = 0, reduced = false) {
   return transition(3, 0, 7.7, .3, 0);
 }
 
-export function statuePose(seconds, { enabled = true, reduced = false } = {}) {
+export function statuePose(seconds, { enabled = true, reduced = false, level = 'clear' } = {}) {
   const motion = enabled && !reduced;
-  return { lotus: motion ? Math.sin(seconds * .57) * .028 : 0,
-    hammer: motion ? Math.sin(seconds * .43 + 1.1) * .024 : 0,
-    glow: enabled ? reduced ? .25 : .32 + Math.sin(seconds * .8) * .12 : 0 };
+  const amount = ({ soft: .65, clear: 1, strong: 1.2 })[level] || 1;
+  // A phone-sized broadcast needs a visible arc, not a sub-pixel wobble.
+  // Different periods keep one hand moving while the other changes direction.
+  return { lotus: motion ? (Math.sin(seconds * .96) * .21 + Math.sin(seconds * 1.92 + .3) * .018) * amount : 0,
+    hammer: motion ? (Math.sin(seconds * .84 + 1.1) * .19 + Math.sin(seconds * 1.68 + .7) * .015) * amount : 0,
+    glow: enabled ? reduced ? .25 : .43 + Math.sin(seconds * .9) * .14 : 0 };
 }

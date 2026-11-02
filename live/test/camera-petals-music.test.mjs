@@ -43,7 +43,7 @@ test('royal flower shower covers all quadrants, bursts at offering, and stays bo
 
 function fakeMusic(options = {}) {
   const sources = [], gains = [], statuses = [];
-  const ctx = { currentTime: 0, decodeAudioData: async () => ({ duration: 128 }), createBufferSource: () => {
+  const ctx = { currentTime: 0, decodeAudioData: async () => ({ duration: 280 }), createBufferSource: () => {
     const source = { connect() {}, disconnect() {}, start() { this.started = true; }, stop() { this.stopped = true; this.onended?.(); } };
     sources.push(source); return source;
   } };

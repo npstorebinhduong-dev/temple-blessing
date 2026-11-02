@@ -2,7 +2,7 @@
 
 Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào, quỳ chắp tay và cúi lạy, bảng tên, xếp hạng, mục tiêu và sáu hiệu ứng dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy bản 0.4
+## Chạy bản 0.5
 
 Cài **Node.js 24 trở lên**. Trên Windows, giải nén toàn bộ gói và chạy `CHAY-LIVE.bat`. Hướng dẫn thao tác đầy đủ trong [HUONG-DAN-WINDOWS.txt](HUONG-DAN-WINDOWS.txt).
 
@@ -60,14 +60,15 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 
 ## Nhạc nền đi kèm
 
-**Thai Dawn**, dài **2 phút 08 giây**, là bản nhạc không lời viết riêng cho dự án với âm sắc tổng hợp gợi đàn khim/ranat, sáo khlui và chuông nhẹ. Đây là nhạc thiền lấy cảm hứng Thái, không phải bản thu nghi lễ Phật giáo truyền thống. Không sử dụng bản nhạc hoặc sample thu âm của bên thứ ba. Quyền sử dụng nằm trong [thông tin nhạc](assets/ganesha/music/LICENSE.txt).
+**Eastern Serenity**, dài **4 phút 40 giây**, là bản ghép nhạc thiền Á Đông từ hai bản thu của **Kevin MacLeod**: *The Hidden Valley of Shambhala* và *Midnight in the Green House*. Bản mới thay Thai Dawn của các phiên bản trước. Hai nguồn được phát hành trong danh mục FreePD dưới CC0 / Public Domain; nguồn cố định, SHA-256 và các chỉnh sửa được ghi trong [thông tin nhạc](assets/ganesha/music/LICENSE.txt), kèm toàn văn [CC0](assets/ganesha/music/CC0-1.0.txt).
 
-- Nhạc và **Lặp nhạc liên tục** bật sẵn. File MP3 đi kèm gói; phát nhạc không cần Internet và không cần cài Python/phần mềm âm nhạc.
+- Nhạc và **Lặp nhạc liên tục** bật sẵn khi cài mới. File MP3 đi kèm gói, không cần Internet để phát. Khi nâng cấp, giữ nguyên lựa chọn bật/tắt và âm lượng đã lưu của bạn.
+- Hai đoạn được cân âm lượng, chuyển tiếp trong 8 giây và xử lý nối đầu/cuối trong 8 giây; vòng phát cuối cùng dài 280 giây. Đây là bản ghép từ các tác phẩm có sẵn, không phải bản thu nghi lễ Phật giáo Thái truyền thống.
 - Chỉnh **Âm lượng nhạc nền** độc lập với âm lượng tổng. Khi giọng cầu chúc phát, nhạc tự hạ còn 20% mức đã chọn rồi tăng trở lại.
 - **Nghe thử nhạc tại đây** phát ngay tại bảng điều khiển. Dừng nghe thử trước khi dùng nguồn LIVE để tránh thu hai nguồn cùng lúc.
-- **Phát lại nhạc trên LIVE** đưa bản nhạc về đầu. Lưu cấu hình không tạo thêm bản nhạc chồng tiếng và không cắt nghi lễ.
-- Tắt **Lặp nhạc liên tục** thì bản nhạc dừng khi phát hết; bật lại hoặc bấm Phát lại để tiếp tục.
-- Nhạc dùng AudioBuffer loop cục bộ; phần đuôi nốt và tiếng vang được xử lý để nối đầu/cuối. Mã dựng nhạc tại `scripts/render-thai-dawn.py` chỉ dành cho người muốn tái tạo/chỉnh sửa bản nhạc.
+- **Phát lại nhạc trên LIVE** đưa nhạc về đầu. Lưu cấu hình không tạo thêm bản nhạc chồng tiếng và không cắt nghi lễ.
+- Tắt **Lặp nhạc liên tục** thì nhạc dừng khi hết 4:40; bật lại hoặc bấm Phát lại để tiếp tục.
+- Mã chuẩn bị nhạc tại `scripts/prepare-eastern-serenity.py`; chỉ cần NumPy/ffmpeg nếu muốn tái tạo MP3 từ hai nguồn đã ghi, không cần để chạy LIVE.
 
 ## Nhân vật, lời cầu chúc và lúc vắng quà
 
@@ -79,7 +80,7 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 - Khi đủ chỗ, người mới vào hàng chờ theo thứ tự đến. Người **ngồi lâu nhất** đứng dậy, đi ra trong khoảng 5 giây, rồi người đang chờ mới vào chỗ vừa trống; không xếp lại các chỗ khác. Tối đa hai lượt rời chỗ đồng thời. Cả nhân vật nền cũng nhường chỗ và không tự quay lại. Người mới có ít nhất 12 giây ngồi trước khi nhường; người đang/chờ làm lễ được giữ chỗ cho đến khi hết lượt hiệu ứng.
 - Hàng chờ chỗ ngồi tối đa 500 người, mỗi người một lượt; quà tiếp theo cập nhật cùng người. Khi đầy hàng chờ, vẫn cộng xu và đọc cầu chúc, nhưng chưa thêm nhân vật. Nếu người đang đi ra tặng tiếp, họ hoàn tất lượt đi ra rồi vào cuối hàng chờ. Bảng điều khiển hiển thị số người trong cảnh, đang chờ và đang rời chỗ.
 - Nam và nữ có chuỗi động tác **quỳ chắp tay → hạ hai tay, cúi đầu sát sàn → ngẩng lên**, lấy cảm hứng cách lạy năm điểm của Thái; lặp ba lần rồi nghỉ ngắn, mỗi người một nhịp. Đây là hoạt ảnh sprite, cần người hiểu nghi lễ Thái duyệt sắc thái động tác trước khi phát chính thức.
-- Tay cầm sen và tay cầm búa vàng/khí cụ của Ganesha chuyển động nhẹ, có hào quang nhỏ. Có thể tắt bằng **Tay cầm sen và búa vàng chuyển động**. Thiết lập Giảm chuyển động của hệ thống giữ tư thế chắp tay và tắt chuyển động tay/zoom.
+- Tay cầm sen và tay cầm búa vàng/khí cụ của Ganesha chuyển động lệch nhịp, giữ cố định khớp vai, kèm hào quang. Từ v0.5, mặc định **Rõ trên điện thoại**, biên độ khoảng 10–13 độ thay mức 1–2 độ trước đây; có thêm **Nhẹ** và **Mạnh**. Lưu cấu hình sau khi chỉnh. Có thể tắt bằng **Tay cầm sen và búa vàng chuyển động**. Thiết lập Giảm chuyển động của hệ thống giữ tư thế chắp tay và tắt chuyển động tay/zoom; bảng điều khiển hiện hướng dẫn khi máy đang bật chế độ này.
 - Âm thanh chỉ phát ở overlay/OBS đã mở tiếng. Hàng đợi lời cầu chúc giới hạn 5 câu chờ; đợt quà quá dày có thể bỏ câu mới, vẫn tính đủ xu. Lỗi mạng TTS có timeout 15 giây và nghỉ 30 giây trước khi thử tiếp. Các câu nhắc được lưu đệm cục bộ.
 
 ## Dữ liệu và âm thanh
@@ -89,10 +90,10 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 - Khi khởi động lại, chọn **Xem phiên LIVE đã lưu** hoặc kết nối nguồn để phục hồi điểm. Kết nối nguồn và âm thanh phải khởi động lại. Nhân vật quay lại khi có sự kiện mới; bảng xếp hạng đã lưu vẫn còn.
 - **Dọn nhân vật** giữ nguyên điểm, dọn hàng chờ và trở về 10 nhân vật nền nếu đang bật tính năng. **Bắt đầu phiên mới** xóa số liệu của chế độ đang chọn và chỉ cho phép khi đã ngắt nguồn.
 - Cảnh hiện tối đa 60 nhân vật, tính cả nhân vật nền và người đang đi ra. Việc rời chỗ không xóa điểm hoặc bảng xếp hạng. Chỗ ngồi/hàng chờ không lưu qua lần khởi động máy chủ mới.
-- Hình ảnh, font Thái, bản nhạc MP3 và chuông chạy cục bộ; chuông được tổng hợp bằng Web Audio. Bộ nhạc hiện tại độc lập với concept trước.
+- Hình ảnh, font Thái, bản nhạc MP3 và chuông chạy cục bộ; chuông được tổng hợp bằng Web Audio. Nhạc nền hiện tại là bản ghép CC0, độc lập với concept trước.
 - Edge TTS cần truy cập `speech.platform.bing.com`. File âm thanh tạm ở `live/tts/`, không đưa vào Git hay gói chia sẻ. Khi nâng dữ liệu v0.1 lên v0.2, giọng được bật một lần; các lần sau giữ lựa chọn của bạn.
 
-## Kiểm thử và giới hạn bản 0.4
+## Kiểm thử và giới hạn bản 0.5
 
 ```sh
 cd live

@@ -1,6 +1,7 @@
 export const MUSIC_TRACK = Object.freeze({
-  id: 'thai-dawn', title: 'Thai Dawn · nhạc thiền âm sắc Thái',
-  url: '/assets/ganesha/music/thai-dawn.mp3', duration: 128,
+  id: 'eastern-serenity', title: 'Eastern Serenity · thiền Á Đông',
+  url: '/assets/ganesha/music/eastern-serenity.mp3', duration: 280,
+  artist: 'Kevin MacLeod', license: 'CC0 / Public Domain',
 });
 
 export class MusicBed {

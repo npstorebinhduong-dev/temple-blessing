@@ -7,7 +7,7 @@ const soundCheck = new SceneAudio({ onMusicStatus: status => {
   $('musicPreviewStatus').textContent = ({ loading: 'Đang tải bản nhạc…', playing: 'Đang nghe thử tại bảng điều khiển.', ended: 'Đã phát hết bản nhạc. Bật lặp hoặc bấm nghe thử lại.', error: 'Không tải được nhạc. Tải lại trang hoặc kiểm tra gói cài đặt.' })[status.state] || '';
   if (['ended', 'error'].includes(status.state)) stopMusicPreview();
 } });
-const SETTINGS = ['title', 'subtitle', 'goal', 'joinOnEnter', 'joinOnChat', 'statueMotion', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode'];
+const SETTINGS = ['title', 'subtitle', 'goal', 'joinOnEnter', 'joinOnChat', 'statueMotion', 'statueMotionLevel', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode'];
 let socket, mode = 'demo', bots = false, toastTimer;
 const people = new Map(), numbers = new Intl.NumberFormat('en-US');
 const obsURL = location.origin + '/live/overlay.html'; $('obsURL').textContent = obsURL;
@@ -98,3 +98,7 @@ for (const id of ['musicVolume', 'musicLoop', 'volume']) $(id).addEventListener(
   if (musicPreviewing) soundCheck.configure({ musicVolume: Number($('musicVolume').value), musicLoop: $('musicLoop').checked, volume: Number($('volume').value) });
 });
 $('replayMusic').onclick = () => { stopMusicPreview(); send('music-replay'); toast('Đã yêu cầu phát lại nhạc ở cửa sổ LIVE đã mở tiếng.'); };
+
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+const showMotionHint = () => { $('reducedMotionHint').hidden = !motionPreference.matches; };
+motionPreference.addEventListener('change', showMotionHint); showMotionHint();

@@ -1,17 +1,32 @@
-Thai Dawn — original instrumental for Ganesha LIVE
+Eastern Serenity — 4:40 LIVE medley
 
-This composition and recording were created for this project using the
-deterministic synthesizer in scripts/render-thai-dawn.py. No third-party music,
-sample recording, pre-existing melody, chant, or voice recording is included.
+Composer and recordings: Kevin MacLeod.
+Source works:
+  - The Hidden Valley of Shambhala (2015)
+  - Midnight in the Green House (2015)
 
-The recording may be used, copied, modified, redistributed, and played in
-commercial livestreams under the project's MIT license (see LICENSE at the
-repository root). Retain this notice when redistributing the recording.
+Both source MP3s identify their album as "Public Domain" and carry the comment
+"New music dedicated to the Public Domain October 2015." They are distributed
+by the FreePD archive under CC0 1.0 Universal. Commercial playback, adaptation
+and redistribution are permitted. The complete CC0 text is in CC0-1.0.txt.
 
-The synthesized colors are inspired by khim, ranat, khlui and light ching/gong
-sounds. This is a new relaxation instrumental, not an authentic recording of
-Thai Buddhist liturgy or a claim of traditional ceremonial repertoire.
+Sources (FreePD mirror, pinned commit cf011c7016595833b550a88ff127f089188b25f8):
+https://github.com/0lhi/FreePD/blob/cf011c7016595833b550a88ff127f089188b25f8/Zoned/The%20Hidden%20Valley%20of%20Shambhala.mp3
+https://github.com/0lhi/FreePD/blob/cf011c7016595833b550a88ff127f089188b25f8/World/Midnight%20in%20the%20Green%20House.mp3
+License: https://github.com/0lhi/FreePD/blob/cf011c7016595833b550a88ff127f089188b25f8/LICENSE
+Original catalogue: https://freepd.com/
 
-Duration: 128 seconds. The rendered note tails and room reflections wrap
-across the boundary for continuous replay. Runtime playback uses Web Audio
-buffer looping; no Internet service is required to play the bundled music.
+Source SHA-256:
+Shambhala: 5acaf11e067c234493fbd137c97dbdc098f9eb082225af8ad7cd420861ef32a8
+Midnight: 2a13476ce634cb8ec8fa553f212980e8f25e612c717bbd5133d73700d979571c
+
+Edits for Ganesha LIVE: select 4–150 seconds of Shambhala and 12–162 seconds
+of Midnight, remove sub-bass below 35 Hz, match loudness, crossfade the two
+sections for 8 seconds, then use an 8-second circular crossfade at the repeat
+boundary. Final duration: 280 seconds. Stereo MP3, 44.1 kHz, 160 kb/s.
+This is an edited medley of existing works, not a newly composed recording
+or a claim of traditional Thai Buddhist liturgical repertoire.
+
+Preparation script: scripts/prepare-eastern-serenity.py (MIT, project LICENSE).
+The historical scripts/render-thai-dawn.py synthesizer is also original MIT
+code; its earlier 128-second recording is replaced in the v0.5 bundle.

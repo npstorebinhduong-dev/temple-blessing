@@ -1,5 +1,10 @@
 import { statuePose } from './devotion.js';
 
+export const ARM_PARTS = Object.freeze([
+  { kind: 'hammer', source: [148,225,222,410], pivot: [350,520], target: [348,522], scale: .69, light: [255,310] },
+  { kind: 'lotus', source: [575,298,212,338], pivot: [601,520], target: [596,516], scale: .68, light: [695,355] },
+]);
+
 // Registered to the 941×1672 shrine. The foreground mask keeps the original
 // blessing hand, bowl and torso in front of the two articulated rear arms.
 export class ShrineArms {
@@ -9,12 +14,14 @@ export class ShrineArms {
     this.atlas = new Image(); this.atlas.src = '/assets/ganesha/shrine-arms.png'; this.atlas.onerror = onError;
     this.foreground = new Path2D('M368 441 L355 461 L329 455 L306 461 L295 487 L294 538 L280 564 L282 594 L276 628 L692 628 L686 593 L680 565 L658 553 L619 543 L614 480 L582 441 Z');
   }
+  get ready() {
+    // Dimensions arrive before PNG pixels. Cropping at that point permanently
+    // caches empty arms, so keep the original shrine until both images load.
+    return [this.base, this.atlas].every(image => image.complete && image.naturalWidth > 0);
+  }
   prepare() {
-    if (this.parts || !this.atlas.naturalWidth || !this.base.naturalWidth) return;
-    this.parts = [
-      { kind: 'hammer', source: [148,225,222,410], pivot: [350,520], target: [348,522], scale: .69, light: [255,310] },
-      { kind: 'lotus', source: [575,298,212,338], pivot: [601,520], target: [596,516], scale: .68, light: [695,355] },
-    ].map(p => {
+    if (this.parts || !this.ready) return;
+    this.parts = ARM_PARTS.map(p => {
       const [x,y,w,h] = p.source, sprite = document.createElement('canvas'); sprite.width = w; sprite.height = h;
       sprite.getContext('2d').drawImage(this.atlas, x,y,w,h, 0,0,w,h);
       return { ...p, sprite };

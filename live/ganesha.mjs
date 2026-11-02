@@ -6,7 +6,7 @@ export const DEFAULTS = Object.freeze({
   music: true, musicLoop: true, musicVolume: 60, volume: 35, joinOnEnter: false, joinOnChat: false,
   cinematicZoom: true, petalMode: 'full',
   goal: 4995, giftMap: '', characterMode: 'mixed',
-  idlePrompts: true, idleEverySec: 10, ambientCrowd: true, statueMotion: true,
+  idlePrompts: true, idleEverySec: 10, ambientCrowd: true, statueMotion: true, statueMotionLevel: 'clear',
 });
 export const DEMO_NAMES = ['ศิริพร', 'น้องพลอย', 'มาลี', 'ธนกฤต', 'อรทัย', 'Mi Sirijan',
   'พิมพ์ชนก', 'ณัฐชา', 'สมพร', 'ดวงใจ', 'Kwan', 'น้ำฝน', 'มณีรัตน์', 'น้องแก้ม',

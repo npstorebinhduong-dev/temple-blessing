@@ -388,9 +388,9 @@ function frame(now) {
   shrine.style.transform = `translate(${camera.x.toFixed(2)}px,${camera.y.toFixed(2)}px) scale(${camera.scale.toFixed(4)})`;
   ctx.setTransform(camera.scale * actorResolution, 0, 0, camera.scale * actorResolution, camera.x * actorResolution, camera.y * actorResolution);
   canvas.dataset.zoom = camera.scale.toFixed(3);
-  shrine.classList.toggle('articulated', settings.statueMotion !== false && !!shrineArms.base.naturalWidth && !!shrineArms.atlas.naturalWidth);
+  shrine.classList.toggle('articulated', settings.statueMotion !== false && shrineArms.ready);
   if (shrine.classList.contains('articulated')) {
-    const pose = shrineArms.draw(ctx, t, { enabled: true, reduced });
+    const pose = shrineArms.draw(ctx, t, { enabled: true, reduced, level: settings.statueMotionLevel });
     canvas.dataset.armLotus = pose.lotus.toFixed(4); canvas.dataset.armHammer = pose.hammer.toFixed(4);
   } else { canvas.dataset.armLotus = '0'; canvas.dataset.armHammer = '0'; }
   for (let i = 0; i < 24; i++) {

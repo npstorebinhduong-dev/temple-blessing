@@ -4,8 +4,24 @@ import { Seating, ENTRY_MS, EXIT_MS, MIN_STAY_MS, MAX_WAITING, seatLayout, exitP
 import { Room } from '../ganesha.mjs';
 import { RITUALS } from '../gift-rituals.mjs';
 import { actorPhase, devotionPose, statuePose } from '../devotion.js';
+import { ARM_PARTS, ShrineArms } from '../shrine-arms.js';
 
 const person = i => ({ id: `u${i}`, name: `Name ${i}`, skin: i % 2 ? 'male' : 'female', coins: 0 });
+test('statue never caches arm crops from a PNG whose dimensions arrived before its pixels', () => {
+  const arms = Object.create(ShrineArms.prototype);
+  arms.parts = null;
+  arms.base = { complete: true, naturalWidth: 941 };
+  arms.atlas = { complete: false, naturalWidth: 941 };
+  assert.equal(arms.ready, false);
+  // No drawing APIs should be touched while the atlas is still loading.
+  assert.equal(arms.draw({}, 1, {}).lotus, statuePose(1).lotus);
+  assert.equal(arms.parts, null);
+  arms.atlas.complete = true; arms.base.complete = false;
+  assert.equal(arms.ready, false); arms.prepare(); assert.equal(arms.parts, null);
+  arms.base.complete = true; assert.equal(arms.ready, true);
+  arms.atlas.naturalWidth = 0; assert.equal(arms.ready, false);
+});
+
 test('turning background off and on during its exit restores the same ten slots', () => {
   const seats = new Seating({ now:0 }); seats.setAmbient(false,100);
   assert.equal(seats.summary().departing,10);
@@ -97,9 +113,21 @@ test('seat and devotion motion stays finite, staggered and bounded; reduced moti
     const poses=phases.map(p=>devotionPose(t+p*29));
     assert.ok(poses.some(p=>p.bow>0),`crowd motion at ${t}`);
     for(const p of poses) { assert.ok(p.mix>=0&&p.mix<=1); assert.ok(p.from>=0&&p.to<=3); }
-    const arms=statuePose(t);assert.ok(Math.abs(arms.lotus)<=.028);assert.ok(Math.abs(arms.hammer)<=.024);
-    assert.ok(arms.glow>=.19&&arms.glow<=.45);
+    const arms=statuePose(t);assert.ok(Math.abs(arms.lotus)<.25);assert.ok(Math.abs(arms.hammer)<.23);
+    assert.ok(arms.glow>=.28&&arms.glow<=.58);
   }
   assert.equal(devotionPose(4,0,true).bow,0);assert.equal(statuePose(4,{reduced:true}).lotus,0);
   assert.deepEqual(statuePose(4,{enabled:false}),{lotus:0,hammer:0,glow:0});
+  // Test perceptible travel on a 390 px phone, not just non-zero angles.
+  for (const part of ARM_PARTS) {
+    const positions=Array.from({length:160},(_,i)=>{
+      const a=statuePose(i/20)[part.kind],dx=part.light[0]-part.pivot[0],dy=part.light[1]-part.pivot[1];
+      return {x:(Math.cos(a)*dx-Math.sin(a)*dy)*part.scale*390/941,
+        y:(Math.sin(a)*dx+Math.cos(a)*dy)*part.scale*390/941};
+    });
+    const travel=Math.max(...positions.flatMap(a=>positions.map(b=>Math.hypot(a.x-b.x,a.y-b.y))));
+    assert.ok(travel>20,`${part.kind} must move visibly on a phone: ${travel}px`);
+  }
+  const soft=statuePose(1,{level:'soft'}),clear=statuePose(1),strong=statuePose(1,{level:'strong'});
+  assert.ok(Math.abs(soft.lotus)<Math.abs(clear.lotus));assert.ok(Math.abs(strong.lotus)>Math.abs(clear.lotus));
 });
