@@ -66,8 +66,9 @@ test('server schedules reminders from playback receipts, ignores preview receipt
   control.send({ t: 'ctl', cmd: 'gift', name: 'Gift test', gift: 'Rose', kind: 'lotus', diamonds: 1, count: 1 });
   await until(() => speaker.messages.find(m => m.t === 'gift'));
   speaker.send(status(second.id, 'cancelled'));
+  await setTime(80000); // The donor takes their seat before FIFO speech starts.
   const blessing = await until(() => speaker.messages.find(m => m.t === 'tts' && m.tag === 'gift'));
-  await setTime(75000); speaker.send(status(blessing.id, 'ended')); await sleep(60);
+  await setTime(81000); speaker.send(status(blessing.id, 'ended')); await sleep(60);
   await setTime(81999); assert.equal(prompts().length, 2);
   await setTime(82000); const third = await until(() => prompts()[2]);
   await setTime(90000); speaker.send(status(second.id, 'ended')); await sleep(60);

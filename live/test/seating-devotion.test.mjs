@@ -90,7 +90,7 @@ test('a full scene releases the least recent donor; repeat gifts renew priority 
   assert.equal(room.stats.coins, 62); assert.equal(room.top()[0].id, 'donor0');
 });
 
-test('returning donors finish their exit and rejoin once; bursts have bounded waiting memory', () => {
+test('returning donors finish their exit and rejoin once; bursts retain every waiting donor with bounded actors', () => {
   const seats = new Seating({ ambient:false,now:0 });
   for(let i=0;i<61;i++) seats.offer(person(i),i);
   seats.tick(ENTRY_MS+MIN_STAY_MS+100);
@@ -101,7 +101,7 @@ test('returning donors finish their exit and rejoin once; bursts have bounded wa
   assert.equal(seats.waiting.size,1); assert.equal(seats.waiting.get(leaving.id).name,'Returned');
   let overflow=0;
   for(let i=1000;i<3000;i++) if(seats.offer(person(i),30000).overflow) overflow++;
-  assert.equal(seats.waiting.size,MAX_WAITING); assert.equal(overflow,1501);
+  assert.equal(seats.waiting.size,2001); assert.equal(overflow,0);
   assert.equal(seats.actors.size,60);
 });
 
@@ -111,13 +111,15 @@ test('server owns ceremonies: a waiting premium is admitted first, then protecte
   room.rituals.enqueue({id:'u60',name:'Name 60',count:1,ritual:RITUALS.royal},21000);
   room.advance(21000); assert.equal(room.rituals.active,null);
   room.advance(21000+EXIT_MS);
+  assert.equal(room.rituals.active,null);
+  room.advance(21000+EXIT_MS+ENTRY_MS);
   assert.equal(room.rituals.active.id,'u60');
   const slot=room.find('u60').slot;
-  for(let i=61;i<130;i++) room.join(`u${i}`,`Name ${i}`,{now:27000+i});
-  for(let now=27000;now<54000;now+=250) {
+  for(let i=61;i<130;i++) room.join(`u${i}`,`Name ${i}`,{now:35000+i});
+  for(let now=35000;now<62000;now+=250) {
     room.advance(now); assert.equal(room.find('u60').slot,slot); assert.notEqual(room.find('u60').seatState,'leaving');
   }
-  assert.equal(room.rituals.active.id,'u60'); room.advance(54200); assert.equal(room.rituals.active,null);
+  assert.equal(room.rituals.active.id,'u60'); room.advance(62200); assert.equal(room.rituals.active,null);
 });
 
 test('seat and devotion motion stays finite, staggered and bounded; reduced motion holds a wai', () => {

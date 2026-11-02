@@ -4,7 +4,8 @@ export const AMBIENT_COUNT = 10;
 export const ENTRY_MS = 8000;
 export const EXIT_MS = 5200;
 export const MIN_STAY_MS = 12000;
-export const MAX_WAITING = 500;
+// Waiting records are data, not render objects. Do not discard a paid turn.
+export const MAX_WAITING = Infinity;
 
 export class Seating {
   constructor({ ambient = true, now = Date.now() } = {}) {
@@ -13,6 +14,16 @@ export class Seating {
     this.setAmbient(ambient, now);
   }
   find(id) { return this.actors.get(id) || this.waiting.get(id); }
+  restore(saved, now) {
+    if (!saved || !Array.isArray(saved.actors) || !Array.isArray(saved.waiting)) return;
+    this.actors.clear(); this.waiting.clear(); const slots = new Set();
+    for (const p of saved.actors) if (typeof p?.id === 'string' && Number.isInteger(p.slot) && p.slot >= 1 && p.slot <= SEAT_COUNT && !slots.has(p.slot) && (!p.ambient || this.ambientEnabled)) {
+      const { exitAt, exitUntil, returning, ...stable } = p;
+      slots.add(p.slot); this.actors.set(p.id, { ...stable, seatState: 'seated', seatedAt: Math.min(now, p.seatedAt ?? now) });
+    }
+    for (const p of saved.waiting) if (typeof p?.id === 'string' && !this.actors.has(p.id)) this.waiting.set(p.id, { ...p, seatState: 'waiting', slot: undefined });
+  }
+  serialize() { return { actors: [...this.actors.values()], waiting: [...this.waiting.values()] }; }
   get viewers() { return new Map([...this.actors].filter(([, v]) => !v.ambient)); }
   setAmbient(enabled, now = Date.now()) {
     if (enabled === this.ambientEnabled) return [];

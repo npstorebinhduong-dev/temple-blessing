@@ -4,7 +4,7 @@ export const IDLE_PROMPTS = Object.freeze([
   'ขอบคุณที่อยู่ด้วยกัน ฝากกดหัวใจและแชร์ช่วงเวลาดี ๆ นี้ด้วยนะคะ',
 ]);
 const WISHES = ['ขอให้วันนี้เต็มไปด้วยความสุขและสิ่งดี ๆ', 'ขอให้คุณและครอบครัวมีความสุขและสุขภาพแข็งแรง', 'ขอให้ก้าวผ่านอุปสรรคและมีกำลังใจในทุกวัน'];
-const LABELS = { lotus: 'ดอกบัว', incense: 'กำยาน', garland: 'พวงมาลัย', aarti: 'แสงอารตี', marigold: 'พวงมาลัยดอกดาวเรือง', royal: 'เครื่องบูชาพระพิฆเนศ' };
+const LABELS = { lotus: 'ดอกบัว', incense: 'กำยาน', garland: 'พวงมาลัย', aarti: 'แสงอารตี', marigold: 'พวงมาลัยดอกดาวเรือง', royal: 'เครื่องบูชาพระพิฆเนศ', mushika: 'คำอธิษฐานและกำลังใจ' };
 export function blessingForGift(name, kind, sequence = 0) {
   const spoken = String(name || '').normalize('NFC').replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || 'ผู้ร่วมบูชา';
   const gift = LABELS[kind] || 'ของขวัญ';

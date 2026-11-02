@@ -1,142 +1,119 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.8
+GANESHA LIVE — BẢN 0.9
 
-1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
-2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
-3. Nhấp đúp CHAY-LIVE.bat. Lần đầu cần Internet để cài thư viện.
-   Giữ cửa sổ này mở trong suốt buổi phát.
-4. Mở http://localhost:3000/live/control.html bằng trình duyệt.
-5. Ban đầu là DEMO, có 10 nhân vật nền, chưa có người tặng quà.
-   Thử quà để thấy người tặng vào từ vị trí 11. Nút 50 làm đầy chỗ;
-   nút 80 thử hàng chờ và người cũ đi ra nhường chỗ.
-6. Bấm Mở màn hình LIVE. Nếu có nút mở âm thanh ở dưới cảnh, bấm một lần.
-   Bản xem trước trong bảng điều khiển không phát tiếng.
-7. OBS: thêm Browser Source, URL http://localhost:3000/live/overlay.html,
-   Width 1080, Height 1920. Thu âm thanh nguồn trình duyệt trong OBS.
-   LIVE Studio: dùng nguồn trình duyệt nếu có, hoặc Window Capture cửa sổ
-   overlay và nguồn âm thanh trình duyệt. Tránh thu trùng hai lần.
-8. Mở TikFinity Desktop trên cùng máy. Kết nối kênh TikTok đang LIVE,
-   bật WebSocket server. Trong Ganesha LIVE chọn TikFinity Desktop,
-   nhập địa chỉ thường là ws://127.0.0.1:21213/ rồi bấm Kết nối LIVE.
-   Dữ liệu DEMO sẽ được thay bằng phiên LIVE thật, độc lập với demo.
-9. Thử bình luận và quà thật. Kiểm tra nhật ký có đúng người, số lượng,
-   giá trị một quà và ID quà. Đã kết nối TikFinity không có nghĩa là kênh
-   đã gửi sự kiện; phải kiểm tra tương tác thật.
-10. Giọng cầu chúc Thái đã bật sẵn. Chọn Premwadee (nữ) hoặc Niwat (nam),
-    lưu cấu hình rồi bấm Thử giọng Thái. Cần Internet; không cần cài tiếng
-    Thái trên Windows hoặc mở trình duyệt Edge. Kiểm tra nguồn âm OBS.
-11. Bấm thử cả Bó hoa và Bóng tình yêu; chờ lần lượt 23 và 28 giây để thấy
-    đủ bước đi lên bàn thờ, zoom theo nhân vật, quỳ dâng và trở lại toàn cảnh.
-    Quà 500 xu có mưa hoa phủ màn hình. Chọn nhân vật Nam/Nữ khi thử.
-12. Khi vắng quà 10 giây, bắt đầu lời nhắc thả tim/chia sẻ. Sau khi đọc xong
-    một câu mới chờ thêm 10 giây trước câu tiếp theo. Quà mới ngắt lời nhắc
-    và tính lại bộ đếm. Khung xem trước không tham gia tính thời gian đọc.
-    10 nhân vật nền có ngay từ đầu, giữ nguyên khi có quà. Khi đủ 60 chỗ,
-    người có lần tặng gần nhất cũ nhất đi ra nhường chỗ. Tặng thêm quà
-    cập nhật mốc; bình luận không cập nhật. Nhân vật nền cũng nhường chỗ;
-    không tên, không cộng số liệu LIVE và không tự trở lại khi đã nhường chỗ.
-13. Các nhân vật ngồi chắp tay và cúi lạy theo nhịp riêng. Tay cầm sen và
-    búa vàng chuyển động rõ ở mức Rõ trên điện thoại. Chọn Mạnh để tăng nữa,
-    hoặc Nhẹ để giảm; bấm Lưu cấu hình. Có thể tắt chuyển động tay.
-    Giảm chuyển động của hệ thống tắt lạy/zoom/tay; bảng điều khiển có chỉ dẫn.
-14. Mặc định chỉ người tặng quà vào khu quỳ. Muốn cho người bình luận cũng vào,
-    bật Cho người bình luận vào hàng chờ rồi Lưu cấu hình. Chỗ đang đi ra
-    chỉ được dùng lại khi nhân vật ra hết; người đang dâng lễ được giữ chỗ.
+CHẠY VÀ THỬ
+1. Đóng cửa sổ CHAY-LIVE của bản cũ. Giải nén toàn bộ ZIP vào thư mục
+   riêng; không chạy bên trong ZIP. Cài Node.js 24 LTS hoặc mới hơn
+   từ https://nodejs.org/ nếu chưa có.
+2. Muốn giữ điểm/cấu hình cũ: sao chép thư mục live/data sang bản mới
+   trước khi chạy. Có thể giữ cả live/tts để dùng lại giọng đã lưu đệm.
+   Không sao chép node_modules. Bản cũ chưa lưu ghế/hàng chờ thì chỉ
+   phục hồi số liệu mà bản cũ có lưu.
+3. Nhấp đúp CHAY-LIVE.bat; lần đầu cần Internet để cài thư viện.
+   Giữ cửa sổ này mở trong buổi LIVE.
+4. Mở http://localhost:3000/live/control.html . Mặc định là DEMO riêng,
+   10 nhân vật nền, chưa có người tặng/điểm. Mở màn hình LIVE riêng,
+   bấm nút Thái “♫ เปิดเสียง” nếu hiện. Preview luôn tắt tiếng.
+5. Trong phần Thử tương tác:
+   - 100 / 300 / 500 avatar: thử hàng chờ đông ở mép dưới.
+   - Chọn nữ/nam, bấm Bạn đồng hành: thử nghi thức ghé tai Mushika.
+   - Bấm Thiên hà: thử Ganesha hiển linh, giọng và banner tiếng Thái.
+   - 5 lượt liên tiếp: cùng người, giữ từng lượt và thứ tự nhận.
+   - Reset demo: dọn cả tiếng, camera, hiệu ứng và số liệu demo.
+   - 50: đủ 60 chỗ cùng 10 nhân vật nền; 80: thử nhường ghế.
+6. OBS Browser Source: http://localhost:3000/live/overlay.html
+   Width 1080, Height 1920; bật thu âm thanh nguồn trình duyệt.
+   LIVE Studio: dùng nguồn trình duyệt nếu có, hoặc Window Capture
+   cửa sổ LIVE kèm âm thanh trình duyệt. Tránh thu tiếng hai nguồn.
+7. Mở TikFinity Desktop trên cùng máy, nối kênh đang LIVE, bật WebSocket
+   server. Chọn TikFinity Desktop, nhập địa chỉ (thường
+   ws://127.0.0.1:21213/) rồi Kết nối LIVE. Quà demo không cộng vào LIVE.
+8. Test một bình luận và một quà thật, xem nhật ký tên/ID/giá từng món.
+   “Đã kết nối” chỉ xác nhận socket, chưa chứng minh có sự kiện TikTok.
 
-HÀNG NGƯỜI VÀO PHÒNG (BẢN 0.8)
-Bật sẵn khi cài/nâng cấp: người vào phòng đứng xếp hàng ở mép dưới,
-chưa vào khu quỳ. Cần TikFinity gửi sự kiện member có ID người xem.
-Hiện tối đa 10 người, thêm 200 người chờ hiện. Khi đông, người đã đứng
-ít nhất 15 giây nhường lượt; một lượt đứng tối đa 90 giây. Người chờ
-hiện quá 5 phút được bỏ khỏi hàng hình ảnh. Đây không phải số online.
-Tặng quà thì lên khu quỳ; khi đủ ghế, giữ người đã tặng ở hàng đứng
-đến khi có chỗ. Gõ 1/2 đổi nữ/nam cả trong hàng đứng. Không tạo bản sao.
-Thử vào phòng dùng tên đang nhập; sau đó bấm quà với cùng tên. Có nút
-10 người đứng mép dưới và 30 người để thử luân phiên.
-Tùy chọn Người vừa vào phòng đứng xếp hàng ở mép dưới cho phép tắt;
-các lần chỉnh sau nâng cấp được giữ. Không cộng xu/top khi chỉ vào phòng.
+HAI QUÀ MỚI — PHẦN CẦN ĐỐI CHIẾU
+- Galaxy / Thiên hà: 1.000 xu, ID 11046 đối chiếu từ hai nguồn công khai.
+  Chưa xác nhận quà có trong tài khoản Thái và tên Thái của anh.
+- Bạn đồng hành 299 xu: CHƯA xác minh ID, tên Thái hoặc icon. Nghi thức
+  chạy đầy đủ trong DEMO, chưa tự nhận quà 299 xu thật khi chưa gán ID.
+- Trong Cảnh & âm thanh → Hai quà mới, nhập ID thật và tên quà đúng theo
+  TikTok Thái. Có thể nhập URL icon từ dữ liệu quà; để trống nếu chưa có.
+  Nếu một sự kiện LIVE đã khớp ID có tên tiếng Thái, app tự điền tên còn
+  trống. Không dùng bản dịch tự đoán, không nhận quà chỉ theo giá.
+- Bảng hướng dẫn LIVE thêm mục mới khi có tên và ID. DEMO hiển thị tên
+  nghi thức để thử, không giả làm tên quà TikTok chính thức.
+- Nguồn và chi tiết: docs/QUA-MOI.md .
 
-BẢNG QUÀ VÀ CÔNG ĐỨC (BẢN 0.7.2)
-Cả hai bảng đã được nâng lên 36 px, cùng mức, phía dưới thanh mục tiêu.
-Bảng quà sát mép phải, nền hoàn toàn trong suốt, không viền khung.
-Giữ chữ lớn và thêm bóng chữ; thu gọn chiều cao để lộ tay sen và khu quỳ.
-Sau khi nâng cấp phải Ctrl+F5 hoặc làm mới bộ nhớ đệm nguồn OBS.
+NGHI THỨC VÀ THỨ TỰ
+Mushika: 14 giây. Đứng lên, đi tới tai chuột, khum tay/ghé tai 3,6 giây,
+gửi luồng sáng, chắp tay rồi về ghế. Có asset và tư thế riêng cho nam/nữ.
+Galaxy: khoảng 20 giây, tăng theo độ dài tiếng. Ganesha hiển linh có
+bàn tay chuyển động, mandala, hoa sen, luồng sáng và cánh hoa nhiều lớp.
+Một combo chốt = một lượt có nhãn ×N, tính đủ xu. Các sự kiện kết thúc
+khác nhau giữ lượt riêng, cùng người cũng vậy. Camera chạy đúng thứ tự
+nhận; không gộp lượt, không bỏ theo thời hạn hay ưu tiên quà lớn vượt hàng.
+Người chưa có chỗ chờ ghế trước khi được làm lễ. Khi LIVE tạm chuyển sang
+DEMO hoặc server khởi động lại, giữ các lượt; lượt đang dở chạy lại từ đầu.
+Dọn nhân vật/reset mới xóa lượt đang chờ. Không cộng lại điểm đã ghi.
 
-ZOOM SÁU QUÀ (BẢN 0.7)
-Hoa hồng: 4,5 giây; Đào: 5,5 giây; OK: 6 giây; Cỏ bốn lá: 8 giây;
-Bó hoa: 23 giây; Bóng tình yêu: 28 giây. Thời lượng gồm phóng to và thu về.
-Zoom theo đúng người tặng của lượt hiệu ứng, giữ vị trí ngồi của mọi người.
-Bật Zoom theo người tặng quà và Lưu cấu hình để dùng.
+ÂM THANH
+Giọng Thái chung: Premwadee (nữ) hoặc Niwat (nam), cần Internet, không cần
+cài gói tiếng Thái Windows hay mở Edge. Galaxy dùng riêng Niwat nam,
+tốc độ -12%, cao độ -6 Hz, bass nhẹ/vang ngắn; banner cùng đúng một câu.
+Banner xuất hiện khi thực sự bắt đầu tiếng, giữ thêm 2,5 giây sau câu rồi
+mờ dần. Lỗi/tắt tiếng: hiện câu đủ lâu bằng chữ. Không chồng lời nhắc khác.
+Có bật/tắt và âm lượng riêng cho nhạc, hiệu ứng, giọng; âm lượng tổng
+áp dụng toàn bộ. Bấm Lưu cấu hình sau chỉnh. Nhạc tự hạ khi giọng đang đọc.
+Nhạc Eastern Serenity 4:40 đi kèm, mặc định lặp; nguồn Kevin MacLeod,
+FreePD / CC0. Không phải bản thu nghi lễ Phật giáo Thái truyền thống.
+Nghe thử nhạc tại đây phát ở bảng điều khiển; dừng thử trước khi LIVE.
+Phát lại nhạc trên LIVE đưa bài nhạc về đầu.
+Sau 10 giây không có quà: nhắc tim/chia sẻ. Sau câu nhắc đọc xong, chờ
+thêm 10 giây trước câu tiếp theo. Quà mới ngắt lời nhắc, tính lại bộ đếm.
+Giọng thật Niwat chưa nghe thử được trong cloud do dịch vụ bị chặn;
+anh cần kiểm tra trên máy LIVE. Mã phát/bộ đệm/banner đã được kiểm thử
+bằng MP3 mẫu. Gói không chứa bản thu giọng Thái mới. Có thể cung cấp bản
+thu đúng câu ở assets/ganesha/audio/ganesha-blessing-th.mp3 để thay TTS;
+xem nguyên văn câu trong README.md .
 
-NHẠC NỀN
-Eastern Serenity là bản ghép thiền Á Đông dài 4:40, thay nhạc Thai Dawn cũ.
-Nguồn: The Hidden Valley of Shambhala + Midnight in the Green House của
-Kevin MacLeod, FreePD / CC0 / Public Domain. Hai đoạn được cân âm lượng
-và nối mềm, có xử lý điểm lặp. Giấy phép nằm ở assets/ganesha/music.
-Nhạc có sẵn trong gói và mặc định lặp liên tục, không cần Internet.
-Dùng Nghe thử nhạc tại đây để nghe ngay tại bảng điều khiển. Dừng nghe thử
-trước khi phát LIVE để tránh trùng tiếng. Âm lượng nhạc nền điều chỉnh riêng,
-nhạc tự nhỏ khi đọc lời cầu chúc. Bấm Lưu cấu hình sau khi chỉnh.
-Phát lại nhạc trên LIVE đưa bài nhạc về đầu. Tắt Lặp nhạc liên tục để
-phát một lần. Không cần cài Python hay phần mềm nhạc để chạy ứng dụng.
+HÀNG CHỜ, GHẾ VÀ CHỌN NHÂN VẬT
+Sự kiện member có ID tạo avatar/tên ở mép dưới. Giữ toàn bộ dữ liệu người
+chờ, chỉ vẽ tối đa 88 avatar (49 ở mức Nhẹ). Hàng xa luân phiên mỗi 12 giây;
+ảnh lỗi dùng chữ đầu tên. Tổng chờ không phải số người online và không
+cộng điểm. DEMO có nhãn riêng. Có thể tắt hàng bằng tùy chọn người vào phòng.
+60 ghế: 10 nhân vật nền ban đầu, người tặng bắt đầu từ 11–60. Đầy ghế thì
+người có lần tặng gần nhất cũ nhất rời đi, kể cả nhân vật nền; không xếp
+lại toàn bộ người còn lại. Chỉ người đang làm lễ/người kế tiếp giữ chỗ.
+Tặng thêm cập nhật mốc; bình luận không cập nhật. Hàng ghế giữ dữ liệu đầy đủ.
+Gõ đúng 1 để chọn nữ, 2 để chọn nam, kể cả trước khi tặng hoặc đang làm lễ.
+Chọn nhân vật không tự cấp ghế. Vẫn nhận หญิง/ชาย, female/male, nữ/nam.
+Nhân vật quỳ/cúi lạy lệch nhịp; tay sen/búa có mức Nhẹ/Rõ/Mạnh. Giảm chuyển
+động của hệ thống tắt zoom/chuyển động tay, giữ wai. Người nền không có tên,
+không cộng số liệu, không tự trở lại sau khi đã nhường chỗ.
 
-SÁU QUÀ ĐÃ CHỌN
-Hoa hồng 1 xu -> hoa sen (lotus).
-Quả đào 5 xu -> hương (incense).
-OK 5 xu -> vòng hoa (garland).
-Cỏ 4 lá / Shamrock, ID 9875, 10 xu -> Aarti (aarti), đã nhận sẵn.
-Bó hoa 100 xu -> Golden Marigold Offering (marigold): dâng vòng vạn thọ.
-Bóng tình yêu 500 xu -> Royal Ganesha Offering (royal): dâng mâm đại lễ.
-Nhận bằng đúng tên + giá một món. Combo không đổi loại hiệu ứng.
-Nếu nhật ký báo chưa gán hiệu ứng, lấy ID quà thật rồi nhập ID=loại
-ở Ánh xạ ID quà thật, ví dụ ID_bo_hoa=marigold (thay ID bằng số thật).
-ID cũng cần đúng giá. Khi đã gán ID, tên không dùng để nhận diện loại đó.
+SÁU QUÀ CŨ GIỮ NGUYÊN
+Rose 1 → lotus; Peach 5 → incense; OK 5 → garland;
+Shamrock ID 9875, 10 xu → aarti; Bouquet 100 → marigold;
+Love Balloon 500 → royal. Zoom: 4,5 / 5,5 / 6 / 8 / 23 / 28 giây.
+Ánh xạ nâng cao: mỗi dòng ID=loại. Thêm mushika (299), galaxy (1.000).
+ID nâng cao ưu tiên hơn các ô mới. ID cũng phải khớp giá một món.
 
-CHỌN NHÂN VẬT
-Người xem bình luận đúng 1 để chọn nữ, 2 để chọn nam. Hướng dẫn trên bảng
-quà: พิมพ์ 1 = หญิง / พิมพ์ 2 = ชาย. Chữ bảng quà và xếp hạng đã tăng lớn.
-Có thể chọn trước khi tặng quà hoặc đổi ngay trong lúc dâng lễ. Nếu chưa
-tặng quà, bình luận chọn nhân vật chỉ ghi nhớ lựa chọn trong phiên.
-Vẫn nhận หญิง / ชาย, female / male, nữ / nam; mặc định xen kẽ nam và nữ.
+LƯU VÀ XỬ LÝ LỖI
+- live/data/session.json chứa số liệu, cấu hình, ghế và hàng LIVE.
+  Khi mở lại chọn Xem phiên LIVE đã lưu hoặc Kết nối LIVE. Nối nguồn
+  và mở tiếng lại. Giữ file này riêng, không chia sẻ cùng ZIP.
+- Dọn nhân vật giữ điểm; Bắt đầu phiên mới xóa điểm của chế độ đang chọn
+  sau xác nhận và yêu cầu đã ngắt nguồn. Nâng cấp thì Ctrl+F5 cả hai tab;
+  trong OBS làm mới bộ nhớ đệm nguồn trình duyệt.
+- Không có tiếng: bấm Thử loa / chuông ở bảng điều khiển; kiểm tra tắt tiếng
+  tab, Bộ trộn âm lượng Windows, đầu ra loa và nguồn/monitoring OBS.
+  Giọng im nhưng chuông có tiếng: kiểm tra bật giọng, âm lượng giọng,
+  Internet và nhật ký. TTS timeout 15 giây rồi nghỉ 30 giây trước thử lại.
+- Cổng 3000 bận: đóng CHAY-LIVE cũ. TikFinity không nối: kiểm tra cùng máy,
+  đúng cổng, WebSocket server đã bật; bấm Ngắt để dừng thử nối lại.
+- Chậm: chọn chất lượng hiệu ứng Nhẹ, đóng overlay dư. Lớp hình giảm độ
+  phân giải nhưng chữ, bảng tên và avatar lớp gần giữ đúng đầu ra.
+  Kiểm tra trên máy đang encode OBS; không suy ra FPS máy anh từ cloud.
 
-NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3 / 0.4 / 0.5 / 0.5.1 / 0.6 / 0.7 / 0.7.1 / 0.7.2
-Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.8 vào thư mục riêng.
-Nếu muốn giữ điểm và cấu hình, sao chép thư mục live/data của bản cũ
-sang live/data của bản mới trước khi chạy. Chỉ bản 0.1 được bật giọng
-một lần khi nâng cấp; bản 0.2 trở lên giữ cài đặt giọng của bạn.
-Bản 0.7 sửa một lần ID đã gán cho Cỏ bốn lá thành 9875=aarti. Các ánh xạ
-khác được giữ nguyên. Các lần chỉnh ID thủ công sau đó không bị ghi đè.
-Shamrock phải có giá một món 10 xu; quà 10 xu khác không bị nhận nhầm.
-Bản 0.4 thay cấu hình 24/36/60 cũ bằng 60 chỗ cố định và 10 nhân vật nền.
-Chế độ vào cảnh khi bình luận/vào phòng được tắt một lần khi nâng cấp;
-âm lượng, nhạc, giọng và điểm LIVE vẫn giữ theo cấu hình đã lưu.
-Từ bản 0.4 lên 0.5, giữ nguyên quy tắc vào cảnh khi tặng quà và các cài đặt
-âm thanh. Chuyển động tay mới mặc định Rõ; nhạc đổi sang bản 4:40. Nếu đã
-tắt Lặp nhạc ở bản cũ, bật lại và Lưu cấu hình để nhạc phát liên tục.
-Bản 0.5.1 sửa lỗi nhân vật mất hình vài giây khi quỳ/lạy. Sau khi chạy bản
-0.8, tải lại cả bảng điều khiển và cửa sổ LIVE bằng Ctrl+F5; trong OBS,
-làm mới bộ nhớ đệm của nguồn trình duyệt để nhận chữ và mã mới.
-Không sao chép node_modules từ bản cũ.
-
-KHỞI ĐỘNG LẠI
-Điểm LIVE và cấu hình nằm ở live/data/session.json. Khi mở lại, ứng dụng
-vào DEMO; bấm Xem phiên LIVE đã lưu hoặc Kết nối LIVE để tiếp tục số liệu.
-Cần kết nối TikFinity và bật âm thanh lại. Dọn nhân vật dọn cảnh/hàng chờ rồi đặt lại 10 nhân vật nền;
-Bắt đầu phiên mới sẽ xóa điểm của chế độ đang chọn sau xác nhận.
-
-NẾU CÓ LỖI
-- Không kết nối: kiểm tra TikFinity đang mở, WebSocket server đã bật,
-  đúng cổng và chạy cùng máy. Bấm Ngắt để dừng kết nối lại.
-- Cổng 3000 đang dùng: đóng cửa sổ CHAY-LIVE cũ trước khi mở lại.
-- Không có âm thanh: bấm Thử loa / chuông tại bảng điều khiển. Nút này
-  phát tiếng ngay ở tab đang mở. Nếu vẫn im, kiểm tra tắt tiếng tab,
-  Bộ trộn âm lượng Windows và thiết bị đầu ra.
-- Để có âm thanh LIVE: Lưu cấu hình, mở cửa sổ LIVE riêng và bấm
-  ♫ เปิดเสียง. Sẽ nghe một chuông xác nhận. Bản xem trước luôn tắt tiếng.
-  Kiểm tra nguồn âm OBS/LIVE Studio; đóng các cửa sổ overlay dư.
-- Không đọc tiếng Thái: kiểm tra bật giọng, Internet và nhật ký.
-- Bị chậm: chọn mưa hoa Nhẹ, tắt zoom/chuyển động tay, đóng các overlay dư.
-  Nguồn LIVE nhắm 30 khung hình/giây; khung xem trước nhỏ chạy 15.
-
-Gửi lại clip khoảng 45–60 giây gồm cảnh và một lượt quà để đánh giá.
-Gói không chứa Node.js, node_modules, dữ liệu LIVE hay tài khoản.
-Giữ LICENSE và giấy phép font khi chia sẻ lại.
+Gói có đầy đủ artwork/nhạc/font; không chứa Node.js, node_modules,
+dữ liệu LIVE hay tài khoản. Giữ LICENSE và giấy phép font/nhạc.
+Báo cáo kiểm thử: docs/BAN-GIAO-V0.9.md .

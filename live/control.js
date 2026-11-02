@@ -7,7 +7,7 @@ const soundCheck = new SceneAudio({ onMusicStatus: status => {
   $('musicPreviewStatus').textContent = ({ loading: 'Đang tải bản nhạc…', playing: 'Đang nghe thử tại bảng điều khiển.', ended: 'Đã phát hết bản nhạc. Bật lặp hoặc bấm nghe thử lại.', error: 'Không tải được nhạc. Tải lại trang hoặc kiểm tra gói cài đặt.' })[status.state] || '';
   if (['ended', 'error'].includes(status.state)) stopMusicPreview();
 } });
-const SETTINGS = ['title', 'subtitle', 'goal', 'joinOnEnter', 'joinOnChat', 'statueMotion', 'statueMotionLevel', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode'];
+const SETTINGS = ['title', 'subtitle', 'goal', 'joinOnEnter', 'joinOnChat', 'statueMotion', 'statueMotionLevel', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode', 'effectsEnabled', 'effectsVolume', 'voiceVolume', 'mushikaGiftId', 'mushikaGiftName', 'mushikaGiftIcon', 'galaxyGiftId', 'galaxyGiftName', 'galaxyGiftIcon'];
 let socket, mode = 'demo', bots = false, toastTimer;
 const people = new Map(), numbers = new Intl.NumberFormat('en-US');
 const obsURL = location.origin + '/live/overlay.html'; $('obsURL').textContent = obsURL;
@@ -22,7 +22,7 @@ function readSettings() { return Object.fromEntries(SETTINGS.map(k => { const el
 function stats(m) { if (!m.stats) return; $('coins').textContent = numbers.format(m.stats.coins); $('giftTotal').textContent = numbers.format(m.stats.gifts); $('likes').textContent = numbers.format(m.stats.likes); }
 function seating(m) {
   $('count').textContent = m.seated;
-  $('queueStatus').textContent = `${m.ambient} nhân vật nền · ${m.seated} người ở khu quỳ · ${m.waiting} người chờ ghế · ${m.departing} người đang rời chỗ · ${m.standing || 0} người đứng mép dưới · ${m.entryWaiting || 0} người chờ hiện ở hàng đứng`;
+  $('queueStatus').textContent = `${m.ambient} nhân vật nền · ${m.seated} người ở khu quỳ · ${m.waiting} người chờ ghế · ${m.departing} người đang rời chỗ · ${(m.standing || 0) + (m.entryWaiting || 0)} người chờ · vẽ tối đa ${m.standing || 0} avatar · ${m.rituals || 0} lượt nghi thức đang chờ`;
 }
 function sourceStatus(m) {
   const label = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', connected: 'Đã kết nối nguồn', reconnecting: 'Đang kết nối lại…', disconnected: 'Đã mất kết nối', error: 'Lỗi kết nối' }[m.status] || m.status;
@@ -43,6 +43,7 @@ function connect() {
       fillSettings(m.settings); sourceStatus(m.tiktok); stats(m); seating(m.seating);
     }
     if (m.t === 'stats') stats(m);
+    if (m.t === 'gift-guide') fillSettings(m.settings);
     if (m.t === 'tiktok') sourceStatus(m);
     if (m.t === 'seating') seating(m);
     if (m.t === 'join' && !m.v.ambient) { people.set(m.v.id, m.v); $('count').textContent = people.size; }
@@ -65,6 +66,8 @@ for (const b of document.querySelectorAll('[data-entry-fill]')) b.onclick = () =
 $('simText').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('chat').click(); } };
 for (const b of document.querySelectorAll('[data-gift]')) b.onclick = () => send('gift', { name: $('simName').value, gift: b.dataset.name, giftId: b.dataset.id, kind: b.dataset.gift, skin: $('simSkin').value, count: +$('repeat').value, diamonds: +b.dataset.unit });
 for (const b of document.querySelectorAll('[data-fill]')) b.onclick = () => send('fill', { n: +b.dataset.fill });
+$('giftBurst').onclick = () => send('burst', { name: $('simName').value, skin: $('simSkin').value });
+$('resetDemo').onclick = () => send('demo-reset');
 $('bots').onclick = () => send('bots', { on: !bots, pace: $('botPace').value });
 $('settingsForm').onsubmit = e => { e.preventDefault(); send('settings', { settings: readSettings() }); };
 $('say').onclick = () => { send('settings', { settings: readSettings() }); send('say', { text: $('sayText').value }); };

@@ -12,7 +12,8 @@ export function createEventHandler({ chat, gift, member, like, follow }) {
     const id = d.uniqueId || d.userId || d.user?.uniqueId || d.user?.userId;
     if (!id || !['chat', 'gift', 'member', 'like', 'follow'].includes(event)) return;
     const name = String(d.nickname || d.user?.nickname || id);
-    const avatar = typeof d.profilePictureUrl === 'string' ? d.profilePictureUrl : '';
+    const picture = d.profilePictureUrl || d.user?.profilePictureUrl || d.user?.profilePicture?.url?.[0] || d.user?.avatarThumb?.urlList?.[0] || d.profilePicture?.urls?.[0];
+    const avatar = typeof picture === 'string' && picture.length < 2048 ? picture : '';
     // Streak updates are cumulative; apply only the final count.
     if (event === 'gift' && Number(d.giftType) === 1 && ![true, 1, '1', 'true'].includes(d.repeatEnd)) return;
     const now = Date.now();
@@ -22,7 +23,12 @@ export function createEventHandler({ chat, gift, member, like, follow }) {
     if (key) { seen.set(key, now); if (seen.size > 10000) seen.delete(seen.keys().next().value); }
     const positive = (v, max) => Number.isFinite(Number(v)) ? Math.max(1, Math.min(max, Math.floor(Number(v)))) : 1;
     if (event === 'chat') chat?.(String(id), name, String(d.comment || ''), avatar);
-    if (event === 'gift') gift?.(String(id), name, String(d.giftName || 'ของขวัญ'), positive(d.repeatCount, 9999), positive(d.diamondCount, 50000), avatar, String(d.giftId ?? d.gift?.id ?? ''));
+    if (event === 'gift') {
+      const args = [String(id), name, String(d.giftName || 'ของขวัญ'), positive(d.repeatCount, 9999), positive(d.diamondCount, 50000), avatar, String(d.giftId ?? d.gift?.id ?? '')];
+      const icon = d.giftPictureUrl || d.gift?.image?.url_list?.[0] || d.extendedGiftInfo?.image?.url_list?.[0];
+      if (icon) args.push(undefined, undefined, icon);
+      gift?.(...args);
+    }
     if (event === 'member') member?.(String(id), name, avatar);
     if (event === 'like') like?.(String(id), positive(d.likeCount, 100000));
     if (event === 'follow') follow?.(String(id), name);

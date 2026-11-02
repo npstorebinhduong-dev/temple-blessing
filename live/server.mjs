@@ -10,6 +10,7 @@ import { connectTikFinity, createEventHandler } from './tikfinity.mjs';
 import { RITUALS, giftRitual, parseGiftMap, upgradeShamrockMap } from './gift-rituals.mjs';
 import { DEFAULTS, DEMO_NAMES, Room, cleanName, positive, defaultSkin, skinFromComment } from './ganesha.mjs';
 import { EngagementClock, SpeechQueue, blessingForGift } from './engagement.mjs';
+import { BlessingSession, GANESHA_BLESSING, BLESSING_VOICE } from './blessing-session.js';
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(DIR, '..');
@@ -31,6 +32,10 @@ const SETTING_RULES = {
   statueMotionLevel: v => ['soft', 'clear', 'strong'].includes(v) ? v : 'clear',
   musicLoop: Boolean, cinematicZoom: Boolean,
   musicVolume: v => clamp(v, 0, 100),
+  effectsEnabled: Boolean, effectsVolume: v => clamp(v, 0, 100), voiceVolume: v => clamp(v, 0, 100),
+  mushikaGiftId: giftIdSetting, galaxyGiftId: giftIdSetting,
+  mushikaGiftName: v => String(v || '').normalize('NFC').slice(0, 100), galaxyGiftName: v => String(v || '').normalize('NFC').slice(0, 100),
+  mushikaGiftIcon: giftIconSetting, galaxyGiftIcon: giftIconSetting,
   petalMode: v => v === 'light' ? 'light' : 'full',
   idlePrompts: Boolean, ambientCrowd: Boolean,
   characterMode: v => ['mixed', 'male', 'female'].includes(v) ? v : 'mixed',
@@ -39,6 +44,20 @@ const SETTING_RULES = {
   goal: v => clamp(v, 1, 99999999),
   giftMap: v => { const s = String(v).slice(0, 5000); parseGiftMap(s); return s; },
 };
+function giftIdSetting(v) {
+  const s = String(v || '').trim(); if (s && !/^\d{1,20}$/.test(s)) throw new Error('ID quà phải là số trong nhật ký TikFinity.'); return s;
+}
+function giftIconSetting(v) {
+  const s = String(v || '').trim(); if (!s) return '';
+  try { const u = new URL(s); if (u.protocol === 'https:' && !u.username && !u.password && s.length < 2048) return s; } catch {}
+  throw new Error('Icon quà cần URL HTTPS từ dữ liệu TikTok. Có thể để trống.');
+}
+function giftOverrides() {
+  const map = Object.create(null);
+  if (settings.mushikaGiftId) map[settings.mushikaGiftId] = 'mushika';
+  if (settings.galaxyGiftId) map[settings.galaxyGiftId] = 'galaxy';
+  return Object.assign(map, parseGiftMap(settings.giftMap));
+}
 function applySettings(input = {}) {
   const changes = {};
   for (const [key, rule] of Object.entries(SETTING_RULES)) if (key in input) changes[key] = rule(input[key]);
@@ -76,7 +95,7 @@ function persist() {
   clearTimeout(persistTimer); persistTimer = null;
   try {
     const file = path.join(DATA, 'session.json');
-    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 5, settings, live: rooms.live.serialize() }));
+    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 6, settings, live: rooms.live.serialize() }));
     fs.renameSync(file + '.tmp', file);
     return true;
   } catch (e) { addLog('Không lưu được phiên: ' + e.message); return false; }
@@ -91,12 +110,13 @@ function entranceChanged() {
   if (lastEntranceRevision === room.entrance.revision) return;
   lastEntranceRevision = room.entrance.revision;
   broadcast({ t: 'entrance', ...room.entrance.snapshot() }); seatingChanged();
+  if (mode === 'live') saveSoon();
 }
 function onMember(id, name, avatar = '', skin) {
   const existing = room.find(id);
   if (!id || !settings.joinOnEnter || existing && existing.seatState !== 'waiting') return;
   const chosen = existing?.skin || skin || room.entrance.find(id)?.skin || room.choices.get(String(id)) || defaultSkin(id, settings.characterMode);
-  room.enter(id, name, { avatar, skin: chosen, demo: mode === 'demo' }); entranceChanged();
+  room.enter(id, name, { avatar, skin: chosen, demo: mode === 'demo' }); // Coalesced by the 250ms scene tick.
 }
 function seat(id, name, avatar = '', skin) {
   const old = room.find(id) || room.entrance.find(id);
@@ -104,7 +124,6 @@ function seat(id, name, avatar = '', skin) {
   if (!result) return null;
   for (const event of result.events) broadcast(event);
   entranceChanged();
-  if (result.overflow) addLog('Hàng chờ đã đủ 500 người; vẫn ghi nhận quà và lời cầu chúc. Người tặng có thể vào lại ở lần tương tác sau.');
   seatingChanged();
   return result.viewer;
 }
@@ -122,21 +141,32 @@ function onChat(id, name, text, avatar, skin) {
   if (room.entrance.update(id, { name: cleanName(name), skin: chosen || undefined })) entranceChanged();
   broadcast({ t: 'chat', id: String(id), name: cleanName(name), text: String(text || '').slice(0, 160) });
 }
-function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoKind, skin) {
+function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoKind, skin, giftIcon = '') {
   if (!id) return;
   id = String(id); const v = seat(id, name, avatar, skin);
   const values = room.gift(id, name, count, unitCoins);
   const ritual = mode === 'demo' && Object.hasOwn(RITUALS, demoKind || '') && RITUALS[demoKind].unitCoins === values.unitCoins
-    ? RITUALS[demoKind] : giftRitual(giftName, values.unitCoins, giftId, parseGiftMap(settings.giftMap));
+    ? RITUALS[demoKind] : giftRitual(giftName, values.unitCoins, giftId, giftOverrides());
+  // Learn display metadata only from a matching real event with a Thai name.
+  // This never guesses an unknown 299-coin gift from its price.
+  if (mode === 'live' && ['galaxy', 'mushika'].includes(ritual?.kind) && /\p{Script=Thai}/u.test(giftName) && !settings[`${ritual.kind}GiftName`]) {
+    const changes = { [`${ritual.kind}GiftName`]: String(giftName).slice(0, 100) };
+    if (giftIcon) { try { changes[`${ritual.kind}GiftIcon`] = giftIconSetting(giftIcon); } catch {} }
+    Object.assign(settings, changes); broadcast({ t: 'gift-guide', settings: changes });
+  }
   engagement.gift(Date.now());
   if (currentTTS?.tag === 'idle') currentTTS.cancel();
-  const blessing = blessingForGift(v?.name || name, ritual?.kind, room.stats.gifts);
+  const blessing = ritual?.kind === 'galaxy' ? GANESHA_BLESSING : blessingForGift(v?.name || name, ritual?.kind, room.stats.gifts);
   const message = { t: 'gift', id, name: cleanName(name), skin: v?.skin, giftName: String(giftName || 'ของขวัญ').slice(0, 80), giftId: String(giftId), ...values, ritual, blessing, ...engagement.snapshot() };
   broadcast(message); statsChanged();
-  if (ritual && !room.rituals.enqueue(message, Date.now())) addLog('Hàng chờ nghi lễ đã đầy; tổng xu và lời cầu chúc vẫn được ghi nhận.');
+  if (ritual) {
+    room.rituals.enqueue(message, Date.now());
+    broadcast({ t: 'ritual-wait', name: message.name, queued: room.rituals.pending.length });
+  }
   seatingChanged();
   addLog(`${mode === 'demo' ? 'DEMO' : 'LIVE'} · ${message.name} · ${message.giftName} ×${values.count} · ${values.unitCoins} xu/quà · ID ${giftId || '—'} → ${ritual?.kind || 'chưa gán hiệu ứng'}`);
-  say(blessing, 'gift');
+  if (!ritual && room.rituals.active?.ritual.kind !== 'galaxy') say(blessing, 'gift');
+  if (mode === 'live') saveSoon();
 }
 function onLike(id, n) { n = positive(n, 100000); room.stats.likes += n; broadcast({ t: 'like', id, n }); statsChanged(); }
 function onFollow(id, name) { broadcast({ t: 'follow', id, name: cleanName(name) }); }
@@ -145,11 +175,13 @@ const eventHandler = () => createEventHandler({ chat: onChat, gift: onGift, like
 
 // Voice failures never block gifts. Idle speech yields immediately to a donor.
 let ttsBusy = false, ttsEpoch = 0, currentTTS = null, retrySpeechAt = 0, speechSequence = 0;
+let blessingSession = null;
 const ttsQueue = new SpeechQueue();
 const offlineAudio = process.env.GANESHA_OFFLINE_AUDIO === '1';
 const esc = s => String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
 function say(text, tag = 'manual', id = `speech-${++speechSequence}`) {
   if (!settings.voiceEnabled || offlineAudio || Date.now() < retrySpeechAt) return false;
+  if (tag !== 'blessing' && room.rituals.active?.ritual.kind === 'galaxy') return false;
   if (tag !== 'idle' && currentTTS?.tag === 'idle') currentTTS.cancel();
   if (tag === 'idle' && (speechBusy() || !speechListeners().length)) return false;
   if (!ttsQueue.push({ text: String(text).slice(0, 400), tag, id, epoch: ttsEpoch }, currentTTS?.tag)) {
@@ -166,28 +198,34 @@ async function pumpTTS() {
   const cancelled = new Promise((_, reject) => { cancelReject = reject; });
   currentTTS = { tag, cancel: () => { job.cancelled = true; cancelReject(new Error('cancelled')); try { tts.close(); } catch {} } };
   try {
-    const cacheKey = createHash('sha256').update(JSON.stringify([text, settings.voice, settings.pitch, settings.rate])).digest('hex').slice(0, 20);
-    const cacheFile = path.join(TTS_DIR, `idle-${cacheKey}.mp3`);
+    const voiceSettings = tag === 'blessing' ? BLESSING_VOICE : settings;
+    const cacheKey = createHash('sha256').update(JSON.stringify([text, voiceSettings.voice, voiceSettings.pitch, voiceSettings.rate])).digest('hex').slice(0, 20);
+    const cachePrefix = tag === 'blessing' ? 'blessing' : 'idle';
+    const cacheFile = path.join(TTS_DIR, `${cachePrefix}-${cacheKey}.mp3`);
     const operation = (async () => {
-      if (tag === 'idle' && fs.existsSync(cacheFile)) return fs.readFileSync(cacheFile);
-      await tts.setMetadata(settings.voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
-      const { audioStream } = tts.toStream(esc(text), { pitch: `${settings.pitch >= 0 ? '+' : ''}${settings.pitch}Hz`, rate: `${settings.rate >= 0 ? '+' : ''}${settings.rate}%` });
+      const prerecorded = path.join(ROOT, 'assets', 'ganesha', 'audio', 'ganesha-blessing-th.mp3');
+      if (tag === 'blessing' && fs.existsSync(prerecorded)) return fs.readFileSync(prerecorded);
+      if (['idle', 'blessing'].includes(tag) && fs.existsSync(cacheFile)) return fs.readFileSync(cacheFile);
+      await tts.setMetadata(voiceSettings.voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+      const { audioStream } = tts.toStream(esc(text), { pitch: `${voiceSettings.pitch >= 0 ? '+' : ''}${voiceSettings.pitch}Hz`, rate: `${voiceSettings.rate >= 0 ? '+' : ''}${voiceSettings.rate}%` });
       const chunks = [];
       await new Promise((resolve, reject) => { audioStream.on('data', b => chunks.push(b)); audioStream.on('end', resolve); audioStream.on('error', reject); });
       const buffer = Buffer.concat(chunks); if (!buffer.length) throw new Error('Không có dữ liệu âm thanh'); return buffer;
     })();
     const data = await Promise.race([operation, cancelled, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('TTS quá 15 giây')), 15000); })]);
-    if (epoch === ttsEpoch && settings.voiceEnabled && !job.cancelled && (tag !== 'idle' || engagement.isCurrent(id))) {
-      const file = tag === 'idle' ? `idle-${cacheKey}.mp3` : `voice-${Date.now()}.mp3`;
+    if (epoch === ttsEpoch && settings.voiceEnabled && !job.cancelled && (tag !== 'idle' || engagement.isCurrent(id))
+      && (tag !== 'blessing' || blessingSession?.id === id && blessingSession.active.speech.state === 'loading')) {
+      const file = ['idle', 'blessing'].includes(tag) ? `${cachePrefix}-${cacheKey}.mp3` : `voice-${Date.now()}.mp3`;
       fs.writeFileSync(path.join(TTS_DIR, file), data);
       const listeners = speechListeners();
       if (tag === 'idle') engagement.delivered(id, listeners, Date.now());
+      if (tag === 'blessing') { blessingSession.delivered(listeners, Date.now()); announceBlessing(); }
       for (const listener of listeners) {
         listener.speechJobs.add(id);
         listener.send(JSON.stringify({ t: 'tts', id, url: '/live/tts/' + file, tag }));
       }
       job.delivered = true;
-      const old = fs.readdirSync(TTS_DIR).filter(f => /^(voice-\d+|idle-[a-f0-9]+)\.mp3$/.test(f)).map(f => ({ f, at: fs.statSync(path.join(TTS_DIR, f)).mtimeMs })).sort((a, b) => a.at - b.at);
+      const old = fs.readdirSync(TTS_DIR).filter(f => /^(voice-\d+|idle-[a-f0-9]+|blessing-[a-f0-9]+)\.mp3$/.test(f)).map(f => ({ f, at: fs.statSync(path.join(TTS_DIR, f)).mtimeMs })).sort((a, b) => a.at - b.at);
       while (old.length > 50) fs.unlinkSync(path.join(TTS_DIR, old.shift().f));
     }
   } catch (e) {
@@ -195,6 +233,7 @@ async function pumpTTS() {
   }
   finally {
     if (tag === 'idle' && !job.delivered) engagement.finish(id, Date.now());
+    if (tag === 'blessing' && !job.delivered && blessingSession?.id === id) { blessingSession.fallback(Date.now()); announceBlessing(); }
     clearTimeout(timer); try { tts.close(); } catch {} ttsBusy = false; currentTTS = null; setTimeout(pumpTTS, 50);
   }
 }
@@ -203,12 +242,37 @@ function speechBusy() { return ttsBusy || !!ttsQueue.length || speechListeners()
 function resetSpeech() {
   ttsEpoch++; ttsQueue.clear(); currentTTS?.cancel(); engagement.cancel(Date.now());
   for (const c of wss.clients) c.speechJobs.clear();
+  if (blessingSession) { blessingSession.fallback(Date.now()); announceBlessing(); }
+}
+function announceBlessing() {
+  if (blessingSession?.active !== room.rituals.active) return;
+  broadcast({ t: 'ritual-progress', active: room.rituals.active, serverTime: Date.now() });
+}
+function advanceBlessing(now) {
+  const active = room.rituals.active;
+  if (!active || active.ritual.kind !== 'galaxy') { blessingSession = null; return; }
+  if (!blessingSession && now - active.beganAt >= 4500) {
+    blessingSession = new BlessingSession(active, now);
+    if (!speechListeners().length || !say(active.blessing, 'blessing', blessingSession.id)) blessingSession.fallback(now);
+    announceBlessing();
+  } else if (blessingSession?.tick(now)) {
+    broadcast({ t: 'speech-cancel', id: blessingSession.id }); announceBlessing();
+  }
 }
 setInterval(() => {
-  for (const event of room.advance(Date.now())) broadcast(event);
+  advanceBlessing(Date.now());
+  for (const event of room.advance(Date.now())) {
+    if (event.t === 'ritual') {
+      blessingSession = null;
+      if (event.active?.ritual.kind === 'galaxy') { resetSpeech(); broadcast({ t: 'speech-clear' }); }
+      else if (event.active) say(event.active.blessing, 'gift');
+    }
+    broadcast(event);
+    if (mode === 'live') saveSoon();
+  }
   entranceChanged();
   seatingChanged();
-  const prompt = engagement.tick(Date.now(), { enabled: settings.idlePrompts, intervalMs: settings.idleEverySec * 1000, busy: speechBusy() });
+  const prompt = engagement.tick(Date.now(), { enabled: settings.idlePrompts, intervalMs: settings.idleEverySec * 1000, busy: speechBusy() || room.rituals.active?.ritual.kind === 'galaxy' });
   if (prompt) {
     broadcast({ t: 'engagement', ...prompt });
     if (!say(prompt.text, 'idle', prompt.id)) engagement.finish(prompt.id, Date.now());
@@ -223,7 +287,8 @@ function disconnectSource() {
 }
 function activate(nextMode) {
   stopBots(); resetSpeech(); engagement.reset(Date.now());
-  mode = nextMode; room = rooms[mode]; room.rituals.clear(); lastSeatingSummary = ''; lastEntranceRevision = -1; broadcast(snapshot());
+  room.rituals.pause(); blessingSession = null;
+  mode = nextMode; room = rooms[mode]; lastSeatingSummary = ''; lastEntranceRevision = -1; broadcast(snapshot());
 }
 async function connectSource(message) {
   disconnectSource(); activate('live');
@@ -284,7 +349,7 @@ function setBots(on, pace) {
   broadcast({ t: 'bots', on: true }, 'control');
 }
 function onControl(m) {
-  if (['chat', 'gift', 'fill', 'bots', 'member', 'entry-fill'].includes(m.cmd) && mode !== 'demo') throw new Error('Chuyển sang Demo để thử tương tác. Dữ liệu LIVE được giữ riêng.');
+  if (['chat', 'gift', 'fill', 'bots', 'member', 'entry-fill', 'burst', 'demo-reset'].includes(m.cmd) && mode !== 'demo') throw new Error('Chuyển sang Demo để thử tương tác. Dữ liệu LIVE được giữ riêng.');
   switch (m.cmd) {
     case 'connect': void connectSource(m); break;
     case 'disconnect': disconnectSource(); break;
@@ -297,11 +362,17 @@ function onControl(m) {
       onMember('sim_' + cleanName(m.name), m.name, '', m.skin); break;
     case 'entry-fill':
       if (!settings.joinOnEnter) throw new Error('Bật Người vừa vào phòng đứng xếp hàng ở mép dưới rồi lưu cấu hình.');
-      for (let i = 0; i < positive(m.n, 200); i++) onMember(`entry_demo_${i}`, DEMO_NAMES[i % DEMO_NAMES.length]);
+      for (let i = 0; i < positive(m.n, 500); i++) onMember(`entry_demo_${i}`, `${DEMO_NAMES[i % DEMO_NAMES.length]} ${Math.floor(i / DEMO_NAMES.length) + 1}`);
       break;
+    case 'burst':
+      for (const [i, kind] of ['mushika', 'galaxy', 'lotus', 'galaxy', 'mushika'].entries()) {
+        onGift(`sim_${cleanName(m.name)}`, m.name, `DEMO ${kind}`, i === 2 ? 3 : 1, RITUALS[kind].unitCoins, '', '', kind, m.skin);
+      }
+      break;
+    case 'demo-reset': startDemo(); break;
     case 'fill': fillDemo(positive(m.n, 500)); break;
     case 'bots': setBots(!!m.on, m.pace); break;
-    case 'clear': stopBots(); room.clearScene(settings.ambientCrowd); broadcast(snapshot()); break;
+    case 'clear': stopBots(); resetSpeech(); blessingSession = null; room.clearScene(settings.ambientCrowd); broadcast(snapshot()); if (mode === 'live') saveSoon(); break;
     case 'reset':
       if (tiktokState.status !== 'idle') throw new Error('Ngắt nguồn sự kiện trước khi bắt đầu phiên mới.');
       rooms[mode] = newRoom(); activate(mode); if (mode === 'live') persist(); break;
@@ -372,8 +443,10 @@ wss.on('connection', (ws, req) => {
       if (ws.role === 'control') { if (m?.t === 'ctl') onControl(m); }
       else if (!ws.preview && m?.t === 'speech-status') {
         ws.audioReady = m.ready === true;
+        if (ws.speechJobs.has(m.id) && blessingSession?.receipt(m.id, ws, m.state, Date.now())) announceBlessing();
         if (!ws.audioReady) {
           ws.speechJobs.clear(); engagement.removeListener(ws, Date.now());
+          if (blessingSession?.remove(ws, Date.now())) announceBlessing();
         } else if (['ended', 'cancelled', 'error', 'skipped'].includes(m.state) && ws.speechJobs.delete(m.id)) {
           engagement.listenerDone(m.id, ws, Date.now());
         }
@@ -382,7 +455,7 @@ wss.on('connection', (ws, req) => {
     catch (e) { ws.send(JSON.stringify({ t: 'error', message: e.message })); }
   });
   ws.on('error', () => {});
-  ws.on('close', () => engagement.removeListener(ws, Date.now()));
+  ws.on('close', () => { engagement.removeListener(ws, Date.now()); if (blessingSession?.remove(ws, Date.now())) announceBlessing(); });
 });
 server.listen(PORT, HOST, () => { startDemo(); addLog(`Ganesha LIVE · http://localhost:${PORT}/live/control.html`); });
 server.on('error', e => { console.error(e.code === 'EADDRINUSE' ? `Cổng ${PORT} đang được dùng. Đóng phiên cũ rồi chạy lại.` : e.message); process.exit(1); });

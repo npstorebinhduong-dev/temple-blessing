@@ -1,0 +1,5 @@
+full {"fps": 23.459909522430024, "Timestamp": 6.181, "ScriptDuration": 0.44, "TaskDuration": 5.419, "LayoutDuration": 0, "RecalcStyleDuration": 0.04}
+HOT [('(program)', '', 4241), ('(idle)', '', 552), ('frame', 'overlay.js', 47), ('drawImage', '', 38), ('drawImage', '', 37), ('drawImage', '', 26), ('(garbage collector)', '', 17), ('drawViewer', 'overlay.js', 16), ('save', '', 14), ('draw', 'avatar-crowd.js', 13), ('tile', 'avatar-crowd.js', 13), ('save', '', 13)]
+no_blur {"fps": 24.464091754900576, "Timestamp": 6.05, "ScriptDuration": 0.444, "TaskDuration": 5.724, "LayoutDuration": 0.0, "RecalcStyleDuration": 0.034}
+no_label_compositing {"fps": 23.870961538905277, "Timestamp": 6.032, "ScriptDuration": 0.332, "TaskDuration": 3.807, "LayoutDuration": 0.0, "RecalcStyleDuration": 0.031}
+light {"fps": 20.297059105845364, "Timestamp": 6.011, "ScriptDuration": 0.326, "TaskDuration": 3.152, "LayoutDuration": 0.001, "RecalcStyleDuration": 0.03}

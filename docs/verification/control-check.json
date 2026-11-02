@@ -1,0 +1,43 @@
+{
+  "full_idle_warm": {
+    "fps": 8.540132433937744,
+    "seconds": 8.0795,
+    "scene": {
+      "music": "off",
+      "rendered": "313",
+      "zoom": "1.000",
+      "zoomTarget": "",
+      "ritualKind": "",
+      "armLotus": "-0.1066",
+      "armHammer": "0.1939",
+      "dimmer": "0.000",
+      "bowing": "38",
+      "apparition": "0",
+      "blessingArm": "0",
+      "avatarRendered": "88",
+      "avatarCache": "0",
+      "avatarTiles": "140",
+      "avatarLoading": "0",
+      "ceremonyPhase": "",
+      "ceremonySkin": "",
+      "standing": "88",
+      "standingMale": "44",
+      "people": "50",
+      "ambient": "10",
+      "waiting": "0",
+      "male": "25",
+      "entryWaiting": "412",
+      "entryTotal": "500",
+      "entryReal": "0",
+      "entryDemo": "500",
+      "departing": "0",
+      "queued": "0",
+      "frameMeanMs": "99.23",
+      "spriteCache": "48",
+      "nameCache": "50",
+      "fxNodes": "0"
+    }
+  },
+  "errors": [],
+  "controls": "PASS: save metadata/volumes,500 avatars,50 donors,male Mushika,Galaxy,mid-ritual reset,5 separate burst turns,total2601coins"
+}

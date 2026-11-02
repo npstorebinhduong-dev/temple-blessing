@@ -47,7 +47,7 @@ test('upgrading the old Clover binding preserves the other five gift mappings', 
   assert.equal(upgraded['100'], 'marigold'); assert.equal(upgraded['500'], 'royal');
   assert.equal(giftRitual('Shamrock', 10, '9875', upgraded)?.kind, 'aarti');
   assert.equal(giftRitual('Other ten coin gift', 10, '99', upgraded), null);
-  assert.deepEqual(Object.values(RITUALS).map(r => r.duration), [4500,5500,6000,8000,23000,28000]);
+  assert.deepEqual(Object.values(RITUALS).map(r => r.duration), [4500,5500,6000,8000,23000,28000,14000,20000]);
 });
 test('a 500-rose streak produces one lotus event and counts 500, including string final flags', () => {
   const result = [], room = new Room();
@@ -78,29 +78,31 @@ test('demo and live rooms have independent totals and participants', () => {
   assert.equal(live.stats.coins, 3); assert.equal(demo.stats.coins, 4500);
   assert.equal(live.top()[0].name, 'จริง');
 });
-test('visual queue merges pending repeats, expires stale effects, and stays bounded under bursts', () => {
-  const queue = new RitualQueue({ limit: 3, maxAge: 5000 });
-  const message = (id, count = 1) => ({ id, count, name: '<img src=x>', ritual: giftRitual('Rose', 1) });
-  queue.enqueue(message('a'), 0); const active = queue.tick(0); assert.equal(active.id, 'a');
-  queue.enqueue(message('b', 2), 50); queue.enqueue(message('b', 3), 60);
-  assert.equal(queue.pending.length, 1); assert.equal(queue.pending[0].count, 5);
-  for (let i = 0; i < 20; i++) queue.enqueue(message(String(i)), 100);
-  assert.equal(queue.pending.length, 3); assert.equal(queue.active.id, 'a');
-  assert.equal(queue.tick(6000), null);
-  queue.enqueue(message('fresh'), 6001); assert.equal(queue.tick(6001).id, 'fresh');
-  queue.clear(); assert.equal(queue.tick(6002), null); assert.equal(queue.pending.length, 0);
+test('every separate final gift stays in FIFO order, including repeats by one donor, with no expiry or price priority', () => {
+  const q = new RitualQueue();
+  const kinds = ['lotus', 'galaxy', 'mushika', 'lotus', 'royal'];
+  for (let i=0;i<1000;i++) q.enqueue({id:'same',count:i%3+1,name:'Name',ritual:RITUALS[kinds[i%kinds.length]]},i);
+  q.prune(999999999); assert.equal(q.pending.length,1000);
+  let now=999999999;const turns=new Set();
+  for(let i=0;i<1000;i++){
+    const active=q.tick(now);assert.equal(active.ritual.kind,kinds[i%kinds.length]);assert.equal(active.count,i%3+1);
+    turns.add(active.turn);now=active.until;
+  }
+  assert.equal(turns.size,1000);assert.equal(q.tick(now),null);assert.equal(q.dropped,0);
 });
-
-test('premium ceremonies survive a basic gift burst and run before waiting basics', () => {
-  const queue = new RitualQueue({ limit: 2, maxAge: 5000 });
-  const message = (id, name, coins) => ({ id, name: id, count: 1, ritual: giftRitual(name, coins) });
-  queue.enqueue(message('first', 'Rose', 1), 0); queue.tick(0);
-  queue.enqueue(message('royal', 'Love Balloon', 500), 1);
-  queue.enqueue(message('golden', 'Bouquet', 100), 2);
-  for (let i = 0; i < 50; i++) queue.enqueue(message('basic'+i, 'Rose', 1), 3);
-  const royal = queue.tick(4500); assert.equal(royal.id, 'royal'); assert.equal(royal.until - royal.beganAt, 28000);
-  assert.equal(queue.tick(32499).id, 'royal');
-  assert.equal(queue.tick(32500).id, 'golden');
-  assert.equal(queue.tick(55500), null);
-  queue.clear(); assert.equal(queue.dropped, 0);
+test('the first waiting donor cannot be overtaken and pending turns survive pause/restore',()=>{
+ const q=new RitualQueue();q.enqueue({id:'outside',count:2,ritual:RITUALS.mushika},0);q.enqueue({id:'seated',count:1,ritual:RITUALS.galaxy},1);
+ assert.equal(q.tick(20,item=>item.id==='seated'),null);
+ assert.equal(q.tick(21).id,'outside');q.pause();assert.equal(q.pending.length,2);
+ const restored=new RitualQueue();restored.restore(JSON.parse(JSON.stringify(q.serialize())));
+ assert.equal(restored.tick(30).id,'outside');assert.equal(restored.tick(14030).id,'seated');
+});
+test('new gifts require verified ID or explicit configuration and correct unit price, never a 299/1000 price guess',()=>{
+ assert.equal(giftRitual('localized',1000,'11046').kind,'galaxy');assert.equal(giftRitual('Galaxy',1000).kind,'galaxy');
+ assert.equal(giftRitual('Galaxy',299,'11046'),null);assert.equal(giftRitual('Unknown',1000,'42'),null);
+ assert.equal(giftRitual('Bạn đồng hành',299,'42'),null);
+ const overrides=parseGiftMap('42=mushika\n99=galaxy');
+ assert.equal(giftRitual('localized',299,'42',overrides).kind,'mushika');
+ assert.equal(giftRitual('Galaxy',1000,'11046',overrides),null);
+ assert.equal(giftRitual('localized',1000,'99',overrides).kind,'galaxy');
 });

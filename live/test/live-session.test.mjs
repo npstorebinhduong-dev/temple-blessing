@@ -1,3 +1,4 @@
+import { entrancePosition } from '../entrance-line.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
@@ -58,7 +59,7 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   assert.equal(result.coins, 15); assert.equal(result.ritual.kind, 'garland'); assert.equal(result.giftId, '9001');
   assert.equal(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.slot, 11);
   assert.equal(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.skin, 'female');
-  assert.deepEqual(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.entryFrom, { x: 54, y: 1848, height: 128 });
+  assert.deepEqual(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.entryFrom, entrancePosition(1));
   assert.equal(overlay.messages.filter(m => m.t === 'entrance').at(-1).people.length, 0);
   await until(() => overlay.messages.some(m => m.t === 'stats' && m.stats.coins === 15));
   source.send(JSON.stringify({ event: 'chat', data: { uniqueId: 'thai', nickname: 'น้องพลอย', comment: '2' } }));

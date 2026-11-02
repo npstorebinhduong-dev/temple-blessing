@@ -5,6 +5,10 @@ export const DEFAULTS = Object.freeze({
   title: 'พระพิฆเนศ', subtitle: 'โอม ศรี คเณศายะ นะมะฮา',
   voice: 'th-TH-PremwadeeNeural', voiceEnabled: true, pitch: -5, rate: -8,
   music: true, musicLoop: true, musicVolume: 60, volume: 35, joinOnEnter: true, joinOnChat: false,
+  effectsEnabled: true, effectsVolume: 75, voiceVolume: 100,
+  mushikaGiftId: '', mushikaGiftName: '', mushikaGiftIcon: '',
+  galaxyGiftId: '11046', galaxyGiftName: '',
+  galaxyGiftIcon: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/79a02148079526539f7599150da9fd28.png~tplv-obj.webp',
   cinematicZoom: true, petalMode: 'full',
   goal: 4995, giftMap: '', characterMode: 'mixed',
   idlePrompts: true, idleEverySec: 10, ambientCrowd: true, statueMotion: true, statueMotionLevel: 'clear',
@@ -15,7 +19,8 @@ export const DEMO_NAMES = ['ศิริพร', 'น้องพลอย', '�
 export const positive = (value, max = Number.MAX_SAFE_INTEGER) => Number.isFinite(Number(value))
   ? Math.max(1, Math.min(max, Math.floor(Number(value)))) : 1;
 const nonnegative = value => Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
-export const cleanName = value => Array.from(String(value || 'ผู้ร่วมบูชา').normalize('NFC')).slice(0, 48).join('');
+const graphemes = new Intl.Segmenter('th', { granularity: 'grapheme' });
+export const cleanName = value => [...graphemes.segment(String(value || 'ผู้ร่วมบูชา').normalize('NFC'))].slice(0, 48).map(x => x.segment).join('');
 export function defaultSkin(id, mode = 'mixed') {
   if (['male', 'female'].includes(mode)) return mode;
   const hash = Array.from(String(id)).reduce((sum, c) => (sum * 31 + c.codePointAt(0)) >>> 0, 0);
@@ -30,7 +35,8 @@ export function skinFromComment(text) {
 
 export class Room {
   constructor(saved = {}, { ambient = true, now = Date.now() } = {}) {
-    this.seating = new Seating({ ambient, now }); this.rituals = new RitualQueue(); this.entrance = new EntranceLine(); this.donors = new Map(); this.choices = new Map();
+    this.seating = new Seating({ ambient, now }); this.rituals = new RitualQueue(); this.entrance = new EntranceLine(saved.entrance); this.donors = new Map(); this.choices = new Map(saved.choices || []);
+    this.seating.restore(saved.seating, now); this.rituals.restore(saved.rituals);
     this.stats = { coins: nonnegative(saved.stats?.coins), gifts: nonnegative(saved.stats?.gifts), likes: nonnegative(saved.stats?.likes) };
     this.startedAt = Number(saved.startedAt) || Date.now();
     for (const d of Array.isArray(saved.donors) ? saved.donors : []) {
@@ -74,17 +80,24 @@ export class Room {
   top() { return [...this.donors.values()].sort((a, b) => b.coins - a.coins).slice(0, 5); }
   advance(now = Date.now()) {
     this.rituals.prune(now);
-    const protectedIds = new Set([...this.rituals.pending, this.rituals.active].filter(Boolean).map(v => v.id));
-    const events = this.seating.tick(now, protectedIds);
+    const head = this.rituals.pending[0], events = [];
+    // A donor can have left while their second turn was queued. Bring them
+    // back through the same admission path, retaining the ceremony's order.
+    if (head && !this.find(head.id)) events.push(...this.join(head.id, head.name, { skin: this.choices.get(head.id) || head.skin, now }).events);
+    // Protect only the active donor and the next donor. Protecting every later
+    // turn deadlocks a full room when the FIFO head is waiting outside.
+    const protectedIds = new Set([head, this.rituals.active].filter(Boolean).map(v => v.id));
+    events.push(...this.seating.tick(now, protectedIds));
     for (const event of events) if (event.t === 'join') this.takeEntrance(event.v);
     this.entrance.tick(now, new Set(this.seating.waiting.keys()));
     const previous = this.rituals.active;
     const active = this.rituals.tick(now, item => {
       const v = this.seating.actors.get(item.id);
-      return v && v.seatState !== 'leaving';
+      return v && v.seatState === 'seated';
     });
     if (previous !== active) events.push({ t: 'ritual', active, serverTime: now, queued: this.rituals.pending.length });
     return events;
   }
-  serialize() { return { stats: this.stats, donors: [...this.donors.values()], startedAt: this.startedAt }; }
+  serialize() { return { stats: this.stats, donors: [...this.donors.values()], startedAt: this.startedAt,
+    entrance: this.entrance.serialize(), seating: this.seating.serialize(), rituals: this.rituals.serialize(), choices: [...this.choices] }; }
 }

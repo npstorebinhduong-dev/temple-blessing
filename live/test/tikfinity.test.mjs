@@ -58,6 +58,14 @@ test('server serves UI and forwards TikFinity chat/likes to overlay', async t =>
   assert.equal(messages.some(m=>m.t==='join' && m.v.id==='tester'),false);
   assert.equal(messages.find(m=>m.t==='chat').text,'bình an');
   assert.equal(messages.find(m=>m.t==='like').n,5);
+  // Thai display names come from a matching LIVE event, never our translation.
+  source.send(JSON.stringify({event:'gift',data:{uniqueId:'tester',nickname:'Minh An',giftName:'ชื่อของขวัญทดสอบ',giftId:11046,diamondCount:1000,repeatCount:1,msgId:'galaxy-test',giftPictureUrl:'https://example.test/actual-event-icon.png'}}));
+  await until(()=>messages.some(m=>m.t==='gift-guide'));
+  assert.equal(messages.find(m=>m.t==='gift-guide').settings.galaxyGiftName,'ชื่อของขวัญทดสอบ');
+  assert.equal(messages.find(m=>m.t==='gift-guide').settings.galaxyGiftIcon,'https://example.test/actual-event-icon.png');
+  source.send(JSON.stringify({event:'gift',data:{uniqueId:'tester',giftName:'Unknown 299',giftId:123456,diamondCount:299,repeatCount:1,msgId:'unmapped-test'}}));
+  await until(()=>messages.some(m=>m.t==='gift'&&m.giftId==='123456'));
+  assert.equal(messages.find(m=>m.t==='gift'&&m.giftId==='123456').ritual,null);
   control.send(JSON.stringify({t:'ctl',cmd:'disconnect'}));
   await until(()=>messages.some(m=>m.t==='tiktok' && m.status==='idle'));
 });

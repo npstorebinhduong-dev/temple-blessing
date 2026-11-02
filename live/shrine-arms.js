@@ -26,6 +26,10 @@ export class ShrineArms {
       sprite.getContext('2d').drawImage(this.atlas, x,y,w,h, 0,0,w,h);
       return { ...p, sprite };
     });
+    // Rasterize the small foreground mask once. Clipping a full 941×1672 PNG
+    // each frame is needlessly expensive on OBS/software compositors.
+    this.frontSprite = document.createElement('canvas'); this.frontSprite.width = 450; this.frontSprite.height = 215;
+    const front = this.frontSprite.getContext('2d'); front.translate(-260,-430); front.clip(this.foreground); front.drawImage(this.base,0,0,941,1672);
     this.halo = document.createElement('canvas'); this.halo.width = 192; this.halo.height = 192;
     const c = this.halo.getContext('2d'), g = c.createRadialGradient(96,96,6,96,96,96);
     g.addColorStop(0,'#fff7c5'); g.addColorStop(.28,'#ffdb7a90'); g.addColorStop(.62,'#f8ac3545'); g.addColorStop(1,'#ffc04d00');
@@ -46,7 +50,7 @@ export class ShrineArms {
       }
       ctx.restore();
     }
-    ctx.save(); ctx.clip(this.foreground); ctx.drawImage(this.base,0,0,941,1672); ctx.restore();
+    ctx.drawImage(this.frontSprite,260,430);
     ctx.restore(); return pose;
   }
 }

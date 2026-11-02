@@ -1,16 +1,16 @@
 # Ganesha LIVE · พระพิฆเนศ
 
-Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào, quỳ chắp tay và cúi lạy, bảng tên, xếp hạng, mục tiêu và sáu hiệu ứng dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
+Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào, quỳ chắp tay và cúi lạy, bảng tên, xếp hạng, mục tiêu và tám nghi thức dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy bản 0.8
+## Chạy bản 0.9
 
-Bản 0.8 thêm **hàng người đứng ở mép dưới khi có người vào phòng**. Mặc định bật khi cài mới/nâng cấp. Người tặng quà rời hàng đứng để lên khu quỳ; comment 1/2 chọn nhân vật ngay khi đang đứng.
+[Tải ZIP bản 0.9](https://github.com/npstorebinhduong-dev/temple-blessing/archive/refs/heads/codex/ganesha-live-v0.9.zip) · giải nén toàn bộ trước khi chạy.
 
-Bản 0.7.2 nâng cả bảng quà và bảng công đức lên 36 px trên cảnh 1080 × 1920, cùng một mức và còn khoảng cách với thanh mục tiêu.
+Bản 0.9 thêm hàng chờ avatar nhiều lớp, bảng tên lớn hơn 22%, bảng công đức kính mờ, nghi thức **ghé tai Mushika 299 xu** và **Ganesha hiển linh 1.000 xu**. Có hình mới, động tác ban phước, giọng nam Thái, banner theo thời điểm phát tiếng và hàng đợi nghi thức FIFO lưu qua khởi động lại.
 
-Bản 0.7.1 đưa bảng quà sát mép phải, bỏ nền/viền và thu gọn khoảng cách giữa các hàng để lộ tay cầm sen cùng khu quỳ. Chữ vẫn lớn, có bóng tối để đọc trên nền cảnh.
+**Cần phân biệt:** hai nghi thức dùng được trong DEMO. Galaxy có ID **11046 / 1.000 xu** đối chiếu từ hai nguồn công khai; chưa xác nhận danh mục trên tài khoản Thái. Quà “Bạn đồng hành” 299 xu **chưa có ID và tên Thái xác thực**, nên không gắn quà thật mặc định. Đọc [nguồn và cách cấu hình](docs/QUA-MOI.md). Giọng mới dùng Edge TTS Niwat đã được tích hợp; môi trường cloud không gọi được dịch vụ này để duyệt chất giọng thật.
 
-Bản 0.7 thêm bình luận **1 = nữ, 2 = nam**, hiện hướng dẫn ngay trên bảng quà; tăng cỡ chữ bảng quà/xếp hạng để đọc trên điện thoại, kéo dài thời gian zoom và nhận đúng **Shamrock · ID 9875 · 10 xu**. Giữ lịch nhắc tim/chia sẻ sau 10 giây vắng quà, nghỉ 10 giây từ lúc câu trước đọc xong và bản sửa nhân vật biến mất khi quỳ/lạy.
+Báo cáo bản này: [BÀN GIAO 0.9](docs/BAN-GIAO-V0.9.md).
 
 Cài **Node.js 24 trở lên**. Trên Windows, giải nén toàn bộ gói và chạy `CHAY-LIVE.bat`. Hướng dẫn thao tác đầy đủ trong [HUONG-DAN-WINDOWS.txt](HUONG-DAN-WINDOWS.txt).
 
@@ -55,6 +55,8 @@ TikFinity tự kết nối lại sau 2 giây khi mất socket. Chế độ TikTo
 | Cỏ 4 lá · Shamrock / Clover | 10 | `aarti` · Nghi lễ ánh sáng |
 | Bó hoa · Bouquet | 100 | `marigold` · **Golden Marigold Offering** · 23 giây |
 | Bóng tình yêu · Love Balloon | 500 | `royal` · **Royal Ganesha Offering** · 28 giây |
+| Bạn đồng hành · chờ ID thật | 299 | `mushika` · Ghé tai Mushika · 14 giây |
+| Galaxy · ID công khai 11046 | 1.000 | `galaxy` · Ganesha hiển linh · khoảng 20 giây, theo độ dài âm thanh |
 
 Với Bó hoa, nhân vật mang vòng hoa vạn thọ vàng cam lên bàn thờ, quỳ nâng hoa, rồi trở về chỗ. Với Bóng tình yêu, nhân vật mang mâm vàng/đỏ gồm Modak, trái cây, dừa, hoa vạn thọ và đèn lễ; có ánh sáng, cánh hoa vàng, đèn hai bên và chuông trầm riêng. Nghi lễ hoạt động cho cả nhân vật nam và nữ. Từ v0.3, góc nhìn phóng theo nhân vật khi đi lên (1,45× với 100 xu; 1,62× với 500 xu), giữ cảnh cận khi dâng rồi trở về toàn cảnh. Tượng, nền và nhân vật phóng đồng bộ; bảng quà, xếp hạng và chữ trên màn hình giữ vị trí. Bốn quà cơ bản cũng zoom theo đúng nhân vật đang đi vào hoặc đang ngồi. Thời lượng v0.7: Hoa hồng 4,5 giây (1,55×), Đào 5,5 giây (1,6×), OK 6 giây (1,6×), Cỏ bốn lá 8 giây (1,7×). Mỗi lượt gồm chuyển vào và thu về; quà 100/500 kéo dài thành 23/28 giây. Thời gian tăng thêm nằm ở đoạn giữ cận cảnh; nhịp đi lên và trở về giữ nguyên. Khi có nhiều quà, camera theo hàng đợi hiệu ứng, không nhảy qua người khác giữa lượt. Có thể tắt zoom. Thiết lập Giảm chuyển động của trình duyệt sẽ tắt zoom và giảm mưa hoa.
 
@@ -64,9 +66,21 @@ Nhận diện bằng **đúng tên quà + giá một món**, hỗ trợ tên ti�
 
 **Shamrock ID 9875, giá 10 xu** đã được nhận sẵn, kể cả khi tên được TikTok dịch sang ngôn ngữ khác. Khi nâng dữ liệu cũ lên 0.7, các dòng ID đã gán cho Cỏ bốn lá được sửa một lần thành `9875=aarti`; các ánh xạ khác được giữ lại. Những lần sửa ID thủ công sau nâng cấp được giữ nguyên. Không dùng riêng mức giá 10 xu để nhận quà: Rosa và các quà 10 xu khác không bị gán nhầm.
 
-Lấy ID từ nhật ký rồi vào **Cảnh & âm thanh → Ánh xạ ID quà thật**, nhập `ID=loại` bằng ID số thật. Ví dụ cú pháp `123456=marigold` (ID minh họa). ID vẫn cần đúng giá một món. Khi một loại đã gán ID, nhận diện bằng tên cho loại đó được tắt. Quà chưa khớp vẫn cộng điểm và có lời cảm ơn; nhật ký ghi “chưa gán hiệu ứng”. Các nút demo luôn thử được sáu loại, kể cả khi đã cài ID thật.
+Lấy ID từ nhật ký rồi vào **Cảnh & âm thanh → Ánh xạ ID quà thật**, nhập `ID=loại` bằng ID số thật. Ví dụ cú pháp `123456=marigold` (ID minh họa). ID vẫn cần đúng giá một món. Khi một loại đã gán ID, nhận diện bằng tên cho loại đó được tắt. Quà chưa khớp vẫn cộng điểm và có lời cảm ơn; nhật ký ghi “chưa gán hiệu ứng”. Các nút demo luôn thử được tám loại, kể cả khi đã cài ID thật.
 
-Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 8 hiệu ứng cơ bản chờ 40 giây và 64 nghi lễ đặc biệt chờ 30 phút; gộp quà cùng người/cùng loại đang chờ. Quà cơ bản không đẩy nghi lễ đặc biệt ra khỏi hàng đợi. Khi quá giới hạn, có thể bỏ hiệu ứng hình ảnh; điểm quà luôn được tính độc lập. Hàng chờ nghi lễ chạy trên máy chủ; tải lại overlay tiếp tục nghi lễ đang diễn ra và giữ hàng chờ. Đổi DEMO/LIVE, dọn cảnh hoặc khởi động lại máy chủ sẽ xóa hiệu ứng đang chờ. Lưu cấu hình giữ nghi lễ đang chạy.
+**Một combo chốt = một lượt có nhãn ×N**, tính đủ N món. Mỗi sự kiện kết thúc khác nhau giữ một lượt riêng, kể cả cùng người/cùng loại. Chống phát lại theo `msgId` như trước. Camera và vị trí nghi thức chỉ phục vụ một lượt, theo **thứ tự nhận**, không ưu tiên quà lớn vượt hàng. Không gộp, xóa do quá hạn hoặc bỏ lượt hợp lệ vì đầy hàng hình ảnh. Người chưa có ghế chờ được ngồi trước khi đến lượt. Chỉ người đang làm lễ và người kế tiếp được giữ ghế để tránh kẹt khi khu quỳ đầy.
+
+Hàng chờ, ghế, lựa chọn nhân vật và lượt nghi thức LIVE được lưu cùng số liệu. Đổi chế độ tạm dừng lượt đang chạy và giữ lại để chạy từ đầu khi quay lại; tải lại overlay đang kết nối thì tiếp tục cùng thời gian của server. Dọn cảnh / reset mới xóa hàng đợi. Sau sự cố khởi động lại, lượt dở chạy lại từ đầu; tổng quà không được cộng lại.
+
+Mushika nằm trên bệ thấp gần chân Ganesha. Nhân vật đứng dậy, đi qua lối giữa rồi rẽ đến tai, ghé tay 3,6 giây, gửi luồng sáng lên Ganesha, chắp tay và trở về ghế. Ganesha hiển linh là hình bốn tay riêng ở tiền cảnh, có động tác bàn tay trước, mandala hai lớp, luồng sáng tới người nhận, hoa sen và cánh hoa bay từ hai bên. Tượng chính giữ vị trí phía sau. Hai nghi thức có cả nam và nữ.
+
+Nghi thức Galaxy dùng đúng câu:
+
+> ขอให้เจ้ามีจิตใจที่สงบ มีปัญญาก้าวผ่านอุปสรรค และพบกับการเริ่มต้นที่ดี
+
+Tên người nhận là trường riêng. Giọng **th-TH-NiwatNeural**, tốc độ −12%, cao độ −6 Hz, bass nhẹ và vang ngắn. Banner “พรจากพระพิฆเนศ” mở theo tín hiệu bắt đầu phát, giữ **2,5 giây sau khi đọc xong** rồi tan trong 0,7 giây; camera/nhân vật chờ hết câu. Nhạc tự nhỏ khi giọng phát; các lời cảm ơn/nhắc khác không chồng lên. Nếu mất tiếng, banner hiển thị bản chữ 8,5 giây rồi giữ thêm 2,5 giây. Nhạc, hiệu ứng và giọng có âm lượng và bật/tắt riêng.
+
+Nội dung là một diễn giải nghệ thuật nhằm gửi lời động viên, không phải lời kinh hay bản ghi lời thần linh. Không có cam kết lời cầu xin được thực hiện. Có thể thay bằng bản thu Thái đúng nguyên văn ở `assets/ganesha/audio/ganesha-blessing-th.mp3` (tự tạo thư mục `audio`); gói này không chứa tệp thu đó. Khi không có tệp, ứng dụng dùng Niwat qua Internet và lưu đệm kết quả.
 
 ## Nhạc nền đi kèm
 
@@ -82,13 +96,13 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 
 ## Hàng người mới vào phòng
 
-- TikFinity/TikTok gửi sự kiện `member` có tên/ID thì nhân vật đi vào hàng đứng ở mép dưới. Một người chỉ có một nhân vật; sự kiện lặp và người đã có ghế không tạo thêm bản sao. Follow/like không được coi là vào phòng.
-- Hiện tối đa **10 người đứng**, theo chỗ cố định, và tối đa **200 người chờ hiện**. Khi đông, người đã đứng ít nhất 15 giây lần lượt đi ra để người tiếp theo vào; mỗi lượt đứng tối đa 90 giây. Người chờ hiện quá 5 phút được bỏ khỏi hàng hình ảnh.
-- Tặng quà thì nhân vật đi từ hàng đứng lên khu quỳ. Khi đủ 60 ghế, người đã tặng vẫn được giữ trong hàng đứng cho đến khi hàng chờ ghế cho vào; thứ tự ghế và nghi lễ vẫn theo quy tắc hiện có. Khi hàng chờ ghế quá giới hạn, xu và lời cầu chúc vẫn được tính.
-- Comment **1 = nữ, 2 = nam** áp dụng cả khi đang đứng hoặc đang chờ ghế sau khi tặng. Hàng đứng giữ tại mép dưới khi camera zoom; dòng nhắc tim/chia sẻ thu gọn phía dưới hàng.
-- Hàng đứng không cộng xu, quà, top công đức hay số người ở khu quỳ. Đây là hình ảnh từ các sự kiện vào phòng gần đây, không phải số người đang online; nguồn kết nối không luôn cung cấp sự kiện rời phòng.
-- Bật/tắt trong **Cảnh & âm thanh → Người vừa vào phòng đứng xếp hàng ở mép dưới**. Nâng lên 0.8 bật tính năng một lần; các lần bật/tắt sau được giữ lại. Tắt sẽ dọn hàng đứng, giữ các ghế và điểm đã có.
-- DEMO có **Thử vào phòng**, **10 người đứng mép dưới** và **30 người · thử luân phiên**. Dùng cùng tên bấm Thử vào phòng rồi tặng quà để kiểm tra chuyển lên khu quỳ. Dọn nhân vật dọn cả hàng đứng. Hai chế độ DEMO/LIVE có hàng độc lập; tải lại overlay khôi phục hàng, khởi động lại máy chủ thì chờ sự kiện mới.
+- Sự kiện `member` có tên/ID tạo avatar và tên trong dải dưới, độc lập với 60 chỗ quỳ. Follow/like không tạo người vào hàng; người đã có ghế không bị nhân bản. Điều kiện vào ghế vẫn là tặng quà, trừ khi người vận hành bật vào bằng bình luận.
+- Giữ tất cả dữ liệu người chờ trên server, không tự xóa sau vài phút. Render tối đa **88 avatar** (10 ở lớp gần, 78 phía xa), hoặc **49** khi chọn mức Nhẹ. Mỗi 12 giây luân phiên một hàng xa. Người mới được đưa vào một vị trí xa, chỉ các hàng xóm dịch nhẹ. Người cũ trở lại hàng dữ liệu, không mất thông tin.
+- Avatar dùng URL từ TikTok; ảnh lỗi/thiếu có chữ đầu tên trong vòng tròn màu. Lớp gần có tên rõ; lớp xa luân phiên hiện tên đầy đủ. Cache tối đa 112 ảnh, 4 yêu cầu tải đồng thời. Không tạo một DOM/nhân vật đầy đủ cho mỗi người chờ.
+- Số Thái ở mép dưới là **số người đang nằm trong hàng chờ**, không phải số người online. Không luôn có sự kiện rời phòng nên dữ liệu được giữ đến khi vào ghế hoặc dọn/reset. Không cộng hàng chờ vào xu/top hay số người quỳ. DEMO có nhãn riêng và tổng demo riêng.
+- Tặng quà sẽ chuyển lên khu quỳ theo lượt; đủ 60 ghế thì chờ người tặng lâu nhất rời đi. Comment **1 = nữ, 2 = nam** được nhớ khi ở hàng và khi làm lễ.
+- Các nút **100 / 300 / 500 avatar**, hai quà mới, **5 lượt liên tiếp** và **Reset demo** nằm trong bảng điều khiển. Nút thử dùng cùng hàm xử lý sự kiện thật; dữ liệu demo tách khỏi LIVE.
+- Bật/tắt bằng **Người vừa vào phòng đứng xếp hàng ở mép dưới**. Tắt dọn hàng avatar, giữ ghế và điểm. Dọn nhân vật dọn cả hàng và nghi thức nhưng giữ điểm. Tải lại overlay hoặc mở lại server khôi phục hàng LIVE đã lưu.
 
 ## Nhân vật, lời cầu chúc và lúc vắng quà
 
@@ -98,8 +112,8 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 - Chỉ cửa sổ đã mở tiếng và bật giọng tham gia tính thời điểm đọc xong; khung xem trước không ảnh hưởng. Nếu mở nhiều cửa sổ có tiếng, chờ tất cả đọc xong. Đóng cửa sổ, tắt giọng hoặc lỗi phát âm thanh không làm bộ đếm kẹt. Khi tắt giọng, lời nhắc chữ vẫn xuất hiện theo khoảng chờ.
 - Cảnh bắt đầu với **10 nhân vật nền**, phân bố trên sàn, tại chỗ số 1–10. Các nhân vật này **giữ nguyên khi có quà**; không tên, có nhãn Thái `บรรยากาศจำลอง` và **không cộng vào người tương tác, xu, quà, tim hay xếp hạng**.
 - **60 chỗ cố định**: người tặng quà mới vào từ chỗ 11–60. Người đã có mặt tặng tiếp vẫn giữ chỗ. Mặc định bình luận chỉ hiện trên nhân vật đã có mặt và cho phép chọn nam/nữ; có thể bật **Cho người bình luận vào hàng chờ** để bình luận cũng được vào ghế. Tùy chọn **Người vừa vào phòng đứng xếp hàng ở mép dưới** chỉ tạo người ở hàng đứng, không tự cấp ghế.
-- Khi đủ chỗ, người mới vào hàng chờ theo thứ tự đến. Người có **lần tặng quà gần nhất cũ nhất** đứng dậy, đi ra trong khoảng 5 giây, rồi người đang chờ mới vào chỗ vừa trống; không xếp lại các chỗ khác. Tối đa hai lượt rời chỗ đồng thời. Tặng thêm bất kỳ quà nào cập nhật mốc này; bình luận/đổi tên không cập nhật. Người chưa có quà và nhân vật nền dùng mốc vào ngồi. Cả nhân vật nền cũng nhường chỗ và không tự quay lại. Người mới có ít nhất 12 giây ngồi trước khi nhường; người đang/chờ làm lễ được giữ chỗ cho đến khi hết lượt hiệu ứng.
-- Hàng chờ chỗ ngồi tối đa 500 người, mỗi người một lượt; quà tiếp theo cập nhật cùng người. Khi đầy hàng chờ, vẫn cộng xu và đọc cầu chúc, nhưng chưa thêm nhân vật. Nếu người đang đi ra tặng tiếp, họ hoàn tất lượt đi ra rồi vào cuối hàng chờ. Bảng điều khiển hiển thị số người trong cảnh, đang chờ và đang rời chỗ.
+- Khi đủ chỗ, người mới vào hàng chờ theo thứ tự đến. Người có **lần tặng quà gần nhất cũ nhất** đứng dậy, đi ra trong khoảng 5 giây, rồi người đang chờ mới vào chỗ vừa trống; không xếp lại các chỗ khác. Tối đa hai lượt rời chỗ đồng thời. Tặng thêm bất kỳ quà nào cập nhật mốc này; bình luận/đổi tên không cập nhật. Người chưa có quà và nhân vật nền dùng mốc vào ngồi. Cả nhân vật nền cũng nhường chỗ và không tự quay lại. Người mới có ít nhất 12 giây ngồi trước khi nhường; người đang làm lễ và người đứng đầu hàng nghi thức được giữ chỗ; các lượt còn lại vẫn được lưu và tạo lại nhân vật nếu cần.
+- Hàng chờ ghế giữ toàn bộ người tặng, mỗi người một hồ sơ; quà tiếp theo cập nhật người đó nhưng vẫn tạo lượt nghi thức riêng. Khi đang đi ra mà tặng thêm, nhân vật hoàn tất đi ra rồi vào lại hàng chờ. Số actor trên sàn vẫn bị giới hạn ở 60.
 - Nam và nữ có chuỗi động tác **quỳ chắp tay → hạ hai tay, cúi đầu sát sàn → ngẩng lên**, lấy cảm hứng cách lạy năm điểm của Thái; lặp ba lần rồi nghỉ ngắn, mỗi người một nhịp. Đây là hoạt ảnh sprite, cần người hiểu nghi lễ Thái duyệt sắc thái động tác trước khi phát chính thức.
 - Tay cầm sen và tay cầm búa vàng/khí cụ của Ganesha chuyển động lệch nhịp, giữ cố định khớp vai, kèm hào quang. Từ v0.5, mặc định **Rõ trên điện thoại**, biên độ khoảng 10–13 độ thay mức 1–2 độ trước đây; có thêm **Nhẹ** và **Mạnh**. Lưu cấu hình sau khi chỉnh. Có thể tắt bằng **Tay cầm sen và búa vàng chuyển động**. Thiết lập Giảm chuyển động của hệ thống giữ tư thế chắp tay và tắt chuyển động tay/zoom; bảng điều khiển hiện hướng dẫn khi máy đang bật chế độ này.
 - Âm thanh chỉ phát ở overlay/OBS đã mở tiếng. Hàng đợi lời cầu chúc giới hạn 5 câu chờ; đợt quà quá dày có thể bỏ câu mới, vẫn tính đủ xu. Lỗi mạng TTS có timeout 15 giây và nghỉ 30 giây trước khi thử tiếp. Các câu nhắc được lưu đệm cục bộ.
@@ -108,22 +122,22 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 
 - Demo và LIVE có nhân vật, điểm và bảng xếp hạng riêng. Các nút thử quà bị khóa trong chế độ LIVE.
 - Cấu hình và số liệu LIVE được lưu tại `live/data/session.json`; không đưa file này lên Git hay chia sẻ trong gói phát hành. Có thể đổi thư mục bằng `GANESHA_DATA_DIR`.
-- Khi khởi động lại, chọn **Xem phiên LIVE đã lưu** hoặc kết nối nguồn để phục hồi điểm. Kết nối nguồn và âm thanh phải khởi động lại. Nhân vật quay lại khi có sự kiện mới; bảng xếp hạng đã lưu vẫn còn.
+- Khi khởi động lại, chọn **Xem phiên LIVE đã lưu** hoặc kết nối nguồn để phục hồi điểm. Kết nối nguồn và âm thanh phải khởi động lại. Ghế, hàng chờ và nghi thức đang chờ được phục hồi; lượt dở bắt đầu lại từ đầu. Không cộng lại xu.
 - **Dọn nhân vật** giữ nguyên điểm, dọn hàng chờ và trở về 10 nhân vật nền nếu đang bật tính năng. **Bắt đầu phiên mới** xóa số liệu của chế độ đang chọn và chỉ cho phép khi đã ngắt nguồn.
-- Khu quỳ hiện tối đa 60 nhân vật, tính cả nhân vật nền và người đang đi ra; hàng đứng ở mép dưới có thêm tối đa 10 nhân vật. Việc rời chỗ không xóa điểm hoặc bảng xếp hạng. Chỗ ngồi/hàng chờ không lưu qua lần khởi động máy chủ mới.
+- Khu quỳ hiện tối đa 60 nhân vật, tính cả nhân vật nền và người đang đi ra; hàng dưới chỉ vẽ tối đa 88 avatar. Việc rời chỗ không xóa điểm hoặc bảng xếp hạng. Chỗ ngồi/hàng chờ được lưu qua lần khởi động máy chủ mới.
 - Hình ảnh, font Thái, bản nhạc MP3 và chuông chạy cục bộ; chuông được tổng hợp bằng Web Audio. Nhạc nền hiện tại là bản ghép CC0, độc lập với concept trước.
 - Edge TTS cần truy cập `speech.platform.bing.com`. File âm thanh tạm ở `live/tts/`, không đưa vào Git hay gói chia sẻ. Khi nâng dữ liệu v0.1 lên v0.2, giọng được bật một lần; các lần sau giữ lựa chọn của bạn.
 
-## Kiểm thử và giới hạn bản 0.8
+## Kiểm thử và giới hạn bản 0.9
 
 ```sh
 cd live
 npm test
 ```
 
-Bộ kiểm thử dùng TikFinity giả lập và đồng hồ xác định để kiểm tra sáu quà, combo, ID, nam/nữ, 10 nhân vật nền, chỗ 11–60, hàng chờ 500 người, nhường chỗ theo lần tặng gần nhất, các pha lạy/tay tượng, các pha nghi lễ, zoom, giới hạn mưa hoa, lặp nhạc, nhạc nhỏ khi đọc giọng, nhắc sau 10 giây vắng quà, nghỉ 10 giây sau sự kiện đọc xong, đóng/mở cửa sổ âm thanh, ưu tiên giọng, reconnect, demo/LIVE, lưu/khôi phục và HTTP/WebSocket cục bộ. Các test phiên chạy với `GANESHA_OFFLINE_AUDIO=1`; test lịch đọc dùng một bản sao máy chủ với TTS và đồng hồ giả lập cục bộ. Cả hai không gọi dịch vụ giọng thật. Không chứng minh tương thích phiên bản TikFinity trên máy người dùng hoặc giọng Edge TTS qua Internet.
+Bộ kiểm thử dùng TikFinity giả lập và đồng hồ xác định để kiểm tra tám nghi thức, combo, ID, nam/nữ, 10 nhân vật nền, chỗ 11–60, giữ hàng chờ lớn với lượng avatar vẽ giới hạn, nhường chỗ theo lần tặng gần nhất, các pha lạy/tay tượng, các pha nghi lễ, zoom, giới hạn mưa hoa, lặp nhạc, nhạc nhỏ khi đọc giọng, nhắc sau 10 giây vắng quà, nghỉ 10 giây sau sự kiện đọc xong, đóng/mở cửa sổ âm thanh, ưu tiên giọng, reconnect, demo/LIVE, lưu/khôi phục và HTTP/WebSocket cục bộ. Các test phiên chạy với `GANESHA_OFFLINE_AUDIO=1`; test lịch đọc dùng một bản sao máy chủ với TTS và đồng hồ giả lập cục bộ. Cả hai không gọi dịch vụ giọng thật. Không chứng minh tương thích phiên bản TikFinity trên máy người dùng hoặc giọng Edge TTS qua Internet.
 
-Bộ hình nền, lớp tay tượng, hai atlas đi/quỳ, atlas cúi lạy, atlas nâng lễ và lễ vật được tạo bằng AI. Đây là cảnh 2.5D dùng sprite, chưa khớp mọi chuyển động/hiệu ứng của video tham chiếu. Nội dung tiếng Thái và âm thanh cần được nghe/đọc duyệt trong lần chạy thử. Bản phát nhắm 30 khung hình/giây; khung xem trước nhỏ chạy 15 khung hình/giây để giảm tải. Kiểm tra hiệu năng với OBS/LIVE Studio đang encode trên máy phát thực tế. Nếu máy chậm, chọn mưa hoa Nhẹ, tắt zoom/chuyển động tay và đóng các overlay dư. Cảnh dùng cố định 60 chỗ; không đổi mật độ khi người mới đến.
+Bộ hình nền, lớp tay tượng, hai atlas đi/quỳ, atlas cúi lạy, atlas nâng lễ, Mushika, Ganesha hiển linh, atlas ghé tai và lễ vật được tạo bằng AI. Đây là cảnh 2.5D dùng sprite, chưa khớp mọi chuyển động/hiệu ứng của video tham chiếu. Nội dung tiếng Thái và âm thanh cần được nghe/đọc duyệt trong lần chạy thử. Bản phát nhắm 30 khung hình/giây; khung xem trước nhỏ chạy 15 khung hình/giây để giảm tải. Kiểm tra hiệu năng với OBS/LIVE Studio đang encode trên máy phát thực tế. Nếu máy chậm, chọn mức hiệu ứng Nhẹ (giảm độ phân giải lớp hình và số hạt, vẫn giữ chữ/bảng tên đúng độ phân giải đầu ra), tắt zoom/chuyển động tay và đóng các overlay dư. Cảnh dùng cố định 60 chỗ; không đổi mật độ khi người mới đến.
 
 Các bước kiểm tra trước LIVE trong [TEST-LIVE.md](TEST-LIVE.md).
 

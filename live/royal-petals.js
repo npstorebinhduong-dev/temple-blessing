@@ -5,6 +5,7 @@ export class RoyalPetals {
   configure({ reduced = false, light = false } = {}) { this.light = reduced || light; this.limit = this.light ? 90 : 320; }
   start(now, options = {}) {
     this.reset(); this.configure(options); this.startedAt = now; this.active = true;
+    this.galaxy = options.galaxy === true;
     // Spread the opening shower over the entire frame, including the upper corners.
     for (let i = 0; i < (this.light ? 32 : 110); i++) this.spawn('spread', i);
   }
@@ -12,12 +13,12 @@ export class RoyalPetals {
   spawn(type = 'rain', index = 0) {
     const r = this.random;
     if (this.items.length >= this.limit) return;
-    const depth = r(), burst = type === 'burst';
+    const depth = r(), burst = type === 'burst', ascending = this.galaxy && type === 'rain' && r() < .6;
     this.items.push({
-      x: burst ? 540 + (r() - .5) * 140 : type === 'spread' ? ((index % 10) + r()) * 108 : r() * 1200 - 60,
-      y: burst ? 960 + (r() - .5) * 160 : type === 'spread' ? (Math.floor(index / 10) / (this.light ? 4 : 11)) * 1760 + r() * 120 : -50 - r() * 160,
-      vx: burst ? (r() - .5) * 540 : (r() - .5) * 100,
-      vy: burst ? -100 - r() * 240 : 60 + depth * 100,
+      x: ascending ? (r() < .5 ? -20 : 1100) : burst ? 540 + (r() - .5) * 140 : type === 'spread' ? ((index % 10) + r()) * 108 : r() * 1200 - 60,
+      y: ascending ? 1500 + r()*350 : burst ? 960 + (r() - .5) * 160 : type === 'spread' ? (Math.floor(index / 10) / (this.light ? 4 : 11)) * 1760 + r() * 120 : -50 - r() * 160,
+      vx: ascending ? (r()-.5)*95 : burst ? (r() - .5) * 540 : (r() - .5) * 100,
+      vy: ascending ? -70 - depth*100 : burst ? -100 - r() * 240 : 60 + depth * 100,
       gravity: burst ? 42 : 5, age: 0, life: burst ? 8 + r() * 3 : 9 + r() * 5,
       size: (10 + depth * 17) * (this.light ? .85 : 1), angle: r() * Math.PI * 2,
       spin: (r() - .5) * 2.2, phase: r() * Math.PI * 2, color: Math.floor(r() * 6), depth,
