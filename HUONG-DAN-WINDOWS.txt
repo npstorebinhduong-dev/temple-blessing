@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN 0.10.1
+GANESHA LIVE — BẢN 0.10.2
 
 CHẠY VÀ THỬ
 1. Đóng cửa sổ CHAY-LIVE của bản cũ. Giải nén toàn bộ ZIP vào thư mục
@@ -125,8 +125,12 @@ Gói có đầy đủ artwork/nhạc/font; không chứa Node.js, node_modules,
 dữ liệu LIVE hay tài khoản. Giữ LICENSE và giấy phép font/nhạc.
 Báo cáo kiểm thử: docs/BAN-GIAO-V0.10.md .
 
-SỬA CAMERA 0.10.1
-Khôi phục camera v0.8 cho sáu quà thường: cả cảnh cùng một viewport,
+SỬA CAMERA 0.10.2
+Camera v0.8 điều khiển container gốc: cả cảnh cùng một viewport,
 UI giữ nguyên. Corgi/Galaxy giữ góc rộng. Không thay scale riêng nhân vật.
 Sau cập nhật Ctrl+F5 cả hai tab và làm mới bộ nhớ đệm nguồn OBS.
-Video/kiểm thử: docs/SUA-CAMERA-V0.10.1.md .
+Video/kiểm thử: docs/SUA-CAMERA-V0.10.2.md .
+
+Bản 0.10.2: người lên lễ giữ kích thước phối cảnh như người đang ngồi;
+Rose 1 xu chỉ có hạt sáng nhỏ, không có hoa sen lớn che Mushika.
+Debug để kiểm tra: /live/overlay.html?debugCamera=1 (tắt khi phát thật).

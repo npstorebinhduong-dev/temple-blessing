@@ -2,11 +2,11 @@
 
 Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào, quỳ chắp tay và cúi lạy, bảng tên, xếp hạng, mục tiêu và tám nghi thức dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy bản 0.10.1
+## Chạy bản 0.10.2
 
-[Tải ZIP bản 0.10.1](https://github.com/npstorebinhduong-dev/temple-blessing/archive/refs/heads/codex/ganesha-live-v0.10.1.zip) · giải nén toàn bộ trước khi chạy.
+[Tải ZIP bản 0.10.2](https://github.com/npstorebinhduong-dev/temple-blessing/archive/refs/heads/codex/ganesha-live-v0.10.2.zip) · giải nén toàn bộ trước khi chạy.
 
-Bản 0.10.1 sửa camera; [nguyên nhân, đối chiếu v0.8 và video](docs/SUA-CAMERA-V0.10.1.md). Giữ các nâng cấp v0.10: gộp quà/công đức trong khung kính mờ ở vùng trên, thay hàng avatar bằng đám đông nam/nữ từ vai trở lên, nâng chuỗi truyền lời Mushika và dùng **asset Ganesha đứng mới** cho Galaxy. Trong hai nghi thức đặc biệt, tượng ngồi giữ cố định; ban phước có giọng/banner tiếng Thái, FIFO và dữ liệu LIVE được giữ.
+Bản 0.10.2 bỏ kích thước nhân vật riêng khi lên lễ, chỉ zoom container toàn cảnh và bỏ hoa sen lớn của quà 1 xu; [nguyên nhân, video chuyển động và kiểm thử](docs/SUA-CAMERA-V0.10.2.md). Giữ các nâng cấp v0.10: gộp quà/công đức trong khung kính mờ ở vùng trên, thay hàng avatar bằng đám đông nam/nữ từ vai trở lên, nâng chuỗi truyền lời Mushika và dùng **asset Ganesha đứng mới** cho Galaxy. Trong hai nghi thức đặc biệt, tượng ngồi giữ cố định; ban phước có giọng/banner tiếng Thái, FIFO và dữ liệu LIVE được giữ.
 
 **Corgi 299 xu, ID 6267** thay “Bạn đồng hành” và kích hoạt Mushika. **Galaxy 1.000 xu, ID 11046** giữ nguyên. ID/giá/icon trùng nhau ở hai danh mục công khai; chưa xác nhận danh mục của tài khoản Thái cụ thể. Khi nâng cấu hình cũ, các ánh xạ Mushika cũ được thay bằng Corgi một lần; sáu quà cũ/Galaxy và các lần sửa thủ công sau đó được giữ. [Nguồn đối chiếu](docs/QUA-MOI.md).
 
@@ -49,7 +49,7 @@ TikFinity tự kết nối lại sau 2 giây khi mất socket. Chế độ TikTo
 
 | Quà TikTok đã chọn | Xu mỗi món | Hiệu ứng |
 | --- | ---: | --- |
-| Hoa hồng · Rose | 1 | `lotus` · Dâng hoa sen |
+| Hoa hồng · Rose | 1 | `lotus` · Hạt sáng nhỏ quanh người tặng |
 | Quả đào · Peach | 5 | `incense` · Dâng hương |
 | OK | 5 | `garland` · Dâng vòng hoa |
 | Cỏ 4 lá · Shamrock / Clover | 10 | `aarti` · Nghi lễ ánh sáng |
@@ -58,11 +58,11 @@ TikFinity tự kết nối lại sau 2 giây khi mất socket. Chế độ TikTo
 | Corgi · ID công khai 6267 | 299 | `mushika` · Ghé tai Mushika · 16 giây |
 | Galaxy · ID công khai 11046 | 1.000 | `galaxy` · Ganesha hiển linh · khoảng 20 giây, theo độ dài âm thanh |
 
-Với Bó hoa, nhân vật mang vòng hoa vạn thọ vàng cam lên bàn thờ, quỳ nâng hoa, rồi trở về chỗ. Với Bóng tình yêu, nhân vật mang mâm vàng/đỏ gồm Modak, trái cây, dừa, hoa vạn thọ và đèn lễ; có ánh sáng, cánh hoa vàng, đèn hai bên và chuông trầm riêng. Nghi lễ hoạt động cho cả nhân vật nam và nữ. Từ v0.3, góc nhìn phóng theo nhân vật khi đi lên (1,45× với 100 xu; 1,62× với 500 xu), giữ cảnh cận khi dâng rồi trở về toàn cảnh. Bản 0.10.1 khôi phục camera của v0.8: nền, tượng, Mushika và nhân vật cùng một viewport; không scale riêng vật thể. Hai nghi thức 299/1.000 giữ góc rộng hiện tại. Bảng thông tin giữ vị trí. Bốn quà cơ bản cũng zoom theo đúng nhân vật đang đi vào hoặc đang ngồi. Thời lượng v0.7: Hoa hồng 4,5 giây (1,55×), Đào 5,5 giây (1,6×), OK 6 giây (1,6×), Cỏ bốn lá 8 giây (1,7×). Mỗi lượt gồm chuyển vào và thu về; quà 100/500 kéo dài thành 23/28 giây. Thời gian tăng thêm nằm ở đoạn giữ cận cảnh; nhịp đi lên và trở về giữ nguyên. Khi có nhiều quà, camera theo hàng đợi hiệu ứng, không nhảy qua người khác giữa lượt. Có thể tắt zoom. Thiết lập Giảm chuyển động của trình duyệt sẽ tắt zoom và giảm mưa hoa.
+Với Bó hoa, nhân vật mang vòng hoa vạn thọ vàng cam lên bàn thờ, quỳ nâng hoa, rồi trở về chỗ. Với Bóng tình yêu, nhân vật mang mâm vàng/đỏ gồm Modak, trái cây, dừa, hoa vạn thọ và đèn lễ; có ánh sáng, cánh hoa vàng, đèn hai bên và chuông trầm riêng. Nghi lễ hoạt động cho cả nhân vật nam và nữ. Từ v0.3, góc nhìn phóng theo nhân vật khi đi lên (1,45× với 100 xu; 1,62× với 500 xu), giữ cảnh cận khi dâng rồi trở về toàn cảnh. Bản 0.10.2 giữ đường camera v0.8 trên container gốc của cả cảnh. Nhân vật đi, ngồi, dâng lễ, ghé tai và nhận phước dùng chung kích thước phối cảnh; bỏ các chiều cao riêng 300–350/250/282 px của nghi thức. Hai nghi thức 299/1.000 giữ góc rộng hiện tại. Bảng thông tin giữ vị trí. Bốn quà cơ bản cũng zoom theo đúng nhân vật đang đi vào hoặc đang ngồi. Thời lượng v0.7: Hoa hồng 4,5 giây (1,55×), Đào 5,5 giây (1,6×), OK 6 giây (1,6×), Cỏ bốn lá 8 giây (1,7×). Mỗi lượt gồm chuyển vào và thu về; quà 100/500 kéo dài thành 23/28 giây. Thời gian tăng thêm nằm ở đoạn giữ cận cảnh; nhịp đi lên và trở về giữ nguyên. Khi có nhiều quà, camera theo hàng đợi hiệu ứng, không nhảy qua người khác giữa lượt. Có thể tắt zoom. Thiết lập Giảm chuyển động của trình duyệt sẽ tắt zoom và giảm mưa hoa.
 
 Quà 500 xu có mưa hoa vàng/hồng phủ toàn màn hình, cùng một đợt hoa bung khi nâng mâm. Giới hạn 320 cánh hoa để giữ tài nguyên ổn định; chế độ Nhẹ và thiết lập giảm chuyển động của trình duyệt giảm số cánh hoa. Khi kết thúc, hoa mờ hết trong khoảng 2 giây; đổi DEMO/LIVE hoặc tải lại sẽ xóa toàn bộ hiệu ứng.
 
-Nhận diện bằng **đúng tên quà + giá một món**, hỗ trợ tên tiếng Anh/Thái/Việt. Giá trên là cấu hình bạn đã chọn; kiểm tra lại dữ liệu TikFinity trên kênh thật vì danh mục có thể thay đổi. Combo 500 Hoa hồng 1 xu vẫn tạo hoa sen, cộng đủ 500 xu. Combo chỉ tính khi kết thúc (`giftType`, `repeatEnd`, `repeatCount`). Các gói cùng `msgId` được lọc trùng trong 5 phút; không có ID thì không đảm bảo chống phát lại. Bộ nhớ chống trùng không giữ qua lần khởi động server mới.
+Nhận diện bằng **đúng tên quà + giá một món**, hỗ trợ tên tiếng Anh/Thái/Việt. Giá trên là cấu hình bạn đã chọn; kiểm tra lại dữ liệu TikFinity trên kênh thật vì danh mục có thể thay đổi. Combo 500 Hoa hồng 1 xu vẫn chỉ tạo hạt sáng của quà nhỏ, cộng đủ 500 xu; không chạy nghi thức 500 xu. Combo chỉ tính khi kết thúc (`giftType`, `repeatEnd`, `repeatCount`). Các gói cùng `msgId` được lọc trùng trong 5 phút; không có ID thì không đảm bảo chống phát lại. Bộ nhớ chống trùng không giữ qua lần khởi động server mới.
 
 **Shamrock ID 9875, giá 10 xu** đã được nhận sẵn, kể cả khi tên được TikTok dịch sang ngôn ngữ khác. Khi nâng dữ liệu cũ lên 0.7, các dòng ID đã gán cho Cỏ bốn lá được sửa một lần thành `9875=aarti`; các ánh xạ khác được giữ lại. Những lần sửa ID thủ công sau nâng cấp được giữ nguyên. Không dùng riêng mức giá 10 xu để nhận quà: Rosa và các quà 10 xu khác không bị gán nhầm.
 

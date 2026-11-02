@@ -1,3 +1,4 @@
+import { ACTOR_DENSITY } from './actor-geometry.js';
 // Stable places belong to the scene, never to an array index in the viewer list.
 export const SEAT_COUNT = 60;
 export const AMBIENT_COUNT = 10;
@@ -121,7 +122,7 @@ export function seatLayout() {
     const t = row / 5, half = 305 + 135 * t;
     for (let col = 0; col < 10; col++) {
       let u = (col - 4.5) / 4.5; u = Math.sign(u) * (.12 + .88 * Math.abs(u));
-      seats.push({ x: 540 + u * half, y: 1230 + t * 480, depth: t, gap: half * 1.8 / 9, density: Math.pow(.6, .6), row, col });
+      seats.push({ x: 540 + u * half, y: 1230 + t * 480, depth: t, gap: half * 1.8 / 9, density: ACTOR_DENSITY, row, col });
     }
   }
   const ambient = seats.filter(s => s.row === 5 && [1,3,6,8].includes(s.col) || s.row === 3 && [1,4,5,8].includes(s.col) || s.row === 1 && [2,7].includes(s.col));

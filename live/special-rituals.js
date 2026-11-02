@@ -1,13 +1,18 @@
+import { actorHeight } from './actor-geometry.js';
 const clamp = v => Math.max(0, Math.min(1, v));
 const smooth = v => { v = clamp(v); return v * v * (3 - 2 * v); };
 const mix = (a, b, v) => a + (b - a) * smooth(v);
 // Mouse is on the low altar plinth. Anchor measured in the supplied PNG,
 // not an approximate point at its head's centre.
 export const MUSHIKA = Object.freeze({ x: 380, y: 940, width: 260, height: 260 * 1024 / 1536, earX: 459.6, earY: 979 });
-export const WHISPER_PLACE = Object.freeze({ x: 396, y: 1176, height: 250 });
-export const GALAXY_PLACE = Object.freeze({ x: 850, y: 1370, height: 282 });
+// The old atlas contact at h=250 was (396 + .2544h, 1176 - .788h).
+// Move the FEET to keep that same mouth/ear contact at the normal world stature.
+// Never enlarge the donor or resize/move the mouse to make the contact fit.
+const whisperHeight = actorHeight(MUSHIKA.earY);
+export const WHISPER_PLACE = Object.freeze({ x: MUSHIKA.earX - .2544 * whisperHeight, y: MUSHIKA.earY + .788 * whisperHeight });
+export const GALAXY_PLACE = Object.freeze({ x: 850, y: 1370 });
 export function specialPose(kind, elapsedMs, from, seat, { untilMs = 20000, reduced = false } = {}) {
-  const t = Math.max(0, elapsedMs) / 1000, p = { ...from, frame: 7, phase: 'rise', height: kind === 'mushika' ? 250 : 282, side: false, flip: false, lean: 0, focus: 0 };
+  const t = Math.max(0, elapsedMs) / 1000, p = { ...from, frame: 7, phase: 'rise', side: false, flip: false, lean: 0, focus: 0 };
   const end = untilMs / 1000, dest = kind === 'mushika' ? WHISPER_PLACE : GALAXY_PLACE;
   const arrival = kind === 'mushika' ? 3.7 : 4.2, backAt = kind === 'mushika' ? 12.1 : end - 3;
   const walk = () => { p.frame = Math.floor(t * 7) % 4; p.bob = reduced ? 0 : Math.sin(t * 7 * Math.PI / 2) * 1.2; };

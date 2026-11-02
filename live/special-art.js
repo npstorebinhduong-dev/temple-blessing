@@ -43,8 +43,8 @@ export class SpecialArt {
     const lift=elapsed===null?0:mushikaLight(elapsed).head*.14;
     p.save();p.translate(MUSHIKA.x,MUSHIKA.y);p.scale(MUSHIKA.width/390,MUSHIKA.height/260);p.drawImage(this.mouseParts.body,0,0);p.translate(140,114);p.rotate(lift);p.translate(-140,-114);p.drawImage(this.mouseParts.head,0,Math.sin(t*1.7)*.25);p.restore();
   }
-  actor(pen, hero, pose, sprites, t, reduced) {
-    const h = pose.height, w = h * .75;
+  actor(pen, hero, pose, sprites, t, reduced, geometry) {
+    const { height: h, width: w } = geometry;
     pen.save(); pen.fillStyle='#1c0b0a60';pen.beginPath();pen.ellipse(pose.x,pose.y-3,w*.23,10,0,0,TAU);pen.fill();
     if (pose.side) {
       const sprite = this.side(pose.frame, hero.skin);

@@ -41,14 +41,23 @@ export class Nameplates {
       const seat = item.person.seat, page = Math.floor(now / 6000) % 2;
       if (!item.focus && (ceremony || (seat && seat.row < 5 && seat.col % 2 !== page))) continue;
       const x = item.x * camera.scale + camera.x, y = item.y * camera.scale + camera.y;
-      if (x < -40 || x > 1120 || y < 990 || y > 1705) continue;
+      if (!item.focus && (x < -40 || x > 1120 || y < 990 || y > 1705)) continue;
       // Fixed pixel size keeps text sharp and avoids regenerating dozens of
       // badge canvases every frame while the camera changes scale.
       const width = item.focus ? 520 : Math.min(126, Math.max(62, (seat?.gap || 72) * .84 * (seat?.row === 5 ? .92 : 1.75)));
       const badge = this.badge(pen, item.person.name, width, item.focus), w = badge.width, h = badge.height;
       const left = Math.max(8, Math.min(1072 - w, x - w / 2));
       let top = Math.max(1000, Math.min(1690 - h, y - h));
-      if (exclusions.some(r => left < r.x + r.w && left + w > r.x && top < r.y + r.h && top + h > r.y)) continue;
+      const blocked = y0 => exclusions.some(r => left < r.x + r.w && left + w > r.x && y0 < r.y + r.h && y0 + h > r.y);
+      if (blocked(top)) {
+        if (!item.focus) continue;
+        // A normal-sized donor at the altar can put their badge over Mushika.
+        // Keep the focused name visible, outside the mouse, instead of hiding it.
+        const candidates = exclusions.flatMap(r => [r.y - h - 8, r.y + r.h + 8])
+          .filter(y0 => y0 >= 1000 && y0 + h <= 1700 && !blocked(y0))
+          .sort((a,b) => Math.abs(a-top)-Math.abs(b-top));
+        if (candidates.length) top = candidates[0];
+      }
       const intersects = y0 => used.some(r => left < r.x + r.w + 2 && left + w + 2 > r.x && y0 < r.y + r.h + 2 && y0 + h + 2 > r.y);
       if (intersects(top) && !item.focus) {
         const options = [-47, 47, -24, 24];

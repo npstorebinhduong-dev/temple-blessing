@@ -1,8 +1,8 @@
-import { MUSHIKA, clamp, smooth } from './special-rituals.js';
+import { MUSHIKA, WHISPER_PLACE, clamp, smooth } from './special-rituals.js';
 export const ORB = Object.freeze({x:384,y:939});
 export const RECEIVER = Object.freeze({x:540,y:728});
 export const TRANSMISSION = Object.freeze([ORB,{x:155,y:840},{x:228,y:615},RECEIVER]);
-export const RESPONSE = Object.freeze([RECEIVER,{x:810,y:790},{x:720,y:1105},{x:396,y:1172}]);
+export const RESPONSE = Object.freeze([RECEIVER,{x:810,y:790},{x:720,y:1105},{x:WHISPER_PLACE.x,y:WHISPER_PLACE.y-4}]);
 export function curvePoint(points,t) {
   const u=1-t;return {x:u*u*u*points[0].x+3*u*u*t*points[1].x+3*u*t*t*points[2].x+t*t*t*points[3].x,
     y:u*u*u*points[0].y+3*u*u*t*points[1].y+3*u*t*t*points[2].y+t*t*t*points[3].y};

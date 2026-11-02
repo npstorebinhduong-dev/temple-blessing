@@ -20,7 +20,7 @@ export class CharacterSprites {
     if (!cached) {
       cached = this.createCanvas(); cached.height = h; cached.width = Math.ceil(h * .75);
       const cw = sprite.naturalWidth / 4, ch = sprite.naturalHeight / 2;
-      const bottoms = bow ? [480,483,479,486,467,467,464,467] : carrier ? null : skin === 'male' ? [500,499,500,502,448,443,444,444] : [505,506,506,507,462,450,447,443];
+      const bottoms = bow ? [480,483,479,486,467,467,464,467] : carrier ? [501,503,490,486,476,476,473,473] : skin === 'male' ? [500,499,500,502,448,443,444,444] : [505,506,506,507,462,450,447,443];
       const scale = bow ? .87 : 1, dh = h * scale, dw = cached.width * scale;
       const y = bottoms ? h - dh * bottoms[frame] / 512 : 0;
       cached.getContext('2d').drawImage(sprite, frame % 4 * cw, Math.floor(frame / 4) * ch, cw, ch, (cached.width - dw) / 2, y, dw, dh);

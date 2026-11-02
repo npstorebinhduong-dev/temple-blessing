@@ -1,0 +1,296 @@
+{
+  "version": "0.10.2",
+  "input": "Simulated TikFinity WebSocket envelopes through production LIVE connector, normalizer, onGift and FIFO; no DEMO override",
+  "viewport": [
+    1080,
+    1920
+  ],
+  "turns": [
+    {
+      "kind": "lotus",
+      "id": "u1",
+      "turn": "turn-1"
+    },
+    {
+      "kind": "marigold",
+      "id": "u1",
+      "turn": "turn-2"
+    },
+    {
+      "kind": "royal",
+      "id": "u2",
+      "turn": "turn-3"
+    },
+    {
+      "kind": "incense",
+      "id": "u3",
+      "turn": "turn-4"
+    },
+    {
+      "kind": "mushika",
+      "id": "u2",
+      "turn": "turn-5"
+    },
+    {
+      "kind": "aarti",
+      "id": "u1",
+      "turn": "turn-6"
+    },
+    {
+      "kind": "galaxy",
+      "id": "u3",
+      "turn": "turn-7"
+    },
+    {
+      "kind": "garland",
+      "id": "u4",
+      "turn": "turn-8"
+    },
+    {
+      "kind": "mushika",
+      "id": "u1",
+      "turn": "turn-9"
+    },
+    {
+      "kind": "lotus",
+      "id": "u3",
+      "turn": "turn-10"
+    },
+    {
+      "kind": "galaxy",
+      "id": "u4",
+      "turn": "turn-11"
+    },
+    {
+      "kind": "lotus",
+      "id": "u1",
+      "turn": "turn-12"
+    },
+    {
+      "kind": "lotus",
+      "id": "u1",
+      "turn": "turn-13"
+    },
+    {
+      "kind": "lotus",
+      "id": "u2",
+      "turn": "turn-14"
+    },
+    {
+      "kind": "lotus",
+      "id": "u3",
+      "turn": "turn-15"
+    },
+    {
+      "kind": "lotus",
+      "id": "u4",
+      "turn": "turn-16"
+    },
+    {
+      "kind": "lotus",
+      "id": "u1",
+      "turn": "turn-17"
+    },
+    {
+      "kind": "lotus",
+      "id": "u1",
+      "turn": "turn-18"
+    },
+    {
+      "kind": "lotus",
+      "id": "u2",
+      "turn": "turn-19"
+    },
+    {
+      "kind": "lotus",
+      "id": "u3",
+      "turn": "turn-20"
+    },
+    {
+      "kind": "lotus",
+      "id": "u4",
+      "turn": "turn-21"
+    },
+    {
+      "kind": "lotus",
+      "id": "u1",
+      "turn": "turn-22"
+    },
+    {
+      "kind": "lotus",
+      "id": "u1",
+      "turn": "turn-23"
+    },
+    {
+      "kind": "lotus",
+      "id": "u2",
+      "turn": "turn-24"
+    }
+  ],
+  "ordinaryFocuses": 20,
+  "specialHolds": 4,
+  "frames": 4504,
+  "worldBoundsMaxErrorPx": 0.0003281250001236913,
+  "localScales": [
+    1
+  ],
+  "largeLotusCalls": 0,
+  "cameraErrorFrames": 0,
+  "final": {
+    "version": "0.10.2",
+    "focusId": "",
+    "owner": null,
+    "system": "CameraController → #world",
+    "world": {
+      "scale": 0.84,
+      "x": 86.4,
+      "y": 270
+    },
+    "relative": {
+      "scale": 1,
+      "x": 0,
+      "y": 0
+    },
+    "turn": null,
+    "kind": null,
+    "before": {
+      "id": "u2",
+      "x": 635.8222222222222,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actor": {
+      "id": "u2",
+      "x": 635.8222222222222,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actors": [
+      {
+        "id": "u1",
+        "x": 444.1777777777778,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      },
+      {
+        "id": "u2",
+        "x": 635.8222222222222,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      },
+      {
+        "id": "u3",
+        "x": 272.08888888888885,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      },
+      {
+        "id": "u4",
+        "x": 807.9111111111112,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      }
+    ],
+    "smallGift": null,
+    "state": "wide"
+  },
+  "baseline": {
+    "commit": "724944c",
+    "ceremonyDrawHeightFront": 350,
+    "normalHeightFront": 257.60767298624165,
+    "ceremonyDrawHeightAltar": 300,
+    "normalHeightAltar": 180.32537109036915,
+    "largeLotusCallsOnRose": 55
+  },
+  "recovery": {
+    "reset": {
+      "world": {
+        "scale": 0.84,
+        "x": 86.4,
+        "y": 270
+      },
+      "owner": null,
+      "state": "wide"
+    },
+    "missingTarget": {
+      "world": {
+        "scale": 0.84,
+        "x": 86.4,
+        "y": 270
+      },
+      "owner": null,
+      "state": "missing-target"
+    },
+    "renderError": {
+      "world": {
+        "scale": 0.84,
+        "x": 86.4,
+        "y": 270
+      },
+      "owner": null,
+      "state": "render-error"
+    }
+  },
+  "recoveryPageErrors": [],
+  "wrongPriceMappings": [
+    {
+      "id": "6267",
+      "ritual": null
+    },
+    {
+      "id": "6267",
+      "ritual": null
+    },
+    {
+      "id": "11046",
+      "ritual": null
+    },
+    {
+      "id": "11046",
+      "ritual": null
+    },
+    {
+      "id": "999001",
+      "ritual": null
+    },
+    {
+      "id": "999001",
+      "ritual": null
+    }
+  ],
+  "resolutionSwitch": "same owner and local scale 1",
+  "nodeTests": {
+    "passed": 59,
+    "failed": 0
+  }
+}

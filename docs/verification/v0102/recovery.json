@@ -1,0 +1,151 @@
+{
+  "wrongPriceMappings": [
+    {
+      "id": "6267",
+      "ritual": null
+    },
+    {
+      "id": "6267",
+      "ritual": null
+    },
+    {
+      "id": "11046",
+      "ritual": null
+    },
+    {
+      "id": "11046",
+      "ritual": null
+    },
+    {
+      "id": "999001",
+      "ritual": null
+    },
+    {
+      "id": "999001",
+      "ritual": null
+    }
+  ],
+  "resolutionSwitch": "same owner and local scale 1",
+  "reset": {
+    "version": "0.10.2",
+    "focusId": "",
+    "owner": null,
+    "system": "CameraController → #world",
+    "world": {
+      "scale": 0.84,
+      "x": 86.4,
+      "y": 270
+    },
+    "relative": {
+      "scale": 1,
+      "x": 0,
+      "y": 0
+    },
+    "turn": null,
+    "kind": null,
+    "before": {
+      "id": "u1",
+      "x": 445.5,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actor": null,
+    "actors": [],
+    "smallGift": null,
+    "state": "wide"
+  },
+  "missingTarget": {
+    "version": "0.10.2",
+    "focusId": "",
+    "owner": null,
+    "system": "CameraController → #world",
+    "world": {
+      "scale": 0.84,
+      "x": 86.4,
+      "y": 270
+    },
+    "relative": {
+      "scale": 1,
+      "x": 0,
+      "y": 0
+    },
+    "turn": null,
+    "kind": null,
+    "before": {
+      "id": "u1",
+      "x": 445.5,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actor": null,
+    "actors": [],
+    "smallGift": null,
+    "state": "missing-target"
+  },
+  "renderError": {
+    "version": "0.10.2",
+    "focusId": "",
+    "owner": null,
+    "system": "CameraController → #world",
+    "world": {
+      "scale": 0.84,
+      "x": 86.4,
+      "y": 270
+    },
+    "relative": {
+      "scale": 1,
+      "x": 0,
+      "y": 0
+    },
+    "turn": null,
+    "kind": null,
+    "before": {
+      "id": "u2",
+      "x": 445.50000000000006,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actor": {
+      "id": "u2",
+      "x": 445.50000000000006,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actors": [
+      {
+        "id": "u2",
+        "x": 445.50000000000006,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      }
+    ],
+    "smallGift": null,
+    "state": "render-error"
+  },
+  "pageErrors": []
+}

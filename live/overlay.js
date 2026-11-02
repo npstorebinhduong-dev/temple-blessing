@@ -13,6 +13,9 @@ import { screenRect } from './scene-layout.js';
 import { Nameplates } from './nameplates.js';
 import { SpecialArt } from './special-art.js';
 import { specialPose, smooth, MUSHIKA } from './special-rituals.js';
+import { actorGeometry } from './actor-geometry.js';
+import { drawSmallGift } from './small-gift-effect.js';
+import { CameraDebug } from './camera-debug.js';
 const $ = id => document.getElementById(id);
 const setText = (id, text) => { const el = $(id); if (el.textContent !== text) el.textContent = text; };
 const stage = $('stage'), canvas = $('scene'), ctx = canvas.getContext('2d');
@@ -21,12 +24,17 @@ const entranceCanvas = $('entranceScene'), entranceCtx = entranceCanvas.getConte
 const shrine = document.querySelector('.shrine'), celebration = $('celebration'), celebrationCtx = celebration.getContext('2d');
 const royalPetals = new RoyalPetals(), petalPainter = new PetalPainter();
 const cameraController = new CameraController();
+const world = $('world');
+const cameraDebug = new CameraDebug(stage, new URLSearchParams(location.search).get('debugCamera') === '1');
 const shrineArms = new ShrineArms(() => { $('assetError').hidden = false; $('assetError').textContent = 'โหลดภาพไม่สำเร็จ · กรุณารีเฟรชหน้าจอ'; });
 const preview = new URLSearchParams(location.search).has('preview');
 let actorResolution = preview ? .5 : 1;
+// The standing figure extends left of world x=0. Preserve the old viewport's
+// visible area BEFORE the root camera transforms the canvas bitmap.
+const SCENE_PAD = 160, SCENE_WIDTH = 1400, SCENE_HEIGHT = 2080;
 const textResolution = preview ? .5 : 1;
 nameCanvas.width = 1080 * textResolution; nameCanvas.height = 1920 * textResolution;
-if (preview) { canvas.width = 540; canvas.height = 960; }
+canvas.width = SCENE_WIDTH * actorResolution; canvas.height = SCENE_HEIGHT * actorResolution;
 entranceCanvas.width = 1080 * actorResolution; entranceCanvas.height = 224 * actorResolution;
 // Soft decorative petals need less raster resolution than names and characters.
 celebration.width = 540; celebration.height = 960; celebrationCtx.scale(.5, .5);
@@ -145,7 +153,7 @@ function giftGuide() {
   stage.classList.toggle('light-effects', settings.petalMode === 'light');
   const desiredResolution = preview ? .5 : settings.petalMode === 'light' ? .65 : 1;
   if (actorResolution !== desiredResolution) {
-    actorResolution = desiredResolution; canvas.width = Math.round(1080 * actorResolution); canvas.height = Math.round(1920 * actorResolution);
+    actorResolution = desiredResolution; canvas.width = SCENE_WIDTH * actorResolution; canvas.height = SCENE_HEIGHT * actorResolution;
     // Resizing a canvas resets its matrix to identity. Keep the viewport
     // coherent even between this settings event and the next animation frame.
     applyCamera(cameraController.current);
@@ -270,14 +278,14 @@ function lotus(x, y, scale, time) {
   }
   ctx.fillStyle = '#ffdf86'; ctx.beginPath(); ctx.ellipse(0, 5, 23, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 }
-function ritualArt(active, t) {
+function ritualArt(active, now, t) {
   if (!active || active.ritual.procession) return;
-  const progress = (performance.now() - active.beganAt) / (active.until - active.beganAt);
+  if (active.ritual.kind === 'lotus') return drawSmallGift(ctx, visitors.get(active.id), now - active.beganAt);
+  const progress = (now - active.beganAt) / (active.until - active.beganAt);
   const fade = Math.min(1, progress * 7, (1 - progress) * 7); ctx.save(); ctx.globalAlpha = Math.max(0, fade);
   const x = 540, y = 1015, kind = active.ritual.kind;
   const halo = ctx.createRadialGradient(x, 720, 20, x, 720, 450); halo.addColorStop(0, '#ffd15e00'); halo.addColorStop(.65, '#ffd15e1a'); halo.addColorStop(1, '#ffd15e00');
   ctx.fillStyle = halo; ctx.fillRect(80, 260, 920, 920);
-  if (kind === 'lotus') lotus(x, y, 1.25, t);
   if (kind === 'incense') {
     ctx.lineCap = 'round';
     for (let i = -1; i <= 1; i++) {
@@ -322,10 +330,7 @@ function drawViewer(v, dt, t, active) {
   }
   v.glow = Math.max(0, v.glow - dt * .3);
   const highlight = active?.id === v.id || v.glow > .4;
-  const depth = Math.max(0, Math.min(1.4, (v.y - 1230) / 480));
-  const normalHeight = (245 + 105 * depth) * seat.density;
-  const entryBlend = v.entryStart === null ? 1 : Math.min(1, Math.max(0, (t - v.entryStart) / 2));
-  const h = 128 + (normalHeight - 128) * entryBlend, w = h * .75;
+  const geometry = actorGeometry(v, v, t), { height: h, width: w } = geometry;
   v.renderHeight = h;
   const bob = reduced ? 0 : v.state === 'walk' ? Math.sin(v.step * Math.PI / 2) * 2 : Math.sin(t * 1.4 + v.phase) * 1.1;
   ctx.save();
@@ -349,6 +354,7 @@ function drawViewer(v, dt, t, active) {
     v.bowing = false;
   }
   ctx.restore();
+  cameraDebug.actor(v, v, geometry, v.state, h);
   if (v.ambient) return;
   const tagY = v.y - h * (frame > 3 ? .89 : .99) - 4;
   nameTag(v, v.x, tagY, Math.max(94, seat.gap + 8), active?.id === v.id);
@@ -388,10 +394,10 @@ function blessingBanner(active, now) {
   stage.classList.toggle('blessing-visible', !!visible);
 }
 
-function drawCeremony(active, now, t, pose) {
+function drawCeremony(active, now, t, pose, geometry) {
   if (!hero || !active?.ritual.procession || ['mushika', 'galaxy'].includes(active.ritual.kind)) return;
   canvas.dataset.ceremonyPhase = pose.phase; canvas.dataset.ceremonySkin = hero.skin;
-  const h = 300 + Math.max(0, Math.min(1, (pose.y - 1230) / 480)) * 50, w = h * .75;
+  const { height: h, width: w } = geometry;
   const royal = active.ritual.kind === 'royal';
   ctx.save();
   const beam = ctx.createLinearGradient(540, 900, 540, 1780);
@@ -433,12 +439,14 @@ function drawCeremony(active, now, t, pose) {
     for (const p of petals.slice(-(royal ? 3 : 2))) p.golden = true;
   }
   ctx.restore();
+  cameraDebug.actor(hero, pose, geometry, pose.phase, h);
 }
 function applyCamera(camera) {
-  // The only writer of the scene viewport. The shrine, articulated arms,
-  // mouse, actors and props all consume this SAME matrix in this same frame.
-  shrine.style.transform = `translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`;
-  ctx.setTransform(camera.scale*actorResolution,0,0,camera.scale*actorResolution,camera.x*actorResolution,camera.y*actorResolution);
+  // Exactly ONE viewport transform on the world root. Neither the actor layer
+  // nor the shrine gets a separate camera. Canvas transforms are raster units.
+  world.style.transform = `translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`;
+  ctx.setTransform(actorResolution,0,0,actorResolution,SCENE_PAD*actorResolution,0);
+  canvas.dataset.rasterScale = actorResolution; canvas.dataset.rasterPadding = SCENE_PAD;
   canvas.dataset.zoom = cameraController.relative.scale.toFixed(3);
   canvas.dataset.shrineScale = camera.scale.toFixed(3);
   canvas.dataset.cameraX = camera.x; canvas.dataset.cameraY = camera.y; canvas.dataset.cameraScale = camera.scale;
@@ -453,10 +461,11 @@ function renderFrame(now) {
   nameplates.clear();
   canvas.dataset.rendered = ++renderedFrames;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.clearRect(0, 0, 1080, 1920);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   const requested = remoteRitual && now < remoteRitual.until ? remoteRitual : null;
   const target = requested && visitors.get(requested.id);
   const active = cameraController.accept(requested, target) ? requested : null;
+  cameraDebug.begin(active);
   if (active !== lastRitual) {
     if (['royal', 'galaxy'].includes(lastRitual?.ritual.kind)) royalPetals.stop();
     audio.endSpecial(); lastSpecialPhase = '';
@@ -471,7 +480,8 @@ function renderFrame(now) {
       $('giftName').textContent = active.name; $('giftCount').textContent = '×' + active.count;
       $('gift').dataset.kind = active.ritual.kind; audio.bell(active.ritual.kind);
       if (active.ritual.kind === 'galaxy') audio.beginSpecial();
-      const v = visitors.get(active.id); particles(v?.x || 540, (v?.y || 1400) - 160, active.ritual.kind === 'aarti' ? 36 : 16);
+      const v = visitors.get(active.id);
+      if (active.ritual.kind !== 'lotus') particles(v.x, v.y - 160, active.ritual.kind === 'aarti' ? 36 : 16);
       if (active.ritual.procession) {
         hero = { id: active.id, name: active.name, skin: v.skin || active.skin || 'female', from: { x: v.x, y: v.y }, seat: { ...v.seat }, seated: v.state === 'sit' };
       }
@@ -483,6 +493,7 @@ function renderFrame(now) {
     ? specialPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, { untilMs: active.until - active.beganAt, reduced })
     : processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
   const donor = active && visitors.get(active.id);
+  const heroGeometry = hero && pose ? actorGeometry(hero, pose, t) : null;
   const focus = pose || (donor && { x: donor.x, y: donor.y, bodyHeight: donor.renderHeight || 200 });
   const camera = active ? cameraController.sample(active, now, focus, { enabled: settings.cinematicZoom !== false, reduced }) : cameraController.current;
   applyCamera(camera);
@@ -508,21 +519,22 @@ function renderFrame(now) {
     setText('inviteSub', 'พิมพ์ 1 = หญิง · 2 = ชาย');
   }
   $('invitation').classList.toggle('call-to-action', inviteUntil > now && !hero);
-  ritualArt(active, t);
+  const smallGift = ritualArt(active, now, t) || null;
+  canvas.dataset.smallGiftEffect = smallGift ? 'donor-sparks' : '';
   for (const v of [...visitors.values()].sort((a, b) => a.y - b.y)) {
     ctx.save(); ctx.globalAlpha = hero ? .82 : 1; drawViewer(v, dt, t, active); ctx.restore();
   }
   canvas.dataset.bowing = [...visitors.values()].filter(v => v.bowing).length;
-  drawCeremony(active, now, t, pose);
+  drawCeremony(active, now, t, pose, heroGeometry);
   royalPetals.configure({ reduced, light: settings.petalMode === 'light' });
   const shower = royalPetals.update(now, dt);
   if (dim) {
-    ctx.save();ctx.setTransform(actorResolution,0,0,actorResolution,0,0);
+    ctx.save();ctx.setTransform(actorResolution/camera.scale,0,0,actorResolution/camera.scale,(SCENE_PAD-camera.x/camera.scale)*actorResolution,-camera.y*actorResolution/camera.scale);
     const shade=ctx.createLinearGradient(0,500,0,1830);shade.addColorStop(0,`rgba(6,7,19,${dim})`);shade.addColorStop(.55,`rgba(6,7,19,${dim*.93})`);shade.addColorStop(1,`rgba(6,7,19,${dim*.42})`);
     ctx.fillStyle=shade;ctx.fillRect(0,0,1080,1920);ctx.restore();
   }
   if (galaxy) {
-    ctx.save();ctx.setTransform(actorResolution,0,0,actorResolution,0,0);
+    ctx.save();ctx.setTransform(actorResolution/camera.scale,0,0,actorResolution/camera.scale,(SCENE_PAD-camera.x/camera.scale)*actorResolution,-camera.y*actorResolution/camera.scale);
     petalPainter.draw(ctx,shower.filter(p=>p.depth<.55),now,{clear:false,opacity:.5});ctx.restore();
   }
   if (special && hero && pose) {
@@ -542,8 +554,9 @@ function renderFrame(now) {
       const transfer = specialArt.whisper(ctx, elapsed, pose, t, lotus, settings.petalMode === 'light');
       canvas.dataset.transferPhase = transfer.phase; canvas.dataset.transferProgress = transfer.progress.toFixed(3);
     }
-    specialArt.actor(ctx, hero, pose, characterSprites, t, reduced);
-    if (!galaxy) nameTag(hero, pose.x, pose.y - pose.height - 12, 520, true);
+    specialArt.actor(ctx, hero, pose, characterSprites, t, reduced, heroGeometry);
+    cameraDebug.actor(hero, pose, heroGeometry, pose.phase, heroGeometry.height);
+    if (!galaxy) nameTag(hero, pose.x, pose.y - heroGeometry.height - 12, 520, true);
   } else { canvas.dataset.apparition = '0'; canvas.dataset.blessingArm = '0'; canvas.dataset.transferPhase = ''; canvas.dataset.transferProgress = '0'; }
   for (let i = petals.length - 1; i >= 0; i--) {
     const p = petals[i]; p.age += dt; if (p.age > p.life) { petals.splice(i, 1); continue; }
@@ -557,7 +570,7 @@ function renderFrame(now) {
   const exclusions = [screenRect({x:MUSHIKA.x,y:MUSHIKA.y-12,w:MUSHIKA.width,h:MUSHIKA.height+24},camera)];
   if (active?.ritual.kind === 'mushika' && pose?.side) {
     // The other guests' labels must not run across the mouse or whispering hand.
-    for (const r of [{ x:pose.x-90, y:pose.y-pose.height, w:190, h:pose.height }]) {
+    for (const r of [{ x:pose.x-90, y:pose.y-heroGeometry.height, w:190, h:heroGeometry.height }]) {
       exclusions.push({ x:r.x*camera.scale+camera.x,y:r.y*camera.scale+camera.y,w:r.w*camera.scale,h:r.h*camera.scale });
     }
   }
@@ -575,6 +588,7 @@ function renderFrame(now) {
   }
   petalPainter.draw(celebrationCtx, galaxy ? shower.filter(p=>p.depth>=.55) : shower, now, { exclusions: galaxy ? [specialArt.faceRect()] : [] });
   celebration.dataset.petals = royalPetals.items.length;
+  cameraDebug.end(cameraController, active, smallGift);
 }
 let reportedRenderError = '';
 function frame(now) {
