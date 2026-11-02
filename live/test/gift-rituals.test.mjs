@@ -62,7 +62,7 @@ test('a 500-rose streak produces one lotus event and counts 500, including strin
   assert.equal(room.stats.coins, 500); assert.equal(room.stats.gifts, 500);
 });
 test('crowd eviction never loses donations or the leaderboard; serialized totals restore', () => {
-  const room = new Room({}, { ambient: false, now: 0 }); room.join('donor', 'ศิริพร', { now: 0 }); room.gift('donor', 'ศิริพร', 2, 100);
+  const room = new Room({}, { ambient: false, now: 0 }); room.join('donor', 'ศิริพร', { now: 0 }); room.gift('donor', 'ศิริพร', 2, 100, 0);
   for (let i=0;i<59;i++) room.join('b'+i, 'B', { now: i+1 });
   room.join('c', 'C', { now: 30000 }); room.advance(30000);
   assert.equal(room.viewers.size, 60); assert.equal(room.find('donor').seatState, 'leaving');

@@ -6,14 +6,17 @@ import { SceneAudio } from './audio.js';
 import { processionPose } from './procession.js';
 import { ceremonyCamera } from './ceremony-camera.js';
 import { RoyalPetals, PetalPainter } from './royal-petals.js';
+import { entrancePosition, ENTRANCE_EXIT_MS } from './entrance-line.js';
 const $ = id => document.getElementById(id);
 const stage = $('stage'), canvas = $('scene'), ctx = canvas.getContext('2d');
+const entranceCanvas = $('entranceScene'), entranceCtx = entranceCanvas.getContext('2d');
 const shrine = document.querySelector('.shrine'), celebration = $('celebration'), celebrationCtx = celebration.getContext('2d');
 const royalPetals = new RoyalPetals(), petalPainter = new PetalPainter();
 const shrineArms = new ShrineArms(() => { $('assetError').hidden = false; $('assetError').textContent = 'โหลดภาพไม่สำเร็จ · กรุณารีเฟรชหน้าจอ'; });
 const preview = new URLSearchParams(location.search).has('preview');
 const actorResolution = preview ? .5 : 1;
 if (preview) { canvas.width = 540; canvas.height = 960; }
+entranceCanvas.width = 1080 * actorResolution; entranceCanvas.height = 224 * actorResolution;
 // Soft decorative petals need less raster resolution than names and characters.
 celebration.width = 540; celebration.height = 960; celebrationCtx.scale(.5, .5);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -32,7 +35,7 @@ const audio = new SceneAudio({ preview, onState: state => {
   }
   if (!preview && overlaySocket?.readyState === WebSocket.OPEN) overlaySocket.send(JSON.stringify({ t: 'speech-status', ...status }));
 } });
-const visitors = new Map(), petals = [];
+const visitors = new Map(), entrance = new Map(), petals = [];
 const badgeCache = new Map();
 document.fonts.addEventListener('loadingdone', () => badgeCache.clear());
 const seats = seatLayout(), cap = 60;
@@ -61,12 +64,31 @@ function addViewer(p, instant = false) {
     Object.assign(visitors.get(p.id), { name: p.name, coins: p.coins, skin: p.skin }); attendance(); return;
   }
   const phase = actorPhase(p.id), now = performance.now() / 1000;
-  const v = { ...p, seat: seats[p.slot - 1], x: 540, y: 1990, state: instant || reduced ? 'sit' : 'walk',
+  const entryFrom = p.entryFrom || (entrance.has(p.id) ? entrancePosition(entrance.get(p.id).lineSlot) : null);
+  entrance.delete(p.id); entranceStatus();
+  const v = { ...p, seat: seats[p.slot - 1], x: entryFrom?.x ?? 540, y: entryFrom?.y ?? 1990, state: instant || reduced ? 'sit' : 'walk',
+    entryStart: entryFrom && !instant && !reduced ? now : null,
     elapsed: 0, step: 0, glow: 0, phase: phase * 6.28, bowAt: now - phase * 29 };
   visitors.set(p.id, v);
   if (v.state === 'sit' && v.seat) { v.x = v.seat.x; v.y = v.seat.y; }
   if (p.seatState === 'leaving') depart(p);
   attendance();
+}
+function entranceStatus() {
+  canvas.dataset.standing = entrance.size;
+  canvas.dataset.standingMale = [...entrance.values()].filter(v => v.skin === 'male').length;
+  stage.classList.toggle('entrance-active', entrance.size > 0);
+  entranceCanvas.hidden = entrance.size === 0;
+}
+function receiveEntrance(data = {}) {
+  entrance.clear();
+  const now = performance.now(), serverTime = data.serverTime || Date.now();
+  for (const person of data.people || []) {
+    if (visitors.has(person.id)) continue;
+    entrance.set(person.id, { ...person, shown: now - Math.max(0, serverTime - person.shownAt),
+      exit: person.exitAt === undefined ? null : now - Math.max(0, serverTime - person.exitAt) });
+  }
+  canvas.dataset.entryWaiting = data.waiting || 0; entranceStatus();
 }
 function depart(p) {
   const v = visitors.get(p.id); if (!v) return;
@@ -114,12 +136,13 @@ function updateStats(m) {
 }
 function state(m) {
   // Server snapshots are authoritative after reconnect, mode switches and operator edits.
-  visitors.clear(); petals.length = 0; remoteRitual = null; lastRitual = null; hero = null;
+  visitors.clear(); entrance.clear(); petals.length = 0; remoteRitual = null; lastRitual = null; hero = null;
   royalPetals.reset(); shrine.style.transform = ''; canvas.dataset.zoom = '1.000';
   $('gift').hidden = true; stage.classList.remove('ceremony'); audio.clear();
   lastGiftAt = m.engagement?.lastGiftAt || Date.now(); inviteUntil = 0;
   mode = m.mode; settings = m.settings;
   for (const person of m.actors) addViewer(person, true);
+  receiveEntrance(m.entrance);
   seatingStatus(m.seating); receiveRitual(m.active, m.serverTime);
   $('title').textContent = settings.title; $('subtitle').textContent = settings.subtitle;
   $('demoBadge').hidden = mode !== 'demo'; audio.configure(settings); updateStats(m); attendance();
@@ -130,6 +153,7 @@ function updateSettings(m) {
   const ids = new Set(m.actors.map(v => v.id));
   for (const id of visitors.keys()) if (!ids.has(id)) visitors.delete(id);
   for (const person of m.actors) { addViewer(person, true); if (person.seatState === 'leaving') depart(person); }
+  receiveEntrance(m.entrance);
   seatingStatus(m.seating); updateStats(m); audio.clear(); audio.configure(settings);
   $('title').textContent = settings.title; $('subtitle').textContent = settings.subtitle;
   if (!settings.idlePrompts) inviteUntil = 0;
@@ -150,6 +174,7 @@ function connect() {
     if (m.t === 'settings') updateSettings(m);
     if (m.t === 'stats') updateStats(m);
     if (m.t === 'join') addViewer(m.v);
+    if (m.t === 'entrance') receiveEntrance(m);
     if (m.t === 'character') {
       addViewer(m.v);
       if (hero?.id === m.v.id) hero.skin = m.v.skin;
@@ -185,7 +210,7 @@ function shorten(text, width) {
   while (chars.length && ctx.measureText(chars.join('') + '…').width > width) chars.pop();
   return chars.join('') + '…';
 }
-function nameTag(v, x, y, width, highlight) {
+function nameTag(v, x, y, width, highlight, target = ctx) {
   const size = cap === 60 ? 18 : 21;
   const key = JSON.stringify([v.name, Math.floor(width), size, !!highlight]);
   let badge = badgeCache.get(key);
@@ -202,7 +227,7 @@ function nameTag(v, x, y, width, highlight) {
     if (badgeCache.size >= 256) badgeCache.delete(badgeCache.keys().next().value);
     badgeCache.set(key, badge);
   }
-  ctx.drawImage(badge, x - badge.width / 2, y - 42);
+  target.drawImage(badge, x - badge.width / 2, y - 42);
 }
 function lotus(x, y, scale, time) {
   ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
@@ -267,7 +292,9 @@ function drawViewer(v, dt, t, active) {
   v.glow = Math.max(0, v.glow - dt * .3);
   const highlight = active?.id === v.id || v.glow > .4;
   const depth = Math.max(0, Math.min(1.4, (v.y - 1230) / 480));
-  const h = (245 + 105 * depth) * seat.density, w = h * .75;
+  const normalHeight = (245 + 105 * depth) * seat.density;
+  const entryBlend = v.entryStart === null ? 1 : Math.min(1, Math.max(0, (t - v.entryStart) / 2));
+  const h = 128 + (normalHeight - 128) * entryBlend, w = h * .75;
   v.renderHeight = h;
   const bob = reduced ? 0 : v.state === 'walk' ? Math.sin(v.step * Math.PI / 2) * 2 : Math.sin(t * 1.4 + v.phase) * 1.1;
   ctx.save();
@@ -306,6 +333,28 @@ function finishHero() {
   const v = visitors.get(hero.id);
   if (v?.seat) { v.x = v.seat.x; v.y = v.seat.y; v.state = 'sit'; v.elapsed = 0; v.bowAt = performance.now() / 1000; }
   hero = null; canvas.dataset.ceremonyPhase = ''; canvas.dataset.ceremonySkin = '';
+}
+function drawEntrance(now, t) {
+  // Screen-space foreground keeps newcomers at the bottom during gift zooms.
+  const pen = entranceCtx;
+  pen.setTransform(1, 0, 0, 1, 0, 0); pen.clearRect(0, 0, entranceCanvas.width, entranceCanvas.height);
+  pen.setTransform(actorResolution, 0, 0, actorResolution, 0, -1696 * actorResolution);
+  for (const person of entrance.values()) {
+    const point = entrancePosition(person.lineSlot), phase = actorPhase(person.id) * 6.28;
+    const arriving = reduced ? 1 : Math.min(1, Math.max(0, (now - person.shown) / 1100));
+    const leaving = person.exit === null ? 0 : Math.min(1, Math.max(0, (now - person.exit) / ENTRANCE_EXIT_MS));
+    const progress = arriving * arriving * (3 - 2 * arriving);
+    const x = point.x + (reduced ? 0 : Math.sin(t * 1.2 + phase) * 1.3);
+    const y = point.y + (reduced ? 0 : (1 - progress) * 150 + leaving * 110);
+    const frame = !reduced && (arriving < 1 || leaving > 0) ? Math.floor(t * 7) % 4 : 2;
+    const sprite = characterSprites.get(frame, point.height, person.skin);
+    if (!sprite) continue;
+    pen.save(); pen.globalAlpha = arriving * (1 - leaving);
+    pen.fillStyle = '#170a0766'; pen.beginPath(); pen.ellipse(x, y - 3, 25, 6, 0, 0, Math.PI * 2); pen.fill();
+    const bob = reduced ? 0 : Math.sin(t * 1.4 + phase) * 1.2;
+    pen.drawImage(sprite, x - point.height * .375, y - point.height + bob, point.height * .75, point.height);
+    nameTag(person, x, y + 32, 99, false, pen); pen.restore();
+  }
 }
 function drawCeremony(active, now, t, pose) {
   if (!hero || !active?.ritual.procession) return;
@@ -420,6 +469,7 @@ function frame(now) {
     else { ctx.rotate(t + p.phase); ctx.fillStyle = p.golden ? p.phase > 3 ? '#ffe29a' : '#f8b42f' : p.phase > 3 ? '#fbd7c7' : '#efb6ba'; ctx.beginPath(); ctx.ellipse(0, 0, p.size * .55, p.size, 0, 0, 6.28); ctx.fill(); }
     ctx.restore();
   }
+  drawEntrance(now, t);
   royalPetals.configure({ reduced, light: settings.petalMode === 'light' });
   petalPainter.draw(celebrationCtx, royalPetals.update(now, dt), now);
   celebration.dataset.petals = royalPetals.items.length;

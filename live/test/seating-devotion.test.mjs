@@ -35,11 +35,12 @@ test('ten background actors keep fixed slots through fifty arrivals and repeated
   assert.deepEqual(before.map(([,slot]) => slot), [1,2,3,4,5,6,7,8,9,10]);
   for (let i=0;i<50;i++) assert.equal(room.join(`u${i}`,`Name ${i}`,{ now: i+1 }).viewer.slot, i+11);
   const savedSlots = [...room.seating.actors.values()].map(v => [v.id,v.slot]);
-  room.join('u0','Updated name',{ now: 40000 }); room.gift('u0','Updated name',3,500);
+  room.join('u0','Updated name',{ now: 40000 }); room.gift('u0','Updated name',3,500,40000);
   room.advance(40000);
   assert.deepEqual([...room.seating.actors.values()].map(v => [v.id,v.slot]), savedSlots);
   assert.equal(room.seating.actors.size,60); assert.equal(room.seating.summary().ambient,10);
-  assert.equal(room.find('u0').seatedAt,ENTRY_MS+1); // Interaction does not make a long-seated person new again.
+  assert.equal(room.find('u0').seatedAt,ENTRY_MS+1); // Keep their seat and admission animation.
+  assert.equal(room.find('u0').lastGiftAt,40000); // Only a gift renews departure priority.
   assert.equal(room.stats.coins,1500); assert.equal(room.stats.gifts,3);
   assert.equal(room.viewers.size,50); assert.equal(room.top().length,1);
   assert.equal(room.seating.waiting.size,0);
@@ -68,6 +69,25 @@ test('a full scene vacates the oldest seat before admitting FIFO, including all 
   assert.equal(seats.waiting.size,0); assert.equal(seats.summary().ambient,0);
   assert.ok(departed.includes('u0')); assert.ok(!seats.actors.has('u0')); assert.equal(seats.actors.size,60);
   seats.tick(200000); assert.equal(seats.summary().ambient,0,'background actors must not refill after yielding');
+});
+
+test('a full scene releases the least recent donor; repeat gifts renew priority but ordinary interactions do not', () => {
+  const room = new Room({}, { ambient: false, now: 0 });
+  for (let i = 0; i < 60; i++) {
+    room.join(`donor${i}`, `Donor ${i}`, { now: i });
+    room.gift(`donor${i}`, `Donor ${i}`, 1, 1, 100 + i);
+  }
+  const oldSlot = room.find('donor0').slot, nextSlot = room.find('donor1').slot;
+  room.gift('donor0', 'Recent donor', 1, 1, 29900);
+  room.join('donor1', 'Updated name without a gift', { now: 29999 });
+  room.join('new', 'New donor', { now: 30000 }); room.gift('new', 'New donor', 1, 1, 30000);
+  const departing = room.advance(30000).find(e => e.t === 'depart');
+  assert.equal(departing.v.id, 'donor1');
+  assert.equal(room.find('donor0').slot, oldSlot); assert.equal(room.find('donor0').seatState, 'seated');
+  assert.equal(room.find('donor1').lastGiftAt, 101);
+  const admitted = room.advance(30000 + EXIT_MS).find(e => e.t === 'join' && e.v.id === 'new');
+  assert.ok(admitted); assert.equal(admitted.v.slot, nextSlot);
+  assert.equal(room.stats.coins, 62); assert.equal(room.top()[0].id, 'donor0');
 });
 
 test('returning donors finish their exit and rejoin once; bursts have bounded waiting memory', () => {

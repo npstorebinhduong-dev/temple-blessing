@@ -22,7 +22,7 @@ function readSettings() { return Object.fromEntries(SETTINGS.map(k => { const el
 function stats(m) { if (!m.stats) return; $('coins').textContent = numbers.format(m.stats.coins); $('giftTotal').textContent = numbers.format(m.stats.gifts); $('likes').textContent = numbers.format(m.stats.likes); }
 function seating(m) {
   $('count').textContent = m.seated;
-  $('queueStatus').textContent = `${m.ambient} nhân vật nền · ${m.seated} người tương tác trong cảnh · ${m.waiting} người đang chờ · ${m.departing} người đang rời chỗ`;
+  $('queueStatus').textContent = `${m.ambient} nhân vật nền · ${m.seated} người ở khu quỳ · ${m.waiting} người chờ ghế · ${m.departing} người đang rời chỗ · ${m.standing || 0} người đứng mép dưới · ${m.entryWaiting || 0} người chờ hiện ở hàng đứng`;
 }
 function sourceStatus(m) {
   const label = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', connected: 'Đã kết nối nguồn', reconnecting: 'Đang kết nối lại…', disconnected: 'Đã mất kết nối', error: 'Lỗi kết nối' }[m.status] || m.status;
@@ -60,6 +60,8 @@ $('connect').onclick = () => send('connect', { source: $('source').value, url: $
 $('disconnect').onclick = () => send('disconnect');
 $('demo').onclick = () => send('demo'); $('showLive').onclick = () => send('live');
 $('chat').onclick = () => send('chat', { name: $('simName').value, text: $('simText').value, skin: $('simSkin').value });
+$('enter').onclick = () => send('member', { name: $('simName').value, skin: $('simSkin').value });
+for (const b of document.querySelectorAll('[data-entry-fill]')) b.onclick = () => send('entry-fill', { n: +b.dataset.entryFill });
 $('simText').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('chat').click(); } };
 for (const b of document.querySelectorAll('[data-gift]')) b.onclick = () => send('gift', { name: $('simName').value, gift: b.dataset.name, giftId: b.dataset.id, kind: b.dataset.gift, skin: $('simSkin').value, count: +$('repeat').value, diamonds: +b.dataset.unit });
 for (const b of document.querySelectorAll('[data-fill]')) b.onclick = () => send('fill', { n: +b.dataset.fill });

@@ -1,9 +1,10 @@
 import { Seating } from './seating.js';
 import { RitualQueue } from './ritual-queue.js';
+import { EntranceLine, entrancePosition } from './entrance-line.js';
 export const DEFAULTS = Object.freeze({
   title: 'พระพิฆเนศ', subtitle: 'โอม ศรี คเณศายะ นะมะฮา',
   voice: 'th-TH-PremwadeeNeural', voiceEnabled: true, pitch: -5, rate: -8,
-  music: true, musicLoop: true, musicVolume: 60, volume: 35, joinOnEnter: false, joinOnChat: false,
+  music: true, musicLoop: true, musicVolume: 60, volume: 35, joinOnEnter: true, joinOnChat: false,
   cinematicZoom: true, petalMode: 'full',
   goal: 4995, giftMap: '', characterMode: 'mixed',
   idlePrompts: true, idleEverySec: 10, ambientCrowd: true, statueMotion: true, statueMotionLevel: 'clear',
@@ -29,7 +30,7 @@ export function skinFromComment(text) {
 
 export class Room {
   constructor(saved = {}, { ambient = true, now = Date.now() } = {}) {
-    this.seating = new Seating({ ambient, now }); this.rituals = new RitualQueue(); this.donors = new Map(); this.choices = new Map();
+    this.seating = new Seating({ ambient, now }); this.rituals = new RitualQueue(); this.entrance = new EntranceLine(); this.donors = new Map(); this.choices = new Map();
     this.stats = { coins: nonnegative(saved.stats?.coins), gifts: nonnegative(saved.stats?.gifts), likes: nonnegative(saved.stats?.likes) };
     this.startedAt = Number(saved.startedAt) || Date.now();
     for (const d of Array.isArray(saved.donors) ? saved.donors : []) {
@@ -39,20 +40,35 @@ export class Room {
   }
   get viewers() { return this.seating.viewers; }
   find(id) { return this.seating.find(String(id)); }
-  clearScene(ambient = true) { this.seating = new Seating({ ambient }); this.rituals.clear(); }
+  clearScene(ambient = true) { this.seating = new Seating({ ambient }); this.rituals.clear(); this.entrance.clear(); }
+  enter(id, name, { avatar = '', demo = false, skin, now = Date.now() } = {}) {
+    const existing = this.find(id);
+    if (!id || existing && existing.seatState !== 'waiting') return null;
+    id = String(id);
+    return this.entrance.offer({ id, name: cleanName(name), avatar, demo,
+      skin: existing?.skin || skin || this.entrance.find(id)?.skin || this.choices.get(id) || defaultSkin(id) }, now);
+  }
+  takeEntrance(viewer) {
+    const standing = this.entrance.find(viewer.id);
+    if (standing?.lineSlot) viewer.entryFrom = entrancePosition(standing.lineSlot);
+    this.entrance.remove(viewer.id);
+  }
   join(id, name, { avatar = '', demo = false, skin, now = Date.now() } = {}) {
     if (!id) return null;
     id = String(id);
-    const viewer = { id, name: cleanName(name), avatar, demo, skin: ['male', 'female'].includes(skin) ? skin : this.find(id)?.skin || defaultSkin(id), coins: this.donors.get(id)?.coins || 0 };
-    return this.seating.offer(viewer, now);
+    const viewer = { id, name: cleanName(name), avatar, demo, skin: ['male', 'female'].includes(skin) ? skin : this.find(id)?.skin || this.entrance.find(id)?.skin || this.choices.get(id) || defaultSkin(id), coins: this.donors.get(id)?.coins || 0 };
+    const result = this.seating.offer(viewer, now);
+    if (result.viewer.slot && !result.overflow) this.takeEntrance(result.viewer);
+    return result;
   }
-  gift(id, name, count, unitCoins) {
+  gift(id, name, count, unitCoins, now = Date.now()) {
     count = positive(count, 9999); unitCoins = positive(unitCoins, 50000);
     const coins = count * unitCoins;
     const donor = this.donors.get(id) || { id, name: cleanName(name), coins: 0 };
     donor.name = cleanName(name); donor.coins += coins; this.donors.set(id, donor);
     this.stats.coins += coins; this.stats.gifts += count;
-    const viewer = this.find(id); if (viewer) viewer.coins = donor.coins;
+    const viewer = this.find(id);
+    if (viewer) { viewer.coins = donor.coins; viewer.lastGiftAt = now; }
     return { count, unitCoins, coins, total: donor.coins };
   }
   top() { return [...this.donors.values()].sort((a, b) => b.coins - a.coins).slice(0, 5); }
@@ -60,6 +76,8 @@ export class Room {
     this.rituals.prune(now);
     const protectedIds = new Set([...this.rituals.pending, this.rituals.active].filter(Boolean).map(v => v.id));
     const events = this.seating.tick(now, protectedIds);
+    for (const event of events) if (event.t === 'join') this.takeEntrance(event.v);
+    this.entrance.tick(now, new Set(this.seating.waiting.keys()));
     const previous = this.rituals.active;
     const active = this.rituals.tick(now, item => {
       const v = this.seating.actors.get(item.id);

@@ -44,7 +44,7 @@ export class Seating {
   }
   admit(v, slot, now) {
     Object.assign(v, { slot, seatState: 'arriving', admittedAt: now, seatedAt: now + ENTRY_MS });
-    delete v.exitAt; delete v.exitUntil;
+    delete v.exitAt; delete v.exitUntil; delete v.entryFrom;
     this.actors.set(v.id, v); return { t: 'join', v };
   }
   offer(person, now = Date.now()) {
@@ -87,7 +87,10 @@ export class Seating {
     if (this.waiting.size > leaving && leaving < 2 && now >= this.nextExitAt) {
       const oldest = [...this.actors.values()]
         .filter(v => v.seatState === 'seated' && now - v.seatedAt >= MIN_STAY_MS && !protectedIds.has(v.id))
-        .sort((a, b) => a.seatedAt - b.seatedAt || a.slot - b.slot)[0];
+        // A fresh gift renews priority; chat/name updates do not. Background
+        // actors and optional chat admissions fall back to their seated time.
+        .sort((a, b) => (a.lastGiftAt ?? a.seatedAt) - (b.lastGiftAt ?? b.seatedAt)
+          || a.seatedAt - b.seatedAt || a.slot - b.slot)[0];
       if (oldest) { events.push(this.depart(oldest, now)); this.nextExitAt = now + 1200; }
     }
     return events;

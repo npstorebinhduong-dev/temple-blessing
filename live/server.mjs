@@ -52,17 +52,20 @@ if ((saved.version || 0) < 3) { settings.joinOnEnter = false; settings.joinOnCha
 // v0.7 uses the confirmed Thai LIVE gift: Shamrock, ID 9875, 10 coins.
 // Other gifts/settings are preserved; future manual edits are not rewritten.
 if ((saved.version || 0) < 4) settings.giftMap = upgradeShamrockMap(settings.giftMap);
+// v0.8 routes room-entry events to the bottom welcome line, never to a seat.
+if ((saved.version || 0) < 5) settings.joinOnEnter = true;
 const newRoom = savedRoom => new Room(savedRoom, { ambient: settings.ambientCrowd });
 const rooms = { demo: newRoom(), live: newRoom(saved.live) };
 const engagement = new EngagementClock();
 let mode = 'demo', room = rooms.demo, source = null, sourceGeneration = 0;
 let tiktokState = { status: 'idle', source: 'tikfinity', error: '' };
 let botTimer = null, persistTimer = null;
-let lastSeatingSummary = '';
+let lastSeatingSummary = '', lastEntranceRevision = -1;
 const meta = () => ({ stats: room.stats, top: room.top(), mode, goal: settings.goal });
-const seatingMeta = () => ({ ...room.seating.summary(), rituals: room.rituals.pending.length });
+const seatingMeta = () => ({ ...room.seating.summary(), rituals: room.rituals.pending.length,
+  standing: room.entrance.people.size, entryWaiting: room.entrance.waiting.size });
 const snapshot = () => ({ t: 'state', settings, viewers: [...room.viewers.values()], actors: [...room.seating.actors.values()],
-  seating: seatingMeta(), active: room.rituals.active, serverTime: Date.now(), cap: 60,
+  seating: seatingMeta(), entrance: room.entrance.snapshot(), active: room.rituals.active, serverTime: Date.now(), cap: 60,
   startedAt: room.startedAt, tiktok: tiktokState, engagement: engagement.snapshot(), ...meta() });
 function addLog(message) {
   const line = `[${new Date().toLocaleTimeString('vi-VN')}] ${message}`;
@@ -73,7 +76,7 @@ function persist() {
   clearTimeout(persistTimer); persistTimer = null;
   try {
     const file = path.join(DATA, 'session.json');
-    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 4, settings, live: rooms.live.serialize() }));
+    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 5, settings, live: rooms.live.serialize() }));
     fs.renameSync(file + '.tmp', file);
     return true;
   } catch (e) { addLog('Không lưu được phiên: ' + e.message); return false; }
@@ -84,11 +87,23 @@ function seatingChanged() {
   const summary = seatingMeta(), key = JSON.stringify(summary);
   if (key !== lastSeatingSummary) { lastSeatingSummary = key; broadcast({ t: 'seating', ...summary }); }
 }
+function entranceChanged() {
+  if (lastEntranceRevision === room.entrance.revision) return;
+  lastEntranceRevision = room.entrance.revision;
+  broadcast({ t: 'entrance', ...room.entrance.snapshot() }); seatingChanged();
+}
+function onMember(id, name, avatar = '', skin) {
+  const existing = room.find(id);
+  if (!id || !settings.joinOnEnter || existing && existing.seatState !== 'waiting') return;
+  const chosen = existing?.skin || skin || room.entrance.find(id)?.skin || room.choices.get(String(id)) || defaultSkin(id, settings.characterMode);
+  room.enter(id, name, { avatar, skin: chosen, demo: mode === 'demo' }); entranceChanged();
+}
 function seat(id, name, avatar = '', skin) {
-  const old = room.find(id);
+  const old = room.find(id) || room.entrance.find(id);
   const result = room.join(id, name, { avatar, demo: mode === 'demo', skin: skin || old?.skin || room.choices.get(String(id)) || defaultSkin(id, settings.characterMode) });
   if (!result) return null;
   for (const event of result.events) broadcast(event);
+  entranceChanged();
   if (result.overflow) addLog('Hàng chờ đã đủ 500 người; vẫn ghi nhận quà và lời cầu chúc. Người tặng có thể vào lại ở lần tương tác sau.');
   seatingChanged();
   return result.viewer;
@@ -104,6 +119,7 @@ function onChat(id, name, text, avatar, skin) {
     existing.name = cleanName(name); if (chosen) existing.skin = chosen;
     broadcast({ t: 'character', v: existing });
   } else if (settings.joinOnChat) seat(id, name, avatar, chosen);
+  if (room.entrance.update(id, { name: cleanName(name), skin: chosen || undefined })) entranceChanged();
   broadcast({ t: 'chat', id: String(id), name: cleanName(name), text: String(text || '').slice(0, 160) });
 }
 function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoKind, skin) {
@@ -123,9 +139,9 @@ function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoK
   say(blessing, 'gift');
 }
 function onLike(id, n) { n = positive(n, 100000); room.stats.likes += n; broadcast({ t: 'like', id, n }); statsChanged(); }
-function onFollow(id, name) { if (settings.joinOnEnter) seat(id, name); broadcast({ t: 'follow', id, name: cleanName(name) }); }
+function onFollow(id, name) { broadcast({ t: 'follow', id, name: cleanName(name) }); }
 const eventHandler = () => createEventHandler({ chat: onChat, gift: onGift, like: onLike, follow: onFollow,
-  member: (id, name, avatar) => { if (settings.joinOnEnter) seat(id, name, avatar); } });
+  member: onMember });
 
 // Voice failures never block gifts. Idle speech yields immediately to a donor.
 let ttsBusy = false, ttsEpoch = 0, currentTTS = null, retrySpeechAt = 0, speechSequence = 0;
@@ -190,6 +206,7 @@ function resetSpeech() {
 }
 setInterval(() => {
   for (const event of room.advance(Date.now())) broadcast(event);
+  entranceChanged();
   seatingChanged();
   const prompt = engagement.tick(Date.now(), { enabled: settings.idlePrompts, intervalMs: settings.idleEverySec * 1000, busy: speechBusy() });
   if (prompt) {
@@ -206,7 +223,7 @@ function disconnectSource() {
 }
 function activate(nextMode) {
   stopBots(); resetSpeech(); engagement.reset(Date.now());
-  mode = nextMode; room = rooms[mode]; room.rituals.clear(); lastSeatingSummary = ''; broadcast(snapshot());
+  mode = nextMode; room = rooms[mode]; room.rituals.clear(); lastSeatingSummary = ''; lastEntranceRevision = -1; broadcast(snapshot());
 }
 async function connectSource(message) {
   disconnectSource(); activate('live');
@@ -267,7 +284,7 @@ function setBots(on, pace) {
   broadcast({ t: 'bots', on: true }, 'control');
 }
 function onControl(m) {
-  if (['chat', 'gift', 'fill', 'bots'].includes(m.cmd) && mode !== 'demo') throw new Error('Chuyển sang Demo để thử tương tác. Dữ liệu LIVE được giữ riêng.');
+  if (['chat', 'gift', 'fill', 'bots', 'member', 'entry-fill'].includes(m.cmd) && mode !== 'demo') throw new Error('Chuyển sang Demo để thử tương tác. Dữ liệu LIVE được giữ riêng.');
   switch (m.cmd) {
     case 'connect': void connectSource(m); break;
     case 'disconnect': disconnectSource(); break;
@@ -275,6 +292,13 @@ function onControl(m) {
     case 'live': disconnectSource(); activate('live'); break;
     case 'chat': onChat('sim_' + cleanName(m.name), m.name, m.text || 'สาธุ', '', m.skin); break;
     case 'gift': onGift('sim_' + cleanName(m.name), m.name, m.gift || 'Demo', m.count, m.diamonds, '', m.giftId, m.kind, m.skin); break;
+    case 'member':
+      if (!settings.joinOnEnter) throw new Error('Bật Người vừa vào phòng đứng xếp hàng ở mép dưới rồi lưu cấu hình.');
+      onMember('sim_' + cleanName(m.name), m.name, '', m.skin); break;
+    case 'entry-fill':
+      if (!settings.joinOnEnter) throw new Error('Bật Người vừa vào phòng đứng xếp hàng ở mép dưới rồi lưu cấu hình.');
+      for (let i = 0; i < positive(m.n, 200); i++) onMember(`entry_demo_${i}`, DEMO_NAMES[i % DEMO_NAMES.length]);
+      break;
     case 'fill': fillDemo(positive(m.n, 500)); break;
     case 'bots': setBots(!!m.on, m.pace); break;
     case 'clear': stopBots(); room.clearScene(settings.ambientCrowd); broadcast(snapshot()); break;
@@ -292,6 +316,7 @@ function onControl(m) {
       applySettings(m.settings || {});
       for (const r of Object.values(rooms)) {
         const events = r.seating.setAmbient(settings.ambientCrowd);
+        if (!settings.joinOnEnter) r.entrance.clear();
         if (r === room) for (const event of events) broadcast(event);
       }
       resetSpeech();
