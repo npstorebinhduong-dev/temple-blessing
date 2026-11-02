@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.5.1
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.6
 
 1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
 2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
@@ -27,7 +27,9 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.5.1
 11. Bấm thử cả Bó hoa và Bóng tình yêu; chờ lần lượt 20 và 24 giây để thấy
     đủ bước đi lên bàn thờ, zoom theo nhân vật, quỳ dâng và trở lại toàn cảnh.
     Quà 500 xu có mưa hoa phủ màn hình. Chọn nhân vật Nam/Nữ khi thử.
-12. Khi vắng quà 10 giây, lời nhắc thả tim/chia sẻ lặp mỗi 10 giây.
+12. Khi vắng quà 10 giây, bắt đầu lời nhắc thả tim/chia sẻ. Sau khi đọc xong
+    một câu mới chờ thêm 10 giây trước câu tiếp theo. Quà mới ngắt lời nhắc
+    và tính lại bộ đếm. Khung xem trước không tham gia tính thời gian đọc.
     10 nhân vật nền có ngay từ đầu, giữ nguyên khi có quà. Khi đủ 60 chỗ,
     người ngồi lâu đi ra nhường hàng chờ, kể cả nhân vật nền. Nhân vật nền
     không tên, không cộng số liệu LIVE và không tự trở lại khi đã nhường chỗ.
@@ -38,6 +40,12 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.5.1
 14. Mặc định chỉ người tặng quà vào cảnh. Muốn cho người bình luận cũng vào,
     bật Cho người bình luận vào hàng chờ rồi Lưu cấu hình. Chỗ đang đi ra
     chỉ được dùng lại khi nhân vật ra hết; người đang dâng lễ được giữ chỗ.
+
+ZOOM SÁU QUÀ (BẢN 0.6)
+Hoa hồng: 3,2 giây; Đào: 4,2 giây; OK: 5 giây; Cỏ bốn lá: 6,5 giây;
+Bó hoa: 20 giây; Bóng tình yêu: 24 giây. Thời lượng gồm phóng to và thu về.
+Zoom theo đúng người tặng của lượt hiệu ứng, giữ vị trí ngồi của mọi người.
+Bật Zoom theo người tặng quà và Lưu cấu hình để dùng.
 
 NHẠC NỀN
 Eastern Serenity là bản ghép thiền Á Đông dài 4:40, thay nhạc Thai Dawn cũ.
@@ -67,8 +75,8 @@ CHỌN NHÂN VẬT
 Mặc định có nam và nữ. Người xem gõ ชาย để chọn nam, หญิง để chọn nữ.
 Có thể dùng male/female hoặc nam/nữ. Không đoán giới tính từ tên người xem.
 
-NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3 / 0.4 / 0.5
-Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.5.1 vào thư mục riêng.
+NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3 / 0.4 / 0.5 / 0.5.1
+Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.6 vào thư mục riêng.
 Nếu muốn giữ điểm và cấu hình, sao chép thư mục live/data của bản cũ
 sang live/data của bản mới trước khi chạy. Chỉ bản 0.1 được bật giọng
 một lần khi nâng cấp; bản 0.2 trở lên giữ cài đặt giọng của bạn.

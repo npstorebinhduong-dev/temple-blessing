@@ -1,15 +1,22 @@
 import { MusicBed } from './music.js';
 // Bundled instrumental music and local chimes; Thai speech arrives from Edge TTS.
 export class SceneAudio {
-  constructor({ preview = false, onState = () => {}, onMusicStatus = () => {} } = {}) {
+  constructor({ preview = false, onState = () => {}, onMusicStatus = () => {}, onSpeechState = () => {} } = {}) {
     this.preview = preview; this.onState = onState; this.settings = {}; this.queue = []; this.playing = null;
-    this.onMusicStatus = onMusicStatus;
+    this.onMusicStatus = onMusicStatus; this.onSpeechState = onSpeechState;
+  }
+  speechReady() { return !this.preview && !!this.settings.voiceEnabled && (this.settings.volume ?? 35) > 0 && this.ctx?.state === 'running'; }
+  reportSpeech(id = '', state = 'ready', tag = '') {
+    this.onSpeechState({ id, state, tag, ready: this.speechReady() });
   }
   async start() {
     if (this.preview) return;
     if (!this.ctx) {
       this.ctx = new AudioContext();
-      this.ctx.onstatechange = () => this.onState(this.ctx.state);
+      this.ctx.onstatechange = () => {
+        if (this.ctx.state !== 'running') this.clear();
+        this.onState(this.ctx.state); this.reportSpeech();
+      };
       this.master = this.ctx.createGain(); this.master.connect(this.ctx.destination);
       this.ambient = this.ctx.createGain(); this.ambient.connect(this.master);
       this.ambient.gain.value = 0;
@@ -24,6 +31,7 @@ export class SceneAudio {
     if (!this.ctx) return;
     this.master.gain.setTargetAtTime((this.settings.volume ?? 35) / 100, this.ctx.currentTime, .3);
     this.music?.configure(this.settings, !!this.playing);
+    this.reportSpeech();
   }
   replayMusic() { this.music?.replay(); }
   bell(kind = 'lotus') {
@@ -39,24 +47,44 @@ export class SceneAudio {
     }
   }
   giftPriority() {
+    const removed = this.queue.filter(item => item.tag === 'idle');
     this.queue = this.queue.filter(item => item.tag !== 'idle');
+    for (const job of removed) this.reportSpeech(job.id, 'cancelled', job.tag);
     if (this.playingTag === 'idle') this.stopPlaying();
   }
-  speech(url, tag = 'gift') {
+  speech(url, tag = 'gift', id = '') {
     // Do not build a stale speech backlog while sound is disabled.
-    if (this.preview || !this.settings.voiceEnabled || this.ctx?.state !== 'running') return;
-    if (tag === 'idle' && (this.playing || this.queue.length)) return;
+    if (!this.speechReady() || (tag === 'idle' && (this.playing || this.queue.length))) {
+      this.reportSpeech(id, 'skipped', tag); return;
+    }
     if (tag !== 'idle') this.giftPriority();
-    if (this.queue.length >= 5) return;
-    this.queue.push({ url, tag }); this.pump();
+    if (this.queue.length >= 5) { this.reportSpeech(id, 'skipped', tag); return; }
+    this.queue.push({ url, tag, id }); this.pump();
   }
   pump() {
     if (this.playing || !this.queue.length || this.ctx?.state !== 'running') return;
-    const job = this.queue.shift(), el = new Audio(job.url); this.playing = el; this.playingTag = job.tag;
+    const job = this.queue.shift(), el = new Audio(job.url); this.playing = el; this.playingTag = job.tag; this.playingJob = job;
     const source = this.ctx.createMediaElementSource(el); this.playingSource = source; source.connect(this.master); this.configure({});
-    const finish = () => { if (this.playing !== el) return; source.disconnect(); this.playingSource = null; this.playing = null; this.playingTag = ''; this.configure({}); this.pump(); };
-    el.onended = finish; el.onerror = finish; el.play().catch(finish);
+    const finish = state => { if (this.playing !== el) return; this.stopPlaying(state); this.pump(); };
+    // Failed or stalled files must release the server's pending reminder too.
+    this.speechTimer = setTimeout(() => finish('error'), 15000);
+    el.onplaying = () => {
+      if (this.playing !== el) return;
+      clearTimeout(this.speechTimer); this.speechTimer = setTimeout(() => finish('error'), 120000);
+      this.reportSpeech(job.id, 'started', job.tag);
+    };
+    el.onended = () => finish('ended'); el.onerror = () => finish('error'); el.play().catch(() => finish('error'));
   }
-  stopPlaying() { if (this.playing) { this.playing.pause(); this.playing.onended = null; this.playing.onerror = null; this.playing = null; } this.playingTag = ''; this.playingSource?.disconnect(); this.playingSource = null; this.configure({}); }
-  clear() { this.queue.length = 0; this.stopPlaying(); }
+  stopPlaying(state = 'cancelled') {
+    const job = this.playingJob;
+    clearTimeout(this.speechTimer);
+    if (this.playing) { this.playing.onended = this.playing.onerror = this.playing.onplaying = null; this.playing.pause(); this.playing = null; }
+    this.playingJob = null; this.playingTag = ''; this.playingSource?.disconnect(); this.playingSource = null; this.configure({});
+    if (job) this.reportSpeech(job.id, state, job.tag);
+  }
+  clear() {
+    const removed = this.queue.splice(0);
+    for (const job of removed) this.reportSpeech(job.id, 'cancelled', job.tag);
+    this.stopPlaying();
+  }
 }

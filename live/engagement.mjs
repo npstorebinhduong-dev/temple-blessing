@@ -14,13 +14,34 @@ export function blessingForGift(name, kind, sequence = 0) {
   return `ขอบคุณคุณ${spoken}สำหรับ${gift} ${wish}`;
 }
 export class EngagementClock {
-  constructor(now = Date.now()) { this.reset(now); }
-  reset(now) { this.lastGiftAt = now; this.lastPromptAt = now; this.sequence = 0; }
-  gift(now) { this.lastGiftAt = now; this.lastPromptAt = now; }
-  tick(now, { enabled = true, intervalMs = 10000 } = {}) {
-    if (!enabled || now - this.lastGiftAt < intervalMs || now - this.lastPromptAt < intervalMs) return null;
-    this.lastPromptAt = now;
-    return { text: IDLE_PROMPTS[this.sequence++ % IDLE_PROMPTS.length], lastGiftAt: this.lastGiftAt, at: now };
+  constructor(now = Date.now()) { this.serial = 0; this.reset(now); }
+  reset(now) { this.lastGiftAt = now; this.lastPromptEndedAt = now; this.sequence = 0; this.pending = null; }
+  gift(now) { this.lastGiftAt = now; this.lastPromptEndedAt = now; this.pending = null; }
+  tick(now, { enabled = true, intervalMs = 10000, busy = false } = {}) {
+    if (!enabled || busy || this.pending || now - this.lastGiftAt < intervalMs || now - this.lastPromptEndedAt < intervalMs) return null;
+    const id = `idle-${++this.serial}`;
+    this.pending = { id, listeners: new Set() };
+    return { id, text: IDLE_PROMPTS[this.sequence++ % IDLE_PROMPTS.length], lastGiftAt: this.lastGiftAt, at: now };
+  }
+  isCurrent(id) { return this.pending?.id === id; }
+  delivered(id, listeners, now) {
+    if (!this.isCurrent(id)) return;
+    this.pending.listeners = new Set(listeners);
+    if (!this.pending.listeners.size) this.finish(id, now);
+  }
+  listenerDone(id, listener, now) {
+    if (!this.isCurrent(id) || !this.pending.listeners.delete(listener)) return;
+    if (!this.pending.listeners.size) this.finish(id, now);
+  }
+  removeListener(listener, now) {
+    if (this.pending) this.listenerDone(this.pending.id, listener, now);
+  }
+  finish(id, now) {
+    if (!this.isCurrent(id)) return;
+    this.pending = null; this.lastPromptEndedAt = now;
+  }
+  cancel(now) {
+    if (this.pending) this.finish(this.pending.id, now);
   }
   snapshot() { return { lastGiftAt: this.lastGiftAt }; }
 }

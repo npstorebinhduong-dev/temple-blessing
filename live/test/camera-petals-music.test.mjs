@@ -4,6 +4,7 @@ import { ceremonyCamera } from '../ceremony-camera.js';
 import { processionPose } from '../procession.js';
 import { RoyalPetals } from '../royal-petals.js';
 import { MusicBed } from '../music.js';
+import { RITUALS } from '../gift-rituals.mjs';
 
 test('camera follows both premium processions, keeps the world covering the frame, and returns to wide', () => {
   const from = { x: 880, y: 1710 }, seat = { x: 880, y: 1710 };
@@ -22,7 +23,31 @@ test('camera follows both premium processions, keeps the world covering the fram
     assert.equal(ceremonyCamera(kind, 9000, from, { reduced: true }).scale, 1);
     assert.equal(ceremonyCamera(kind, 9000, from, { enabled: false }).scale, 1);
   }
-  assert.equal(ceremonyCamera('lotus', 2000, from).scale, 1);
+  assert.equal(ceremonyCamera('unknown', 2000, from).scale, 1);
+});
+
+test('all four basic gifts zoom to the donor for their own duration without exposing the canvas edges', () => {
+  for (const [kind, peak] of [['lotus', 1.55], ['incense', 1.6], ['garland', 1.6], ['aarti', 1.7]]) {
+    const duration = RITUALS[kind].duration;
+    for (const pose of [{ x: 100, y: 1290 }, { x: 980, y: 1740 }, { x: 540, y: 1890 }]) {
+      assert.deepEqual(ceremonyCamera(kind, 0, pose), { scale: 1, x: 0, y: 0 });
+      assert.equal(ceremonyCamera(kind, duration / 2, pose).scale, peak);
+      for (let ms = 0; ms <= duration; ms += 50) {
+        const c = ceremonyCamera(kind, ms, pose);
+        assert.ok(c.scale >= 1 && c.scale <= peak);
+        assert.ok(c.x <= 0 && c.y <= 0);
+        assert.ok(c.x + 1080 * c.scale >= 1080 - 1e-6);
+        assert.ok(c.y + 1920 * c.scale >= 1920 - 1e-6);
+      }
+      assert.deepEqual(ceremonyCamera(kind, duration, pose), { scale: 1, x: 0, y: 0 });
+      assert.equal(ceremonyCamera(kind, 1500, pose, { enabled: false }).scale, 1);
+      assert.equal(ceremonyCamera(kind, 1500, pose, { reduced: true }).scale, 1);
+    }
+    const left = ceremonyCamera(kind, 1500, { x: 250, y: 1500 });
+    const right = ceremonyCamera(kind, 1500, { x: 830, y: 1500 });
+    assert.ok(left.x > right.x, 'follow the donor instead of the scene center');
+    assert.equal(ceremonyCamera(kind, duration / 2, null).scale, 1);
+  }
 });
 
 test('royal flower shower covers all quadrants, bursts at offering, and stays bounded through long use', () => {

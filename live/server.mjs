@@ -110,6 +110,7 @@ function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoK
   const ritual = mode === 'demo' && Object.hasOwn(RITUALS, demoKind || '') && RITUALS[demoKind].unitCoins === values.unitCoins
     ? RITUALS[demoKind] : giftRitual(giftName, values.unitCoins, giftId, parseGiftMap(settings.giftMap));
   engagement.gift(Date.now());
+  if (currentTTS?.tag === 'idle') currentTTS.cancel();
   const blessing = blessingForGift(v?.name || name, ritual?.kind, room.stats.gifts);
   const message = { t: 'gift', id, name: cleanName(name), skin: v?.skin, giftName: String(giftName || 'ของขวัญ').slice(0, 80), giftId: String(giftId), ...values, ritual, blessing, ...engagement.snapshot() };
   broadcast(message); statsChanged();
@@ -124,24 +125,24 @@ const eventHandler = () => createEventHandler({ chat: onChat, gift: onGift, like
   member: (id, name, avatar) => { if (settings.joinOnEnter) seat(id, name, avatar); } });
 
 // Voice failures never block gifts. Idle speech yields immediately to a donor.
-let ttsBusy = false, ttsEpoch = 0, currentTTS = null, retrySpeechAt = 0, speechUntil = 0;
+let ttsBusy = false, ttsEpoch = 0, currentTTS = null, retrySpeechAt = 0, speechSequence = 0;
 const ttsQueue = new SpeechQueue();
 const offlineAudio = process.env.GANESHA_OFFLINE_AUDIO === '1';
 const esc = s => String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
-function say(text, tag = 'manual') {
-  if (!settings.voiceEnabled || offlineAudio || Date.now() < retrySpeechAt) return;
+function say(text, tag = 'manual', id = `speech-${++speechSequence}`) {
+  if (!settings.voiceEnabled || offlineAudio || Date.now() < retrySpeechAt) return false;
   if (tag !== 'idle' && currentTTS?.tag === 'idle') currentTTS.cancel();
-  if (tag === 'idle' && Date.now() < speechUntil) return;
-  if (!ttsQueue.push({ text: String(text).slice(0, 400), tag, epoch: ttsEpoch }, currentTTS?.tag)) {
+  if (tag === 'idle' && (speechBusy() || !speechListeners().length)) return false;
+  if (!ttsQueue.push({ text: String(text).slice(0, 400), tag, id, epoch: ttsEpoch }, currentTTS?.tag)) {
     if (tag !== 'idle') addLog('Giọng đọc đang bận; bỏ câu mới, điểm quà vẫn được tính.');
-    return;
+    return false;
   }
-  pumpTTS();
+  pumpTTS(); return true;
 }
 async function pumpTTS() {
   if (ttsBusy || !ttsQueue.length) return;
   ttsBusy = true;
-  const job = ttsQueue.shift(), { text, epoch, tag } = job;
+  const job = ttsQueue.shift(), { text, epoch, tag, id } = job;
   const tts = new MsEdgeTTS(); let timer, cancelReject;
   const cancelled = new Promise((_, reject) => { cancelReject = reject; });
   currentTTS = { tag, cancel: () => { job.cancelled = true; cancelReject(new Error('cancelled')); try { tts.close(); } catch {} } };
@@ -157,25 +158,41 @@ async function pumpTTS() {
       const buffer = Buffer.concat(chunks); if (!buffer.length) throw new Error('Không có dữ liệu âm thanh'); return buffer;
     })();
     const data = await Promise.race([operation, cancelled, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('TTS quá 15 giây')), 15000); })]);
-    if (epoch === ttsEpoch && settings.voiceEnabled && !job.cancelled) {
+    if (epoch === ttsEpoch && settings.voiceEnabled && !job.cancelled && (tag !== 'idle' || engagement.isCurrent(id))) {
       const file = tag === 'idle' ? `idle-${cacheKey}.mp3` : `voice-${Date.now()}.mp3`;
       fs.writeFileSync(path.join(TTS_DIR, file), data);
-      speechUntil = Math.max(Date.now(), tag === 'idle' ? 0 : speechUntil) + data.length / 12000 * 1000;
-      broadcast({ t: 'tts', url: '/live/tts/' + file, tag });
+      const listeners = speechListeners();
+      if (tag === 'idle') engagement.delivered(id, listeners, Date.now());
+      for (const listener of listeners) {
+        listener.speechJobs.add(id);
+        listener.send(JSON.stringify({ t: 'tts', id, url: '/live/tts/' + file, tag }));
+      }
+      job.delivered = true;
       const old = fs.readdirSync(TTS_DIR).filter(f => /^(voice-\d+|idle-[a-f0-9]+)\.mp3$/.test(f)).map(f => ({ f, at: fs.statSync(path.join(TTS_DIR, f)).mtimeMs })).sort((a, b) => a.at - b.at);
       while (old.length > 50) fs.unlinkSync(path.join(TTS_DIR, old.shift().f));
     }
   } catch (e) {
     if (!job.cancelled) { retrySpeechAt = Date.now() + 30000; ttsQueue.clear(); addLog('Giọng Thái chưa phát được: ' + e.message + ' · thử lại sau 30 giây'); }
   }
-  finally { clearTimeout(timer); try { tts.close(); } catch {} ttsBusy = false; currentTTS = null; setTimeout(pumpTTS, 50); }
+  finally {
+    if (tag === 'idle' && !job.delivered) engagement.finish(id, Date.now());
+    clearTimeout(timer); try { tts.close(); } catch {} ttsBusy = false; currentTTS = null; setTimeout(pumpTTS, 50);
+  }
 }
-function resetSpeech() { ttsEpoch++; ttsQueue.clear(); currentTTS?.cancel(); speechUntil = 0; }
+function speechListeners() { return [...wss.clients].filter(c => c.readyState === 1 && c.audioReady); }
+function speechBusy() { return ttsBusy || !!ttsQueue.length || speechListeners().some(c => c.speechJobs.size); }
+function resetSpeech() {
+  ttsEpoch++; ttsQueue.clear(); currentTTS?.cancel(); engagement.cancel(Date.now());
+  for (const c of wss.clients) c.speechJobs.clear();
+}
 setInterval(() => {
   for (const event of room.advance(Date.now())) broadcast(event);
   seatingChanged();
-  const prompt = engagement.tick(Date.now(), { enabled: settings.idlePrompts, intervalMs: settings.idleEverySec * 1000 });
-  if (prompt) { broadcast({ t: 'engagement', ...prompt }); say(prompt.text, 'idle'); }
+  const prompt = engagement.tick(Date.now(), { enabled: settings.idlePrompts, intervalMs: settings.idleEverySec * 1000, busy: speechBusy() });
+  if (prompt) {
+    broadcast({ t: 'engagement', ...prompt });
+    if (!say(prompt.text, 'idle', prompt.id)) engagement.finish(prompt.id, Date.now());
+  }
 }, 250).unref();
 function stopBots() { clearInterval(botTimer); botTimer = null; broadcast({ t: 'bots', on: false }, 'control'); }
 function disconnectSource() {
@@ -316,15 +333,28 @@ function broadcast(msg, only) {
   }
 }
 wss.on('connection', (ws, req) => {
-  ws.role = new URL(req.url, 'http://local').searchParams.get('role') === 'control' ? 'control' : 'overlay';
+  const params = new URL(req.url, 'http://local').searchParams;
+  ws.role = params.get('role') === 'control' ? 'control' : 'overlay';
+  ws.preview = params.get('preview') === '1'; ws.audioReady = false; ws.speechJobs = new Set();
   ws.send(JSON.stringify(snapshot()));
   if (ws.role === 'control') ws.send(JSON.stringify({ t: 'logs', lines: log }));
   ws.on('message', buf => {
-    if (ws.role !== 'control') return;
-    try { const m = JSON.parse(buf); if (m?.t === 'ctl') onControl(m); }
+    try {
+      const m = JSON.parse(buf);
+      if (ws.role === 'control') { if (m?.t === 'ctl') onControl(m); }
+      else if (!ws.preview && m?.t === 'speech-status') {
+        ws.audioReady = m.ready === true;
+        if (!ws.audioReady) {
+          ws.speechJobs.clear(); engagement.removeListener(ws, Date.now());
+        } else if (['ended', 'cancelled', 'error', 'skipped'].includes(m.state) && ws.speechJobs.delete(m.id)) {
+          engagement.listenerDone(m.id, ws, Date.now());
+        }
+      }
+    }
     catch (e) { ws.send(JSON.stringify({ t: 'error', message: e.message })); }
   });
   ws.on('error', () => {});
+  ws.on('close', () => engagement.removeListener(ws, Date.now()));
 });
 server.listen(PORT, HOST, () => { startDemo(); addLog(`Ganesha LIVE · http://localhost:${PORT}/live/control.html`); });
 server.on('error', e => { console.error(e.code === 'EADDRINUSE' ? `Cổng ${PORT} đang được dùng. Đóng phiên cũ rồi chạy lại.` : e.message); process.exit(1); });

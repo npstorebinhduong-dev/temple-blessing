@@ -17,6 +17,7 @@ if (preview) { canvas.width = 540; canvas.height = 960; }
 // Soft decorative petals need less raster resolution than names and characters.
 celebration.width = 540; celebration.height = 960; celebrationCtx.scale(.5, .5);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let overlaySocket = null;
 const audio = new SceneAudio({ preview, onState: state => {
   if (preview) return;
   $('unmute').hidden = state === 'running';
@@ -25,6 +26,11 @@ const audio = new SceneAudio({ preview, onState: state => {
   canvas.dataset.music = status.state;
   $('audioError').hidden = status.state !== 'error';
   if (status.state === 'error') $('audioError').textContent = 'โหลดเพลงไม่สำเร็จ · กรุณารีเฟรช';
+}, onSpeechState: status => {
+  if (status.id) {
+    canvas.dataset.speechId = status.id; canvas.dataset.speechState = status.state; canvas.dataset.speechTag = status.tag;
+  }
+  if (!preview && overlaySocket?.readyState === WebSocket.OPEN) overlaySocket.send(JSON.stringify({ t: 'speech-status', ...status }));
 } });
 const visitors = new Map(), petals = [];
 const badgeCache = new Map();
@@ -134,9 +140,10 @@ function particles(x, y, count, heart = false) {
   if (petals.length > 180) petals.splice(0, petals.length - 180);
 }
 function connect() {
-  const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws?role=overlay`);
-  ws.onopen = () => { $('connection').hidden = true; };
-  ws.onclose = () => { $('connection').hidden = false; setTimeout(connect, 2000); };
+  const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws?role=overlay${preview ? '&preview=1' : ''}`);
+  overlaySocket = ws;
+  ws.onopen = () => { $('connection').hidden = true; audio.reportSpeech(); };
+  ws.onclose = () => { overlaySocket = null; audio.clear(); $('connection').hidden = false; setTimeout(connect, 2000); };
   ws.onmessage = e => {
     let m; try { m = JSON.parse(e.data); } catch { return; }
     if (m.t === 'state') state(m);
@@ -162,7 +169,7 @@ function connect() {
     if (m.t === 'like') { const v = visitors.get(m.id); particles(v?.x || 900, (v?.y || 1650) - 150, Math.min(4, m.n), true); }
     if (m.t === 'follow') { const v = visitors.get(m.id); if (v) { v.glow = 1; particles(v.x, v.y - 150, 8); } }
     if (m.t === 'bell') audio.bell('aarti');
-    if (m.t === 'tts') audio.speech(m.url, m.tag);
+    if (m.t === 'tts') audio.speech(m.url, m.tag, m.id);
     if (m.t === 'music-replay') audio.replayMusic();
   };
 }
@@ -257,6 +264,7 @@ function drawViewer(v, dt, t, active) {
   const highlight = active?.id === v.id || v.glow > .4;
   const depth = Math.max(0, Math.min(1.4, (v.y - 1230) / 480));
   const h = (245 + 105 * depth) * seat.density, w = h * .75;
+  v.renderHeight = h;
   const bob = reduced ? 0 : v.state === 'walk' ? Math.sin(v.step * Math.PI / 2) * 2 : Math.sin(t * 1.4 + v.phase) * 1.1;
   ctx.save();
   ctx.fillStyle = '#25100745'; ctx.beginPath(); ctx.ellipse(v.x, v.y - 7, w * .28, 11 * seat.density, 0, 0, Math.PI * 2); ctx.fill();
@@ -368,12 +376,17 @@ function frame(now) {
     }
   }
   const pose = hero && active ? processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
-  const camera = ceremonyCamera(active?.ritual.kind, active ? now - active.beganAt : 0, pose, { enabled: settings.cinematicZoom !== false, reduced });
+  const donor = active && visitors.get(active.id);
+  const focus = pose || (donor && { x: donor.x, y: donor.y, bodyHeight: donor.renderHeight || 200 });
+  const camera = ceremonyCamera(active?.ritual.kind, active ? now - active.beganAt : 0, focus,
+    { enabled: settings.cinematicZoom !== false, reduced, durationMs: active ? active.until - active.beganAt : 0 });
   // Transform world coordinates inside a fixed-size canvas so zoom does not
   // create a much larger animated compositor layer on integrated graphics.
   shrine.style.transform = `translate(${camera.x.toFixed(2)}px,${camera.y.toFixed(2)}px) scale(${camera.scale.toFixed(4)})`;
   ctx.setTransform(camera.scale * actorResolution, 0, 0, camera.scale * actorResolution, camera.x * actorResolution, camera.y * actorResolution);
   canvas.dataset.zoom = camera.scale.toFixed(3);
+  canvas.dataset.zoomTarget = active && focus ? active.id : '';
+  canvas.dataset.ritualKind = active?.ritual.kind || '';
   shrine.classList.toggle('articulated', settings.statueMotion !== false && shrineArms.ready);
   if (shrine.classList.contains('articulated')) {
     const pose = shrineArms.draw(ctx, t, { enabled: true, reduced, level: settings.statueMotionLevel });

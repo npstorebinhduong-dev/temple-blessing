@@ -24,17 +24,44 @@ test('both ceremonies reach the altar, kneel, lift the correct offering and retu
   assert.equal(processionPose('marigold', 15000, from, seat).phase, 'return');
 });
 
-test('idle prompts run every ten seconds, pause after a gift, and do not replay a missed backlog', () => {
+test('idle reminders start after ten gift-free seconds, then wait ten seconds after actual playback ends', () => {
   const clock = new EngagementClock(0);
   assert.equal(clock.tick(9999), null);
-  assert.match(clock.tick(10000).text, /หัวใจ.*แชร์/);
-  assert.equal(clock.tick(10001), null);
-  assert.match(clock.tick(20000).text, /หัวใจ.*แชร์/);
-  clock.gift(25000); assert.equal(clock.tick(34999), null);
-  assert.equal(clock.tick(35000).lastGiftAt, 25000);
-  assert.equal(clock.tick(45000, { enabled: false }), null);
-  assert.ok(clock.tick(120000)); assert.equal(clock.tick(120001), null);
-  clock.reset(150000); assert.equal(clock.tick(159999), null);
+  const first = clock.tick(10000); assert.match(first.text, /หัวใจ.*แชร์/);
+  assert.equal(clock.tick(20000), null, 'TTS generation/loading has not finished');
+  clock.delivered(first.id, ['live'], 21000);
+  assert.equal(clock.tick(30000), null, 'no estimate may finish an audible reminder');
+  clock.listenerDone(first.id, 'live', 32500);
+  assert.equal(clock.tick(42499), null);
+  const second = clock.tick(42500); assert.notEqual(second.id, first.id);
+  clock.gift(43000); clock.finish(second.id, 50000); // Late completion cannot shift the new gift timer.
+  assert.equal(clock.tick(52999), null); assert.equal(clock.tick(53000).lastGiftAt, 43000);
+});
+
+test('reminder completion follows every audible window, handles disconnects and rejects stale receipts', () => {
+  const clock = new EngagementClock(0), prompt = clock.tick(10000);
+  clock.delivered(prompt.id, ['obs', 'live'], 11000);
+  clock.listenerDone(prompt.id, 'preview', 13000); // A silent preview is not a listener.
+  clock.listenerDone(prompt.id, 'obs', 14000);
+  assert.equal(clock.tick(30000), null);
+  clock.removeListener('live', 31000);
+  assert.equal(clock.tick(40999), null);
+  const next = clock.tick(41000);
+  clock.listenerDone(prompt.id, 'live', 42000); assert.equal(clock.isCurrent(next.id), true);
+  clock.reset(50000); assert.equal(clock.tick(59999), null);
+  const fresh = clock.tick(60000); assert.notEqual(fresh.id, prompt.id);
+});
+
+test('muted or failed reminders recover without backlog, and busy gift speech delays the first reminder', () => {
+  const clock = new EngagementClock(0);
+  assert.equal(clock.tick(10000, { busy: true }), null);
+  assert.equal(clock.tick(15000, { enabled: false }), null);
+  const prompt = clock.tick(20000); clock.delivered(prompt.id, [], 20000);
+  assert.equal(clock.tick(29999), null);
+  const failed = clock.tick(30000); clock.finish(failed.id, 35000);
+  assert.equal(clock.tick(44999), null);
+  assert.ok(clock.tick(45000)); assert.equal(clock.tick(120000), null);
+  clock.cancel(120000); assert.equal(clock.tick(129999), null); assert.ok(clock.tick(130000));
 });
 
 test('gift speech removes waiting idle speech; no idle backlog while any voice is busy', () => {
