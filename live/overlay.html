@@ -7,8 +7,12 @@
 </head>
 <body class="broadcast">
 <div id="fit"><main id="stage" aria-label="พระพิฆเนศ ไลฟ์">
-  <div class="shrine"></div><div class="vignette"></div>
-  <canvas id="scene" width="1080" height="1920" aria-label="ผู้ร่วมบูชา"></canvas>
+  <div id="world" class="world">
+    <div class="shrine"></div>
+    <canvas id="scene" width="1080" height="1920" aria-label="ผู้ร่วมบูชา"></canvas>
+  </div>
+  <div class="vignette"></div>
+  <canvas id="celebration" width="1080" height="1920" aria-hidden="true"></canvas>
   <header class="identity">
     <div class="eyebrow"><span></span> GANESHA <span></span></div>
     <h1 id="title">พระพิฆเนศ</h1>
@@ -32,6 +36,7 @@
   <span id="ambientBadge" class="ambient-badge" hidden>บรรยากาศจำลอง</span>
   <div id="connection" class="connection" hidden>กำลังเชื่อมต่อ…</div>
   <div id="assetError" class="asset-error" hidden></div>
+  <div id="audioError" class="audio-error" hidden></div>
   <button id="unmute" class="unmute">♫ เปิดเสียง</button>
 </main></div>
 <script type="module" src="/live/overlay.js"></script>

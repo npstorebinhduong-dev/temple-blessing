@@ -1,7 +1,9 @@
-// Locally synthesized ambience/chimes; Thai speech arrives from Edge TTS.
+import { MusicBed } from './music.js';
+// Bundled instrumental music and local chimes; Thai speech arrives from Edge TTS.
 export class SceneAudio {
-  constructor({ preview = false, onState = () => {} } = {}) {
+  constructor({ preview = false, onState = () => {}, onMusicStatus = () => {} } = {}) {
     this.preview = preview; this.onState = onState; this.settings = {}; this.queue = []; this.playing = null;
+    this.onMusicStatus = onMusicStatus;
   }
   async start() {
     if (this.preview) return;
@@ -10,13 +12,8 @@ export class SceneAudio {
       this.ctx.onstatechange = () => this.onState(this.ctx.state);
       this.master = this.ctx.createGain(); this.master.connect(this.ctx.destination);
       this.ambient = this.ctx.createGain(); this.ambient.connect(this.master);
-      for (const [i, f] of [130.81, 196, 261.63, 392].entries()) {
-        const osc = this.ctx.createOscillator(), gain = this.ctx.createGain();
-        osc.type = 'sine'; osc.frequency.value = f; osc.detune.value = i % 2 ? 2 : -2;
-        gain.gain.value = .022 / (1 + i * .3); osc.connect(gain); gain.connect(this.ambient); osc.start();
-        const lfo = this.ctx.createOscillator(), depth = this.ctx.createGain(); lfo.frequency.value = .07 + i * .014; depth.gain.value = .008;
-        lfo.connect(depth); depth.connect(gain.gain); lfo.start();
-      }
+      this.ambient.gain.value = 0;
+      this.music = new MusicBed(this.ctx, this.ambient, { onStatus: this.onMusicStatus });
     }
     this.onState(this.ctx.state);
     await this.ctx.resume(); this.configure(this.settings); this.pump(); this.onState(this.ctx.state);
@@ -26,8 +23,9 @@ export class SceneAudio {
     this.settings = { ...this.settings, ...s };
     if (!this.ctx) return;
     this.master.gain.setTargetAtTime((this.settings.volume ?? 35) / 100, this.ctx.currentTime, .3);
-    this.ambient.gain.setTargetAtTime(this.settings.music ? (this.playing ? .2 : 1) : 0, this.ctx.currentTime, .5);
+    this.music?.configure(this.settings, !!this.playing);
   }
+  replayMusic() { this.music?.replay(); }
   bell(kind = 'lotus') {
     if (this.ctx?.state !== 'running') return;
     const now = this.ctx.currentTime;

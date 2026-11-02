@@ -1,8 +1,13 @@
 import { SceneAudio } from './audio.js';
 const $ = id => document.getElementById(id);
 // A deliberate click tests this tab's output, even when no broadcast window is open.
-const soundCheck = new SceneAudio();
-const SETTINGS = ['title', 'subtitle', 'goal', 'seatMode', 'joinOnEnter', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'ambientAfterSec', 'ambientTarget'];
+let musicPreviewing = false;
+const soundCheck = new SceneAudio({ onMusicStatus: status => {
+  if (!musicPreviewing) return;
+  $('musicPreviewStatus').textContent = ({ loading: 'Đang tải bản nhạc…', playing: 'Đang nghe thử tại bảng điều khiển.', ended: 'Đã phát hết bản nhạc. Bật lặp hoặc bấm nghe thử lại.', error: 'Không tải được nhạc. Tải lại trang hoặc kiểm tra gói cài đặt.' })[status.state] || '';
+  if (['ended', 'error'].includes(status.state)) stopMusicPreview();
+} });
+const SETTINGS = ['title', 'subtitle', 'goal', 'seatMode', 'joinOnEnter', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'ambientAfterSec', 'ambientTarget', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode'];
 let socket, mode = 'demo', bots = false, toastTimer;
 const people = new Map(), numbers = new Intl.NumberFormat('en-US');
 const obsURL = location.origin + '/live/overlay.html'; $('obsURL').textContent = obsURL;
@@ -57,6 +62,7 @@ $('bots').onclick = () => send('bots', { on: !bots, pace: $('botPace').value });
 $('settingsForm').onsubmit = e => { e.preventDefault(); send('settings', { settings: readSettings() }); };
 $('say').onclick = () => { send('settings', { settings: readSettings() }); send('say', { text: $('sayText').value }); };
 $('bell').onclick = async () => {
+  stopMusicPreview();
   const volume = Number($('volume').value);
   if (volume <= 0) { toast('Âm lượng tổng đang bằng 0. Tăng âm lượng rồi thử lại.'); return; }
   soundCheck.configure({ music: false, voiceEnabled: false, volume });
@@ -70,3 +76,20 @@ $('bell').onclick = async () => {
 $('clearScene').onclick = () => send('clear');
 $('resetSession').onclick = () => { if (confirm(`Xóa điểm và bảng xếp hạng của phiên ${mode.toUpperCase()} hiện tại để bắt đầu phiên mới?`)) send('reset'); };
 $('copyURL').onclick = async () => { try { await navigator.clipboard.writeText(obsURL); toast('Đã sao chép địa chỉ nguồn OBS.'); } catch { toast('Chọn và sao chép địa chỉ nguồn OBS bên trên.'); } };
+
+function stopMusicPreview() {
+  musicPreviewing = false; soundCheck.configure({ music: false });
+  $('listenMusic').textContent = 'Nghe thử nhạc tại đây';
+}
+$('listenMusic').onclick = async () => {
+  if (musicPreviewing) { stopMusicPreview(); $('musicPreviewStatus').textContent = 'Đã dừng nghe thử.'; return; }
+  if (Number($('volume').value) <= 0 || Number($('musicVolume').value) <= 0) { toast('Tăng âm lượng tổng và âm lượng nhạc trước khi nghe thử.'); return; }
+  musicPreviewing = true; $('listenMusic').textContent = 'Dừng nghe thử';
+  soundCheck.configure({ music: true, musicLoop: $('musicLoop').checked, musicVolume: Number($('musicVolume').value), volume: Number($('volume').value), voiceEnabled: false });
+  try { if (await soundCheck.start()) soundCheck.replayMusic(); }
+  catch { stopMusicPreview(); toast('Chưa mở được tiếng. Thử loa / chuông trước rồi nghe nhạc lại.'); }
+};
+for (const id of ['musicVolume', 'musicLoop', 'volume']) $(id).addEventListener('input', () => {
+  if (musicPreviewing) soundCheck.configure({ musicVolume: Number($('musicVolume').value), musicLoop: $('musicLoop').checked, volume: Number($('volume').value) });
+});
+$('replayMusic').onclick = () => { stopMusicPreview(); send('music-replay'); toast('Đã yêu cầu phát lại nhạc ở cửa sổ LIVE đã mở tiếng.'); };

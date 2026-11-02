@@ -28,6 +28,9 @@ const SETTING_RULES = {
   title: v => cleanName(v), subtitle: v => Array.from(String(v)).slice(0, 80).join(''),
   voice: v => ['th-TH-PremwadeeNeural', 'th-TH-NiwatNeural'].includes(v) ? v : settings.voice,
   voiceEnabled: Boolean, music: Boolean, joinOnEnter: Boolean,
+  musicLoop: Boolean, cinematicZoom: Boolean,
+  musicVolume: v => clamp(v, 0, 100),
+  petalMode: v => v === 'light' ? 'light' : 'full',
   idlePrompts: Boolean, ambientCrowd: Boolean,
   characterMode: v => ['mixed', 'male', 'female'].includes(v) ? v : 'mixed',
   idleEverySec: v => clamp(v, 10, 300), ambientAfterSec: v => clamp(v, 10, 300),
@@ -240,6 +243,9 @@ function onControl(m) {
       if (tiktokState.status !== 'idle') throw new Error('Ngắt nguồn sự kiện trước khi bắt đầu phiên mới.');
       rooms[mode] = new Room(); activate(mode); if (mode === 'live') persist(); break;
     case 'bell': broadcast({ t: 'bell' }); break;
+    case 'music-replay':
+      if (!settings.music) throw new Error('Bật nhạc nền và lưu cấu hình trước khi phát lại.');
+      broadcast({ t: 'music-replay' }); break;
     case 'say':
       if (!settings.voiceEnabled) throw new Error('Bật giọng đọc tiếng Thái trước khi thử.');
       say(m.text || 'ขอให้วันนี้เป็นวันที่ดีของคุณ'); break;

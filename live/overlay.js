@@ -1,14 +1,26 @@
 import { RitualQueue } from './ritual-queue.js';
 import { SceneAudio } from './audio.js';
 import { processionPose } from './procession.js';
+import { ceremonyCamera } from './ceremony-camera.js';
+import { RoyalPetals, PetalPainter } from './royal-petals.js';
 const $ = id => document.getElementById(id);
 const stage = $('stage'), canvas = $('scene'), ctx = canvas.getContext('2d');
+const shrine = document.querySelector('.shrine'), celebration = $('celebration'), celebrationCtx = celebration.getContext('2d');
+const royalPetals = new RoyalPetals(), petalPainter = new PetalPainter();
 const preview = new URLSearchParams(location.search).has('preview');
+const actorResolution = preview ? .5 : 1;
+if (preview) { canvas.width = 540; canvas.height = 960; }
+// Soft decorative petals need less raster resolution than names and characters.
+celebration.width = 540; celebration.height = 960; celebrationCtx.scale(.5, .5);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const audio = new SceneAudio({ preview, onState: state => {
   if (preview) return;
   $('unmute').hidden = state === 'running';
   if (state !== 'running') $('unmute').textContent = '♫ เปิดเสียง';
+}, onMusicStatus: status => {
+  canvas.dataset.music = status.state;
+  $('audioError').hidden = status.state !== 'error';
+  if (status.state === 'error') $('audioError').textContent = 'โหลดเพลงไม่สำเร็จ · กรุณารีเฟรช';
 } });
 const queue = new RitualQueue();
 const visitors = new Map(), ambience = new Map(), petals = [];
@@ -16,6 +28,7 @@ const badgeCache = new Map(), spriteCache = new Map();
 document.fonts.addEventListener('loadingdone', () => badgeCache.clear());
 let order = [], seats = [], cap = 24, baseCap = 24, mode = null, settings = {}, last = performance.now(), lastRitual = null;
 let hero = null, ambientAlpha = 0, lastGiftAt = Date.now(), inviteUntil = 0, nextGolden = 0;
+let renderedFrames = 0;
 const numbers = new Intl.NumberFormat('en-US');
 const images = {};
 for (const [key, file] of Object.entries({ female: 'worshipper', male: 'worshipper-male', carriers: 'ceremony-carriers', marigold: 'marigold-garland', royal: 'royal-offering', shrine: 'shrine' })) {
@@ -79,6 +92,7 @@ function updateStats(m) {
 function state(m) {
   // Server snapshots are authoritative after reconnect, mode switches and operator edits.
   visitors.clear(); ambience.clear(); order = []; petals.length = 0; queue.clear(); lastRitual = null; hero = null; ambientAlpha = 0;
+  royalPetals.reset(); shrine.style.transform = ''; canvas.dataset.zoom = '1.000';
   $('gift').hidden = true; stage.classList.remove('ceremony'); audio.clear();
   lastGiftAt = m.engagement?.lastGiftAt || Date.now(); inviteUntil = 0;
   mode = m.mode; settings = m.settings; baseCap = m.cap; layout(m.cap);
@@ -128,6 +142,7 @@ function connect() {
     if (m.t === 'follow') { const v = visitors.get(m.id); if (v) { v.glow = 1; particles(v.x, v.y - 150, 8); } }
     if (m.t === 'bell') audio.bell('aarti');
     if (m.t === 'tts') audio.speech(m.url, m.tag);
+    if (m.t === 'music-replay') audio.replayMusic();
   };
 }
 function rounded(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
@@ -274,10 +289,8 @@ function finishHero() {
   if (v?.seat) { v.x = v.seat.x; v.y = v.seat.y; v.state = 'sit'; v.elapsed = 0; }
   hero = null; canvas.dataset.ceremonyPhase = ''; canvas.dataset.ceremonySkin = '';
 }
-function drawCeremony(active, now, t) {
+function drawCeremony(active, now, t, pose) {
   if (!hero || !active?.ritual.procession) return;
-  const seat = visitors.get(hero.id)?.seat || hero.seat;
-  const pose = processionPose(active.ritual.kind, now - active.beganAt, hero.from, seat, hero.seated);
   canvas.dataset.ceremonyPhase = pose.phase; canvas.dataset.ceremonySkin = hero.skin;
   const h = 300 + Math.max(0, Math.min(1, (pose.y - 1230) / 480)) * 50, w = h * .75;
   const royal = active.ritual.kind === 'royal';
@@ -322,16 +335,16 @@ function drawCeremony(active, now, t) {
   ctx.restore();
 }
 function frame(now) {
-  requestAnimationFrame(frame); const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000;
+  requestAnimationFrame(frame);
+  // 30 fps suits the broadcast; the small operator preview needs only 15 fps.
+  if (now - last < 1000 / (preview ? 15 : 30) - .7) return;
+  const dt = Math.min(.1, (now - last) / 1000); last = now; const t = now / 1000;
+  canvas.dataset.rendered = ++renderedFrames;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, 1080, 1920);
-  // Slow drifting motes provide motion without moving the sacred figure.
-  for (let i = 0; i < 24; i++) {
-    const x = (i * 137 + Math.sin(t * .15 + i) * 30) % 1080;
-    const y = (i * 83 - t * (reduced ? 2 : 7) + 20000) % 1660;
-    ctx.fillStyle = `rgba(255,221,147,${.12 + .16 * Math.sin(t + i) ** 2})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + i % 3, 0, 6.28); ctx.fill();
-  }
   const active = queue.tick(now);
   if (active !== lastRitual) {
+    if (lastRitual?.ritual.kind === 'royal') royalPetals.stop();
     finishHero();
     lastRitual = active; $('gift').hidden = !active;
     stage.classList.toggle('ceremony', !!active?.ritual.procession);
@@ -344,7 +357,20 @@ function frame(now) {
         const seat = v?.seat || { x: 620, y: 1710 };
         hero = { id: active.id, name: active.name, skin: v?.skin || active.skin || 'female', from: { x: v?.x ?? 540, y: v?.y ?? 1870 }, seat: { ...seat }, seated: v?.state === 'sit' };
       }
+      if (active.ritual.kind === 'royal') royalPetals.start(now, { reduced, light: settings.petalMode === 'light' });
     }
+  }
+  const pose = hero && active ? processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
+  const camera = ceremonyCamera(active?.ritual.kind, active ? now - active.beganAt : 0, pose, { enabled: settings.cinematicZoom !== false, reduced });
+  // Transform world coordinates inside a fixed-size canvas so zoom does not
+  // create a much larger animated compositor layer on integrated graphics.
+  shrine.style.transform = `translate(${camera.x.toFixed(2)}px,${camera.y.toFixed(2)}px) scale(${camera.scale.toFixed(4)})`;
+  ctx.setTransform(camera.scale * actorResolution, 0, 0, camera.scale * actorResolution, camera.x * actorResolution, camera.y * actorResolution);
+  canvas.dataset.zoom = camera.scale.toFixed(3);
+  for (let i = 0; i < 24; i++) {
+    const x = (i * 137 + Math.sin(t * .15 + i) * 30) % 1080;
+    const y = (i * 83 - t * (reduced ? 2 : 7) + 20000) % 1660;
+    ctx.fillStyle = `rgba(255,221,147,${.12 + .16 * Math.sin(t + i) ** 2})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + i % 3, 0, 6.28); ctx.fill();
   }
   if (inviteUntil <= now) {
     $('inviteText').textContent = 'พิมพ์ “สาธุ” เพื่อร่วมบูชา';
@@ -357,7 +383,7 @@ function frame(now) {
   for (const v of [...visitors.values(), ...ambience.values()].sort((a, b) => a.y - b.y)) {
     ctx.save(); ctx.globalAlpha = (v.ambient ? ambientAlpha * .82 : 1) * (hero ? .68 : 1); drawViewer(v, dt, t, active); ctx.restore();
   }
-  drawCeremony(active, now, t);
+  drawCeremony(active, now, t, pose);
   for (let i = petals.length - 1; i >= 0; i--) {
     const p = petals[i]; p.age += dt; if (p.age > p.life) { petals.splice(i, 1); continue; }
     p.x += (p.vx + Math.sin(t + p.phase) * 12) * dt; p.y += p.vy * dt;
@@ -366,5 +392,8 @@ function frame(now) {
     else { ctx.rotate(t + p.phase); ctx.fillStyle = p.golden ? p.phase > 3 ? '#ffe29a' : '#f8b42f' : p.phase > 3 ? '#fbd7c7' : '#efb6ba'; ctx.beginPath(); ctx.ellipse(0, 0, p.size * .55, p.size, 0, 0, 6.28); ctx.fill(); }
     ctx.restore();
   }
+  royalPetals.configure({ reduced, light: settings.petalMode === 'light' });
+  petalPainter.draw(celebrationCtx, royalPetals.update(now, dt), now);
+  celebration.dataset.petals = royalPetals.items.length;
 }
 layout(24); connect(); requestAnimationFrame(frame);

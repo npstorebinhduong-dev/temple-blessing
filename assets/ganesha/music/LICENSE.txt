@@ -1,0 +1,17 @@
+Thai Dawn — original instrumental for Ganesha LIVE
+
+This composition and recording were created for this project using the
+deterministic synthesizer in scripts/render-thai-dawn.py. No third-party music,
+sample recording, pre-existing melody, chant, or voice recording is included.
+
+The recording may be used, copied, modified, redistributed, and played in
+commercial livestreams under the project's MIT license (see LICENSE at the
+repository root). Retain this notice when redistributing the recording.
+
+The synthesized colors are inspired by khim, ranat, khlui and light ching/gong
+sounds. This is a new relaxation instrumental, not an authentic recording of
+Thai Buddhist liturgy or a claim of traditional ceremonial repertoire.
+
+Duration: 128 seconds. The rendered note tails and room reflections wrap
+across the boundary for continuous replay. Runtime playback uses Web Audio
+buffer looping; no Internet service is required to play the bundled music.

@@ -1,7 +1,8 @@
 export const DEFAULTS = Object.freeze({
   title: 'พระพิฆเนศ', subtitle: 'โอม ศรี คเณศายะ นะมะฮา',
   voice: 'th-TH-PremwadeeNeural', voiceEnabled: true, pitch: -5, rate: -8,
-  music: true, volume: 35, joinOnEnter: false, seatMode: 'auto',
+  music: true, musicLoop: true, musicVolume: 60, volume: 35, joinOnEnter: false, seatMode: 'auto',
+  cinematicZoom: true, petalMode: 'full',
   goal: 4995, giftMap: '', characterMode: 'mixed',
   idlePrompts: true, idleEverySec: 10, ambientCrowd: true, ambientAfterSec: 10, ambientTarget: 36,
 });

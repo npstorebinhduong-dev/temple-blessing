@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.2.1
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.3
 
 1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
 2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
@@ -15,7 +15,7 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.2.1
    overlay và nguồn âm thanh trình duyệt. Tránh thu trùng hai lần.
 8. Mở TikFinity Desktop trên cùng máy. Kết nối kênh TikTok đang LIVE,
    bật WebSocket server. Trong Ganesha LIVE chọn TikFinity Desktop,
-   nhập địa chỉ thường là ws://127.0.0.2:21213/ rồi bấm Kết nối LIVE.
+   nhập địa chỉ thường là ws://127.0.0.1:21213/ rồi bấm Kết nối LIVE.
    Dữ liệu DEMO sẽ được thay bằng phiên LIVE thật, độc lập với demo.
 9. Thử bình luận và quà thật. Kiểm tra nhật ký có đúng người, số lượng,
    giá trị một quà và ID quà. Đã kết nối TikFinity không có nghĩa là kênh
@@ -24,10 +24,20 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.2.1
     lưu cấu hình rồi bấm Thử giọng Thái. Cần Internet; không cần cài tiếng
     Thái trên Windows hoặc mở trình duyệt Edge. Kiểm tra nguồn âm OBS.
 11. Bấm thử cả Bó hoa và Bóng tình yêu; chờ lần lượt 20 và 24 giây để thấy
-    đủ bước đi lên bàn thờ, quỳ dâng và trở lại. Chọn nhân vật Nam/Nữ khi thử.
+    đủ bước đi lên bàn thờ, zoom theo nhân vật, quỳ dâng và trở lại toàn cảnh.
+    Quà 500 xu có mưa hoa phủ màn hình. Chọn nhân vật Nam/Nữ khi thử.
 12. Khi vắng quà 10 giây, lời nhắc thả tim/chia sẻ lặp mỗi 10 giây.
     Nhân vật nền không tên tạo không khí đông vui, không cộng số liệu LIVE.
     Có thể tắt hoặc điều chỉnh hai tính năng trong Cảnh & âm thanh.
+
+NHẠC NỀN
+Thai Dawn là nhạc không lời viết riêng, dài 2:08, lấy cảm hứng âm sắc Thái.
+Nhạc có sẵn trong gói và mặc định lặp liên tục, không cần Internet.
+Dùng Nghe thử nhạc tại đây để nghe ngay tại bảng điều khiển. Dừng nghe thử
+trước khi phát LIVE để tránh trùng tiếng. Âm lượng nhạc nền điều chỉnh riêng,
+nhạc tự nhỏ khi đọc lời cầu chúc. Bấm Lưu cấu hình sau khi chỉnh.
+Phát lại nhạc trên LIVE đưa bài nhạc về đầu. Tắt Lặp nhạc liên tục để
+phát một lần. Không cần cài Python hay phần mềm nhạc để chạy ứng dụng.
 
 SÁU QUÀ ĐÃ CHỌN
 Hoa hồng 1 xu -> hoa sen (lotus).
@@ -45,10 +55,11 @@ CHỌN NHÂN VẬT
 Mặc định có nam và nữ. Người xem gõ ชาย để chọn nam, หญิง để chọn nữ.
 Có thể dùng male/female hoặc nam/nữ. Không đoán giới tính từ tên người xem.
 
-NÂNG TỪ BẢN 0.1
-Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.2 vào thư mục riêng.
+NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1
+Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.3 vào thư mục riêng.
 Nếu muốn giữ điểm và cấu hình, sao chép thư mục live/data của bản cũ
-sang live/data của bản mới trước khi chạy. Giọng sẽ được bật một lần.
+sang live/data của bản mới trước khi chạy. Chỉ bản 0.1 được bật giọng
+một lần khi nâng cấp; bản 0.2 trở lên giữ cài đặt giọng của bạn.
 Kiểm tra lại ID quà đã gán vì bảng giá và các loại hiệu ứng đã thay đổi.
 Không sao chép node_modules từ bản cũ.
 
@@ -69,7 +80,8 @@ NẾU CÓ LỖI
   ♫ เปิดเสียง. Sẽ nghe một chuông xác nhận. Bản xem trước luôn tắt tiếng.
   Kiểm tra nguồn âm OBS/LIVE Studio; đóng các cửa sổ overlay dư.
 - Không đọc tiếng Thái: kiểm tra bật giọng, Internet và nhật ký.
-- Bị chậm: thử 24 người, giảm nhịp mô phỏng và đóng các overlay dư.
+- Bị chậm: chọn 24/36 người, mưa hoa Nhẹ, đóng các overlay dư.
+  Nguồn LIVE nhắm 30 khung hình/giây; khung xem trước nhỏ chạy 15.
 
 Gửi lại clip khoảng 45–60 giây gồm cảnh và một lượt quà để đánh giá.
 Gói không chứa Node.js, node_modules, dữ liệu LIVE hay tài khoản.
