@@ -2,7 +2,9 @@
 
 Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào, quỳ chắp tay và cúi lạy, bảng tên, xếp hạng, mục tiêu và sáu hiệu ứng dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy bản 0.7
+## Chạy bản 0.7.1
+
+Bản 0.7.1 đưa bảng quà sát mép phải, bỏ nền/viền và thu gọn khoảng cách giữa các hàng để lộ tay cầm sen cùng khu quỳ. Chữ vẫn lớn, có bóng tối để đọc trên nền cảnh.
 
 Bản 0.7 thêm bình luận **1 = nữ, 2 = nam**, hiện hướng dẫn ngay trên bảng quà; tăng cỡ chữ bảng quà/xếp hạng để đọc trên điện thoại, kéo dài thời gian zoom và nhận đúng **Shamrock · ID 9875 · 10 xu**. Giữ lịch nhắc tim/chia sẻ sau 10 giây vắng quà, nghỉ 10 giây từ lúc câu trước đọc xong và bản sửa nhân vật biến mất khi quỳ/lạy.
 
@@ -98,7 +100,7 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 - Hình ảnh, font Thái, bản nhạc MP3 và chuông chạy cục bộ; chuông được tổng hợp bằng Web Audio. Nhạc nền hiện tại là bản ghép CC0, độc lập với concept trước.
 - Edge TTS cần truy cập `speech.platform.bing.com`. File âm thanh tạm ở `live/tts/`, không đưa vào Git hay gói chia sẻ. Khi nâng dữ liệu v0.1 lên v0.2, giọng được bật một lần; các lần sau giữ lựa chọn của bạn.
 
-## Kiểm thử và giới hạn bản 0.7
+## Kiểm thử và giới hạn bản 0.7.1
 
 ```sh
 cd live
