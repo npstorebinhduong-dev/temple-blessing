@@ -29,7 +29,9 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   t.after(async () => { for (const ws of sockets) ws.terminate(); for (const ws of mock.clients) ws.terminate(); mock.close(); if (child?.exitCode === null) await stop(); rmSync(dir, { recursive: true, force: true }); });
   await start(); const control = await client('control'), overlay = await client('overlay');
   const initial = await until(() => control.messages.find(m => m.t === 'state'));
-  assert.equal(initial.mode, 'demo'); assert.equal(initial.settings.voiceEnabled, true); assert.equal(initial.viewers.length, 24);
+  assert.equal(initial.mode, 'demo'); assert.equal(initial.settings.voiceEnabled, true); assert.equal(initial.viewers.length, 0);
+  assert.equal(initial.actors.length, 10); assert.equal(initial.seating.ambient, 10);
+  assert.equal(initial.settings.joinOnChat, false); assert.equal(initial.settings.joinOnEnter, false);
   control.send('settings', { settings: { giftMap: '9001=garland', goal: 900, voiceEnabled: false } });
   await until(() => overlay.messages.some(m => m.t === 'settings' && !m.settings.voiceEnabled));
   const connected = once(mock, 'connection');
@@ -40,6 +42,7 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   source.send(JSON.stringify(gift)); gift.data.repeatEnd = true; source.send(JSON.stringify(gift)); source.send(JSON.stringify(gift));
   const result = await until(() => overlay.messages.find(m => m.t === 'gift'));
   assert.equal(result.coins, 15); assert.equal(result.ritual.kind, 'garland'); assert.equal(result.giftId, '9001');
+  assert.equal(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.slot, 11);
   await until(() => overlay.messages.some(m => m.t === 'stats' && m.stats.coins === 15));
   source.send(JSON.stringify({ event: 'chat', data: { uniqueId: 'thai', nickname: 'น้องพลอย', comment: 'ชาย' } }));
   await until(() => overlay.messages.some(m => m.t === 'character' && m.v.id === 'thai' && m.v.skin === 'male'));
@@ -51,8 +54,16 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   await until(() => control.messages.some(m => m.t === 'error' && /Demo/.test(m.message)));
   for (let i = 0; i < 80; i++) source.send(JSON.stringify({ event: 'chat', data: { uniqueId: `v${i}`, nickname: `User ${i}`, comment: 'สาธุ' } }));
   await until(() => overlay.messages.some(m => m.t === 'chat' && m.id === 'v79'));
+  const beforeCrowd = await client('overlay'), giftOnly = await until(() => beforeCrowd.messages.find(m => m.t === 'state'));
+  assert.equal(giftOnly.viewers.length, 1); assert.equal(giftOnly.actors.length, 11); // Chats never displace the ten background figures.
+  control.send('settings', { settings: { joinOnChat: true } });
+  await until(() => overlay.messages.some(m => m.t === 'settings' && m.settings.joinOnChat));
+  for (let i = 0; i < 80; i++) source.send(JSON.stringify({ event: 'chat', data: { uniqueId: `v${i}`, nickname: `User ${i}`, comment: 'สาธุ' } }));
+  await until(() => overlay.messages.filter(m => m.t === 'chat' && m.id === 'v79').length === 2);
   const observer = await client('overlay'); const full = await until(() => observer.messages.find(m => m.t === 'state'));
-  assert.equal(full.viewers.length, 60); assert.equal(full.stats.coins, 115); assert.equal(full.top[0].name, 'น้องพลอย');
+  assert.equal(full.actors.length, 60); assert.equal(full.viewers.length, 50); assert.equal(full.seating.waiting, 31);
+  assert.equal(new Set(full.actors.map(v => v.slot)).size, 60);
+  assert.equal(full.stats.coins, 115); assert.equal(full.top[0].name, 'น้องพลอย');
   // Overlays cannot issue control commands.
   observer.send('reset'); observer.send('gift', { name: 'fake', diamonds: 500, count: 1 });
   control.send('demo'); await until(() => control.messages.filter(m => m.t === 'state' && m.mode === 'demo').length >= 2);

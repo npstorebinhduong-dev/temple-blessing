@@ -1,16 +1,17 @@
-# Phiếu chạy thử Ganesha LIVE 0.3
+# Phiếu chạy thử Ganesha LIVE 0.4
 
 Ghi cấu hình máy, phiên bản TikFinity, OBS/LIVE Studio và số nhân vật khi thử.
 
-1. **Hình:** mở overlay 1080 × 1920, kiểm tra tượng, nền, chữ Thái, bảng tên. Thử 24 / 36 / 60 người, ghi lại chỗ chữ hoặc nhân vật bị che.
-2. **Chuyển động:** dùng tên mới gửi bình luận; nhân vật đi lên lối giữa, vào vị trí rồi quỳ. Thử bình luận tiếng Thái dài.
+1. **Hình:** mở overlay 1080 × 1920, kiểm tra tượng, nền, chữ Thái, bảng tên. Ban đầu phải có 10 nhân vật nền và 0 người tương tác. Tay sen/búa chuyển động nhẹ, hào quang nhỏ; thử bật/tắt chuyển động tay. Ghi lại chỗ chữ hoặc nhân vật bị che.
+2. **Chuyển động:** dùng tên mới gửi quà; nhân vật đi lên lối giữa, vào chỗ 11 rồi quỳ chắp tay, cúi lạy và ngẩng lên. Quan sát cả nam/nữ, nhịp lệch nhau. Mặc định bình luận chưa tạo người mới; thử tùy chọn cho bình luận vào hàng chờ, chọn nam/nữ và bình luận dài.
 3. **Quà demo:** sáu nút Hoa hồng (1), Quả đào (5), OK (5), Cỏ 4 lá (10), Bó hoa (100), Bóng tình yêu (500). Combo 3 quà phải cộng đúng 3 × giá trị một quà và chỉ phát một lượt hiệu ứng có ×3.
 4. **Nghi lễ lớn:** Bó hoa phải đi lên, quỳ nâng vòng vạn thọ và trở về trong 20 giây; Bóng tình yêu mang mâm lễ, hiệu ứng vàng/đèn, trở về trong 24 giây. Thử với nam và nữ, gửi thêm quà cơ bản khi đang làm lễ, lưu cấu hình giữa nghi lễ. Zoom phải đi theo nhân vật và về toàn cảnh khi xong; quà 500 có mưa hoa phủ các góc màn hình. Thử tắt zoom và chọn mưa hoa Nhẹ.
 5. **Nguồn thật:** kết nối TikFinity vào LIVE; kiểm tra nhãn DEMO biến mất và số liệu demo không chuyển sang LIVE. Bình luận/quà thật phải xuất hiện trong nhật ký.
 6. **Quà combo thật:** gửi một chuỗi quà liên tiếp. Đối chiếu số xu và nhật ký sau khi chuỗi kết thúc, tránh cộng các gói trung gian. Ghi lại ID/tên/giá trị TikFinity gửi để cấu hình cho Thái.
 7. **Âm thanh:** bật tiếng trong nguồn phát, thử chuông và giọng Thái. Xác nhận không bị phát hai lần và lời đọc phát âm tự nhiên. Người biết tiếng Thái duyệt nội dung và giọng. Nghe Thai Dawn ít nhất 3 phút để qua điểm lặp 2:08; không được có khoảng im dài hay hai bản nhạc chồng nhau. Thử âm lượng nhạc riêng, nhỏ khi đọc giọng, tắt lặp và Phát lại nhạc. Dừng nghe thử ở bảng điều khiển khi phát nguồn LIVE.
-8. **Vắng quà:** chờ 10 giây rồi thêm 10 giây; mỗi mốc phải hiện lời nhắc tim/share. Gửi quà khi lời nhắc đang đọc: lời cầu chúc được ưu tiên, bộ đếm chạy lại. Nhân vật nền không tên xuất hiện cùng nhãn mô phỏng; tổng người tương tác/xu/quà/tim không tăng. Thử tắt tính năng.
-9. **Phục hồi:** ngắt/mở lại TikFinity; kiểm tra reconnect. Dừng server, mở lại, chọn phiên LIVE đã lưu; điểm và cấu hình phải còn. Dọn nhân vật không xóa điểm.
-10. **Chạy dài:** phát thử 30–60 phút, thử đợt quà dồn dập, quan sát CPU/GPU/RAM, FPS của OBS và âm thanh. Chưa kiểm chứng hiệu năng trên máy phát cho đến khi hoàn thành bước này.
+8. **Vắng quà:** chờ 10 giây rồi thêm 10 giây; mỗi mốc phải hiện lời nhắc tim/share. Gửi quà khi lời nhắc đang đọc: lời cầu chúc được ưu tiên, bộ đếm chạy lại. 10 nhân vật nền đã có từ đầu phải tiếp tục lạy, giữ nguyên sau quà. Tổng người tương tác/xu/quà/tim không tăng do nhân vật nền. Thử tắt tính năng.
+9. **Hàng chờ:** mở lại cảnh demo, bấm 50 để đủ 60 chỗ (10 nền + 50 người thử), rồi bấm 80. Nhân vật ngồi lâu đi ra, người chờ vào đúng chỗ trống; người khác không biến mất/đổi chỗ. Sau khoảng 30 giây, 10 nhân vật nền đã nhường hết. Người cũ tặng lại không làm mất người khác. Người đang dâng lễ không bị đuổi giữa chừng.
+10. **Phục hồi:** ngắt/mở lại TikFinity; kiểm tra reconnect. Dừng server, mở lại, chọn phiên LIVE đã lưu; điểm và cấu hình phải còn. Dọn nhân vật không xóa điểm. Tải lại overlay giữa lễ 500 xu phải tiếp tục pha đang diễn ra, không chạy lại từ đầu.
+11. **Chạy dài:** phát thử 30–60 phút, thử đợt quà dồn dập, quan sát CPU/GPU/RAM, FPS của OBS và âm thanh. Chưa kiểm chứng hiệu năng trên máy phát cho đến khi hoàn thành bước này.
 
 Khi báo lỗi, gửi hành động vừa thực hiện, kết quả mong đợi, clip và vài dòng nhật ký liên quan; không gửi thông tin tài khoản.

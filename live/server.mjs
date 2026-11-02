@@ -27,17 +27,15 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, Math.round(Number(v) || 0)));
 const SETTING_RULES = {
   title: v => cleanName(v), subtitle: v => Array.from(String(v)).slice(0, 80).join(''),
   voice: v => ['th-TH-PremwadeeNeural', 'th-TH-NiwatNeural'].includes(v) ? v : settings.voice,
-  voiceEnabled: Boolean, music: Boolean, joinOnEnter: Boolean,
+  voiceEnabled: Boolean, music: Boolean, joinOnEnter: Boolean, joinOnChat: Boolean, statueMotion: Boolean,
   musicLoop: Boolean, cinematicZoom: Boolean,
   musicVolume: v => clamp(v, 0, 100),
   petalMode: v => v === 'light' ? 'light' : 'full',
   idlePrompts: Boolean, ambientCrowd: Boolean,
   characterMode: v => ['mixed', 'male', 'female'].includes(v) ? v : 'mixed',
-  idleEverySec: v => clamp(v, 10, 300), ambientAfterSec: v => clamp(v, 10, 300),
-  ambientTarget: v => [24, 36, 60].includes(Number(v)) ? Number(v) : 36,
+  idleEverySec: v => clamp(v, 10, 300),
   volume: v => clamp(v, 0, 100), pitch: v => clamp(v, -30, 30), rate: v => clamp(v, -30, 30),
   goal: v => clamp(v, 1, 99999999),
-  seatMode: v => ['auto', '24', '36', '60'].includes(String(v)) ? String(v) : 'auto',
   giftMap: v => { const s = String(v).slice(0, 5000); parseGiftMap(s); return s; },
 };
 function applySettings(input = {}) {
@@ -48,15 +46,20 @@ function applySettings(input = {}) {
 try { applySettings(saved.settings); } catch { console.warn('Cấu hình lưu không hợp lệ; dùng cấu hình mặc định.'); }
 // v0.2 enables the requested spoken blessings once when upgrading a v0.1 session.
 if (saved.version === 1) settings.voiceEnabled = true;
-const rooms = { demo: new Room(), live: new Room(saved.live) };
+// v0.4 starts real admissions with gifts. Older crowd-size settings are retired.
+if ((saved.version || 0) < 3) { settings.joinOnEnter = false; settings.joinOnChat = false; }
+const newRoom = savedRoom => new Room(savedRoom, { ambient: settings.ambientCrowd });
+const rooms = { demo: newRoom(), live: newRoom(saved.live) };
 const engagement = new EngagementClock();
 let mode = 'demo', room = rooms.demo, source = null, sourceGeneration = 0;
 let tiktokState = { status: 'idle', source: 'tikfinity', error: '' };
 let botTimer = null, persistTimer = null;
-const capacity = () => settings.seatMode === 'auto' ? ([24, 36, 60].find(n => room.viewers.size <= n) || 60) : +settings.seatMode;
-const limit = () => settings.seatMode === 'auto' ? 60 : +settings.seatMode;
+let lastSeatingSummary = '';
 const meta = () => ({ stats: room.stats, top: room.top(), mode, goal: settings.goal });
-const snapshot = () => ({ t: 'state', settings, viewers: [...room.viewers.values()], cap: capacity(), startedAt: room.startedAt, tiktok: tiktokState, engagement: engagement.snapshot(), ...meta() });
+const seatingMeta = () => ({ ...room.seating.summary(), rituals: room.rituals.pending.length });
+const snapshot = () => ({ t: 'state', settings, viewers: [...room.viewers.values()], actors: [...room.seating.actors.values()],
+  seating: seatingMeta(), active: room.rituals.active, serverTime: Date.now(), cap: 60,
+  startedAt: room.startedAt, tiktok: tiktokState, engagement: engagement.snapshot(), ...meta() });
 function addLog(message) {
   const line = `[${new Date().toLocaleTimeString('vi-VN')}] ${message}`;
   log.push(line); if (log.length > 180) log.shift();
@@ -66,25 +69,38 @@ function persist() {
   clearTimeout(persistTimer); persistTimer = null;
   try {
     const file = path.join(DATA, 'session.json');
-    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 2, settings, live: rooms.live.serialize() }));
+    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 3, settings, live: rooms.live.serialize() }));
     fs.renameSync(file + '.tmp', file);
     return true;
   } catch (e) { addLog('Không lưu được phiên: ' + e.message); return false; }
 }
 function saveSoon() { if (!persistTimer) persistTimer = setTimeout(persist, 200); }
 function statsChanged() { broadcast({ t: 'stats', ...meta() }); if (mode === 'live') saveSoon(); }
+function seatingChanged() {
+  const summary = seatingMeta(), key = JSON.stringify(summary);
+  if (key !== lastSeatingSummary) { lastSeatingSummary = key; broadcast({ t: 'seating', ...summary }); }
+}
 function seat(id, name, avatar = '', skin) {
-  const old = room.viewers.get(String(id));
-  const result = room.join(id, name, { avatar, demo: mode === 'demo', limit: limit(), skin: skin || old?.skin || defaultSkin(id, settings.characterMode) });
+  const old = room.find(id);
+  const result = room.join(id, name, { avatar, demo: mode === 'demo', skin: skin || old?.skin || room.choices.get(String(id)) || defaultSkin(id, settings.characterMode) });
   if (!result) return null;
-  if (result.removed) broadcast({ t: 'leave', id: result.removed });
-  if (result.isNew) broadcast({ t: 'join', v: result.viewer, cap: capacity() });
-  else broadcast({ t: 'character', v: result.viewer });
+  for (const event of result.events) broadcast(event);
+  if (result.overflow) addLog('Hàng chờ đã đủ 500 người; vẫn ghi nhận quà và lời cầu chúc. Người tặng có thể vào lại ở lần tương tác sau.');
+  seatingChanged();
   return result.viewer;
 }
 function onChat(id, name, text, avatar, skin) {
-  const v = seat(id, name, avatar, skinFromComment(text) || skin); if (!v) return;
-  broadcast({ t: 'chat', id: String(id), name: v.name, text: String(text || '').slice(0, 160) });
+  if (!id) return;
+  const chosen = skinFromComment(text) || skin, existing = room.find(id);
+  if (chosen) {
+    if (room.choices.size >= 1000) room.choices.delete(room.choices.keys().next().value);
+    room.choices.set(String(id), chosen);
+  }
+  if (existing) {
+    existing.name = cleanName(name); if (chosen) existing.skin = chosen;
+    broadcast({ t: 'character', v: existing });
+  } else if (settings.joinOnChat) seat(id, name, avatar, chosen);
+  broadcast({ t: 'chat', id: String(id), name: cleanName(name), text: String(text || '').slice(0, 160) });
 }
 function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoKind, skin) {
   if (!id) return;
@@ -96,11 +112,13 @@ function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoK
   const blessing = blessingForGift(v?.name || name, ritual?.kind, room.stats.gifts);
   const message = { t: 'gift', id, name: cleanName(name), skin: v?.skin, giftName: String(giftName || 'ของขวัญ').slice(0, 80), giftId: String(giftId), ...values, ritual, blessing, ...engagement.snapshot() };
   broadcast(message); statsChanged();
+  if (ritual && !room.rituals.enqueue(message, Date.now())) addLog('Hàng chờ nghi lễ đã đầy; tổng xu và lời cầu chúc vẫn được ghi nhận.');
+  seatingChanged();
   addLog(`${mode === 'demo' ? 'DEMO' : 'LIVE'} · ${message.name} · ${message.giftName} ×${values.count} · ${values.unitCoins} xu/quà · ID ${giftId || '—'} → ${ritual?.kind || 'chưa gán hiệu ứng'}`);
   say(blessing, 'gift');
 }
 function onLike(id, n) { n = positive(n, 100000); room.stats.likes += n; broadcast({ t: 'like', id, n }); statsChanged(); }
-function onFollow(id, name) { seat(id, name); broadcast({ t: 'follow', id, name: cleanName(name) }); }
+function onFollow(id, name) { if (settings.joinOnEnter) seat(id, name); broadcast({ t: 'follow', id, name: cleanName(name) }); }
 const eventHandler = () => createEventHandler({ chat: onChat, gift: onGift, like: onLike, follow: onFollow,
   member: (id, name, avatar) => { if (settings.joinOnEnter) seat(id, name, avatar); } });
 
@@ -153,6 +171,8 @@ async function pumpTTS() {
 }
 function resetSpeech() { ttsEpoch++; ttsQueue.clear(); currentTTS?.cancel(); speechUntil = 0; }
 setInterval(() => {
+  for (const event of room.advance(Date.now())) broadcast(event);
+  seatingChanged();
   const prompt = engagement.tick(Date.now(), { enabled: settings.idlePrompts, intervalMs: settings.idleEverySec * 1000 });
   if (prompt) { broadcast({ t: 'engagement', ...prompt }); say(prompt.text, 'idle'); }
 }, 250).unref();
@@ -165,7 +185,7 @@ function disconnectSource() {
 }
 function activate(nextMode) {
   stopBots(); resetSpeech(); engagement.reset(Date.now());
-  mode = nextMode; room = rooms[mode]; broadcast(snapshot());
+  mode = nextMode; room = rooms[mode]; room.rituals.clear(); lastSeatingSummary = ''; broadcast(snapshot());
 }
 async function connectSource(message) {
   disconnectSource(); activate('live');
@@ -205,12 +225,10 @@ async function connectSource(message) {
 }
 function fillDemo(n) {
   if (mode !== 'demo') return;
-  for (let i = 0; i < Math.min(n, limit()); i++) seat('demo_' + i, DEMO_NAMES[i % DEMO_NAMES.length] + (i >= DEMO_NAMES.length ? ` ${Math.floor(i / DEMO_NAMES.length) + 1}` : ''));
+  for (let i = 0; i < Math.min(n, 500); i++) seat('demo_' + i, DEMO_NAMES[i % DEMO_NAMES.length] + (i >= DEMO_NAMES.length ? ` ${Math.floor(i / DEMO_NAMES.length) + 1}` : ''));
 }
 function startDemo() {
-  disconnectSource(); rooms.demo = new Room(); activate('demo'); fillDemo(24);
-  [338, 212, 106, 88, 52].forEach((coins, i) => room.gift('demo_' + i, DEMO_NAMES[i], coins, 1));
-  broadcast(snapshot());
+  disconnectSource(); rooms.demo = newRoom(); activate('demo');
 }
 function setBots(on, pace) {
   stopBots(); if (!on || mode !== 'demo') return;
@@ -236,12 +254,12 @@ function onControl(m) {
     case 'live': disconnectSource(); activate('live'); break;
     case 'chat': onChat('sim_' + cleanName(m.name), m.name, m.text || 'สาธุ', '', m.skin); break;
     case 'gift': onGift('sim_' + cleanName(m.name), m.name, m.gift || 'Demo', m.count, m.diamonds, '', m.giftId, m.kind, m.skin); break;
-    case 'fill': fillDemo(positive(m.n, 60)); break;
+    case 'fill': fillDemo(positive(m.n, 500)); break;
     case 'bots': setBots(!!m.on, m.pace); break;
-    case 'clear': stopBots(); room.viewers.clear(); broadcast(snapshot()); break;
+    case 'clear': stopBots(); room.clearScene(settings.ambientCrowd); broadcast(snapshot()); break;
     case 'reset':
       if (tiktokState.status !== 'idle') throw new Error('Ngắt nguồn sự kiện trước khi bắt đầu phiên mới.');
-      rooms[mode] = new Room(); activate(mode); if (mode === 'live') persist(); break;
+      rooms[mode] = newRoom(); activate(mode); if (mode === 'live') persist(); break;
     case 'bell': broadcast({ t: 'bell' }); break;
     case 'music-replay':
       if (!settings.music) throw new Error('Bật nhạc nền và lưu cấu hình trước khi phát lại.');
@@ -251,7 +269,10 @@ function onControl(m) {
       say(m.text || 'ขอให้วันนี้เป็นวันที่ดีของคุณ'); break;
     case 'settings':
       applySettings(m.settings || {});
-      while (room.viewers.size > limit()) room.viewers.delete(room.viewers.keys().next().value);
+      for (const r of Object.values(rooms)) {
+        const events = r.seating.setAmbient(settings.ambientCrowd);
+        if (r === room) for (const event of events) broadcast(event);
+      }
       resetSpeech();
       if (!persist()) throw new Error('Cấu hình đã áp dụng nhưng chưa lưu được xuống đĩa. Kiểm tra quyền ghi thư mục live/data.');
       broadcast({ ...snapshot(), t: 'settings' }); broadcast({ t: 'saved' }, 'control'); break;

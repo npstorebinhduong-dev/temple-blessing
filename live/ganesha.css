@@ -35,5 +35,6 @@
 .invitation{transition:background .4s,box-shadow .4s;border-radius:25px;padding:8px 10px}.invitation small{max-width:760px;font-size:18px}.invitation.call-to-action{background:#4d2416cc;box-shadow:0 0 30px #ffbf5630}.invitation.call-to-action strong{color:#ffe28c}
 .world{position:absolute;inset:0;z-index:-3;isolation:isolate}
 .world .shrine{z-index:0;transform-origin:0 0;will-change:transform}.world #scene{z-index:1}
+.world .shrine.articulated{background-image:url('/assets/ganesha/shrine-base.png')}
 #celebration{position:absolute;inset:0;width:1080px;height:1920px;z-index:3;pointer-events:none}
 .unmute,.asset-error,.audio-error{z-index:5}.audio-error{position:absolute;bottom:265px;left:220px;right:220px;border:1px solid #dca65d;background:#321c13e8;border-radius:15px;padding:12px;text-align:center;font-size:19px;color:#ffe5ae}

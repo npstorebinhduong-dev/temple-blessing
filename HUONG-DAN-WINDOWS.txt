@@ -1,12 +1,13 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.3
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.4
 
 1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
 2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
 3. Nhấp đúp CHAY-LIVE.bat. Lần đầu cần Internet để cài thư viện.
    Giữ cửa sổ này mở trong suốt buổi phát.
 4. Mở http://localhost:3000/live/control.html bằng trình duyệt.
-5. Ban đầu là DEMO, có sẵn 24 nhân vật. Thử các nút quà, combo và
-   Chạy mô phỏng. Chọn 36 hoặc 60 để kiểm tra khi đông người.
+5. Ban đầu là DEMO, có 10 nhân vật nền, chưa có người tặng quà.
+   Thử quà để thấy người tặng vào từ vị trí 11. Nút 50 làm đầy chỗ;
+   nút 80 thử hàng chờ và người cũ đi ra nhường chỗ.
 6. Bấm Mở màn hình LIVE. Nếu có nút mở âm thanh ở dưới cảnh, bấm một lần.
    Bản xem trước trong bảng điều khiển không phát tiếng.
 7. OBS: thêm Browser Source, URL http://localhost:3000/live/overlay.html,
@@ -27,8 +28,15 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.3
     đủ bước đi lên bàn thờ, zoom theo nhân vật, quỳ dâng và trở lại toàn cảnh.
     Quà 500 xu có mưa hoa phủ màn hình. Chọn nhân vật Nam/Nữ khi thử.
 12. Khi vắng quà 10 giây, lời nhắc thả tim/chia sẻ lặp mỗi 10 giây.
-    Nhân vật nền không tên tạo không khí đông vui, không cộng số liệu LIVE.
-    Có thể tắt hoặc điều chỉnh hai tính năng trong Cảnh & âm thanh.
+    10 nhân vật nền có ngay từ đầu, giữ nguyên khi có quà. Khi đủ 60 chỗ,
+    người ngồi lâu đi ra nhường hàng chờ, kể cả nhân vật nền. Nhân vật nền
+    không tên, không cộng số liệu LIVE và không tự trở lại khi đã nhường chỗ.
+13. Các nhân vật ngồi chắp tay và cúi lạy theo nhịp riêng. Tay cầm sen và
+    búa vàng của tượng chuyển động nhẹ kèm hào quang. Có thể tắt chuyển động
+    tay trong Cảnh & âm thanh. Giảm chuyển động của hệ thống tắt lạy/zoom/tay.
+14. Mặc định chỉ người tặng quà vào cảnh. Muốn cho người bình luận cũng vào,
+    bật Cho người bình luận vào hàng chờ rồi Lưu cấu hình. Chỗ đang đi ra
+    chỉ được dùng lại khi nhân vật ra hết; người đang dâng lễ được giữ chỗ.
 
 NHẠC NỀN
 Thai Dawn là nhạc không lời viết riêng, dài 2:08, lấy cảm hứng âm sắc Thái.
@@ -55,18 +63,21 @@ CHỌN NHÂN VẬT
 Mặc định có nam và nữ. Người xem gõ ชาย để chọn nam, หญิง để chọn nữ.
 Có thể dùng male/female hoặc nam/nữ. Không đoán giới tính từ tên người xem.
 
-NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1
-Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.3 vào thư mục riêng.
+NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3
+Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.4 vào thư mục riêng.
 Nếu muốn giữ điểm và cấu hình, sao chép thư mục live/data của bản cũ
 sang live/data của bản mới trước khi chạy. Chỉ bản 0.1 được bật giọng
 một lần khi nâng cấp; bản 0.2 trở lên giữ cài đặt giọng của bạn.
 Kiểm tra lại ID quà đã gán vì bảng giá và các loại hiệu ứng đã thay đổi.
+Bản 0.4 thay cấu hình 24/36/60 cũ bằng 60 chỗ cố định và 10 nhân vật nền.
+Chế độ vào cảnh khi bình luận/vào phòng được tắt một lần khi nâng cấp;
+âm lượng, nhạc, giọng, ID quà và điểm LIVE vẫn giữ theo cấu hình đã lưu.
 Không sao chép node_modules từ bản cũ.
 
 KHỞI ĐỘNG LẠI
 Điểm LIVE và cấu hình nằm ở live/data/session.json. Khi mở lại, ứng dụng
 vào DEMO; bấm Xem phiên LIVE đã lưu hoặc Kết nối LIVE để tiếp tục số liệu.
-Cần kết nối TikFinity và bật âm thanh lại. Dọn nhân vật chỉ dọn cảnh;
+Cần kết nối TikFinity và bật âm thanh lại. Dọn nhân vật dọn cảnh/hàng chờ rồi đặt lại 10 nhân vật nền;
 Bắt đầu phiên mới sẽ xóa điểm của chế độ đang chọn sau xác nhận.
 
 NẾU CÓ LỖI
@@ -80,7 +91,7 @@ NẾU CÓ LỖI
   ♫ เปิดเสียง. Sẽ nghe một chuông xác nhận. Bản xem trước luôn tắt tiếng.
   Kiểm tra nguồn âm OBS/LIVE Studio; đóng các cửa sổ overlay dư.
 - Không đọc tiếng Thái: kiểm tra bật giọng, Internet và nhật ký.
-- Bị chậm: chọn 24/36 người, mưa hoa Nhẹ, đóng các overlay dư.
+- Bị chậm: chọn mưa hoa Nhẹ, tắt zoom/chuyển động tay, đóng các overlay dư.
   Nguồn LIVE nhắm 30 khung hình/giây; khung xem trước nhỏ chạy 15.
 
 Gửi lại clip khoảng 45–60 giây gồm cảnh và một lượt quà để đánh giá.

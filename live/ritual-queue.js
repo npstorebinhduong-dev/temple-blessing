@@ -20,12 +20,14 @@ export class RitualQueue {
     }
     this.pending.push({ ...message, queuedAt: now }); return true;
   }
-  tick(now) {
+  tick(now, eligible = () => true) {
     if (this.active && now >= this.active.until) this.active = null;
     this.prune(now);
     if (!this.active && this.pending.length) {
-      const firstPremium = this.pending.findIndex(item => item.ritual.procession);
-      const [message] = this.pending.splice(firstPremium >= 0 ? firstPremium : 0, 1);
+      const firstPremium = this.pending.findIndex(item => item.ritual.procession && eligible(item));
+      const index = firstPremium >= 0 ? firstPremium : this.pending.findIndex(eligible);
+      if (index < 0) return null;
+      const [message] = this.pending.splice(index, 1);
       this.active = { ...message, beganAt: now, until: now + Math.min(24000, message.ritual.duration || 3200) };
     }
     return this.active;

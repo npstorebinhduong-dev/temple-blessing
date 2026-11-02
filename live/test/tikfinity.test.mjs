@@ -55,7 +55,7 @@ test('server serves UI and forwards TikFinity chat/likes to overlay', async t =>
   source.send(JSON.stringify({event:'chat',data:{uniqueId:'tester',nickname:'Minh An',comment:'bình an'}}));
   source.send(JSON.stringify({event:'like',data:{uniqueId:'tester',likeCount:5}}));
   await until(()=>messages.some(m=>m.t==='chat') && messages.some(m=>m.t==='like'));
-  assert.equal(messages.find(m=>m.t==='join').v.name,'Minh An');
+  assert.equal(messages.some(m=>m.t==='join' && m.v.id==='tester'),false);
   assert.equal(messages.find(m=>m.t==='chat').text,'bình an');
   assert.equal(messages.find(m=>m.t==='like').n,5);
   control.send(JSON.stringify({t:'ctl',cmd:'disconnect'}));
