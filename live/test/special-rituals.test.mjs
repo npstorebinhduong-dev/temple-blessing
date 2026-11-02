@@ -32,7 +32,7 @@ test('no sound, failed playback, silent listeners and timeouts get a readable te
 });
 test('all seats reach the actual whisper anchor, hold 3.6 seconds, and return without position discontinuities',()=>{
  for(const seat of seatLayout())for(const kind of ['mushika','galaxy']){
-  const duration=kind==='mushika'?14000:32000;let previous=specialPose(kind,0,seat,seat,{untilMs:duration});
+  const duration=kind==='mushika'?16000:32000;let previous=specialPose(kind,0,seat,seat,{untilMs:duration});
   for(let ms=16;ms<=duration;ms+=16){
    const p=specialPose(kind,ms,seat,seat,{untilMs:duration});assert.ok(Number.isFinite(p.x+p.y));
    assert.ok(Math.hypot(p.x-previous.x,p.y-previous.y)<31,`${kind} discontinuity at ${ms}`);previous=p;
@@ -41,7 +41,7 @@ test('all seats reach the actual whisper anchor, hold 3.6 seconds, and return wi
   const end=specialPose(kind,duration,seat,seat,{untilMs:duration});assert.equal(end.x,seat.x);assert.equal(end.y,seat.y);
   assert.deepEqual(specialCamera(kind,duration,duration),{scale:1,x:0,y:0});
  }
- for(const ms of [4300,5000,7899]){const p=specialPose('mushika',ms,{x:540,y:1710},{x:540,y:1710},{untilMs:14000});assert.equal(p.phase,'whisper');assert.equal(p.x,WHISPER_PLACE.x);assert.equal(p.y,WHISPER_PLACE.y);}
+ for(const ms of [4300,5000,7899]){const p=specialPose('mushika',ms,{x:540,y:1710},{x:540,y:1710},{untilMs:16000});assert.equal(p.phase,'whisper');assert.equal(p.x,WHISPER_PLACE.x);assert.equal(p.y,WHISPER_PLACE.y);}
 });
 test('FIFO cannot deadlock a full room whose later donors also have pending turns',()=>{
  const room=new Room({}, {ambient:false,now:0});

@@ -7,7 +7,7 @@ export const RITUAL_TIMING = Object.freeze({
   aarti: { duration: 8000 },
   marigold: { duration: 23000, hold: 8 },
   royal: { duration: 28000, hold: 13 },
-  mushika: { duration: 14000 },
+  mushika: { duration: 16000 },
   galaxy: { duration: 20000 },
 });
 export const MAX_RITUAL_MS = Math.max(...Object.values(RITUAL_TIMING).map(timing => timing.duration));

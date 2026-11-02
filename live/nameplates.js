@@ -32,27 +32,33 @@ export class Nameplates {
     if (this.cache.size >= 256) this.cache.delete(this.cache.keys().next().value);
     this.cache.set(key, badge); return badge;
   }
-  draw(pen, camera, exclusions = []) {
+  draw(pen, camera, exclusions = [], now = 0, ceremony = false) {
     const used = [];
     // A separate pass above ALL bodies; labels never deform with a bow.
     for (const item of this.items.sort((a, b) => Number(a.focus) - Number(b.focus) || (a.person.slot || 61) - (b.person.slot || 61))) {
+      // Ten tightly packed seats cannot fit ten readable full names. Keep the
+      // front row visible and alternate neighbouring distant names in place.
+      const seat = item.person.seat, page = Math.floor(now / 6000) % 2;
+      if (!item.focus && (ceremony || (seat && seat.row < 5 && seat.col % 2 !== page))) continue;
       const x = item.x * camera.scale + camera.x, y = item.y * camera.scale + camera.y;
       if (x < -40 || x > 1120 || y < 990 || y > 1705) continue;
       // Fixed pixel size keeps text sharp and avoids regenerating dozens of
       // badge canvases every frame while the camera changes scale.
-      const width = item.focus ? 520 : Math.min(145, item.width);
+      const width = item.focus ? 520 : Math.min(126, Math.max(62, (seat?.gap || 72) * .84 * (seat?.row === 5 ? .92 : 1.75)));
       const badge = this.badge(pen, item.person.name, width, item.focus), w = badge.width, h = badge.height;
       const left = Math.max(8, Math.min(1072 - w, x - w / 2));
       let top = Math.max(1000, Math.min(1690 - h, y - h));
       if (exclusions.some(r => left < r.x + r.w && left + w > r.x && top < r.y + r.h && top + h > r.y)) continue;
       const intersects = y0 => used.some(r => left < r.x + r.w + 2 && left + w + 2 > r.x && y0 < r.y + r.h + 2 && y0 + h + 2 > r.y);
       if (intersects(top) && !item.focus) {
-        const options = [-23, 23, -12, 12];
+        const options = [-47, 47, -24, 24];
         const offset = options.find(d => top + d >= 1000 && top + d + h <= 1700 && !intersects(top + d));
         if (offset !== undefined) top += offset;
       }
+      if (!item.focus && (intersects(top) || exclusions.some(r => left < r.x + r.w && left + w > r.x && top < r.y + r.h && top + h > r.y))) continue;
       if (Math.abs(top + h - y) > 8) { pen.strokeStyle = '#e8ca8f80'; pen.lineWidth = 1; pen.beginPath(); pen.moveTo(x, y); pen.lineTo(left + w / 2, top + h); pen.stroke(); }
       pen.drawImage(badge, left, top); used.push({ x: left, y: top, w, h });
     }
+    return used.length;
   }
 }

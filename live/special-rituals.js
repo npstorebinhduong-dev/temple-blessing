@@ -5,11 +5,11 @@ const mix = (a, b, v) => a + (b - a) * smooth(v);
 // not an approximate point at its head's centre.
 export const MUSHIKA = Object.freeze({ x: 380, y: 940, width: 260, height: 260 * 1024 / 1536, earX: 459.6, earY: 979 });
 export const WHISPER_PLACE = Object.freeze({ x: 396, y: 1176, height: 250 });
-export const GALAXY_PLACE = Object.freeze({ x: 792, y: 1320, height: 282 });
+export const GALAXY_PLACE = Object.freeze({ x: 850, y: 1370, height: 282 });
 export function specialPose(kind, elapsedMs, from, seat, { untilMs = 20000, reduced = false } = {}) {
   const t = Math.max(0, elapsedMs) / 1000, p = { ...from, frame: 7, phase: 'rise', height: kind === 'mushika' ? 250 : 282, side: false, flip: false, lean: 0, focus: 0 };
   const end = untilMs / 1000, dest = kind === 'mushika' ? WHISPER_PLACE : GALAXY_PLACE;
-  const arrival = kind === 'mushika' ? 3.7 : 4.2, backAt = kind === 'mushika' ? 9.7 : end - 3;
+  const arrival = kind === 'mushika' ? 3.7 : 4.2, backAt = kind === 'mushika' ? 12.1 : end - 3;
   const walk = () => { p.frame = Math.floor(t * 7) % 4; p.bob = reduced ? 0 : Math.sin(t * 7 * Math.PI / 2) * 1.2; };
   if (t < .7) p.frame = 7 - Math.min(3, Math.floor(t / .175));
   else if (t < 1.4) { p.phase = 'to-aisle'; p.x = mix(from.x, 540, (t - .7) / .7); walk(); }
@@ -22,7 +22,10 @@ export function specialPose(kind, elapsedMs, from, seat, { untilMs = 20000, redu
     if (kind === 'mushika') {
       if (t < 4.3) { p.phase = 'lean'; p.frame = t < 4 ? 0 : 1; p.lean = smooth((t - 3.7) / .6); }
       else if (t < 7.9) { p.phase = 'whisper'; p.frame = 2; p.lean = 1; }
-      else if (t < 9) { p.phase = 'light-stream'; p.frame = 2; p.lean = 1; }
+      else if (t < 8.6) { p.phase = 'gather'; p.frame = 3; }
+      else if (t < 10.2) { p.phase = 'light-stream'; p.frame = 3; }
+      else if (t < 10.7) { p.phase = 'receive'; p.frame = 3; }
+      else if (t < 11.8) { p.phase = 'reply'; p.frame = 3; }
       else { p.phase = 'wai'; p.frame = 3; }
     }
   } else if (t < end - .7) {
@@ -35,13 +38,7 @@ export function specialPose(kind, elapsedMs, from, seat, { untilMs = 20000, redu
   } else { p.phase = t >= end ? 'done' : 'settle'; p.x = seat.x; p.y = seat.y; p.frame = 4 + Math.min(3, Math.floor((t - end + .7) / .175)); }
   return p;
 }
-export function specialCamera(kind, elapsedMs, durationMs, { enabled = true, reduced = false } = {}) {
-  if (!enabled || reduced) return { scale: 1, x: 0, y: 0 };
-  const t = elapsedMs / 1000, end = durationMs / 1000;
-  const w = smooth((t - .5) / 3.1) * (1 - smooth((t - end + 3) / 3));
-  const scale = 1 + (kind === 'mushika' ? .7 : .13) * w;
-  const target = kind === 'mushika' ? { x: 473, y: 1080 } : { x: 520, y: 1050 };
-  return { scale, x: Math.max(1080 * (1 - scale), Math.min(0, (540 - target.x * scale) * w)),
-    y: Math.max(1920 * (1 - scale), Math.min(0, (1080 - target.y * scale) * w)) };
-}
+// Both new rituals deliberately retain a wide shot: mouse, transmission path,
+// standing apparition and donor remain visible. The seated shrine stays fixed.
+export function specialCamera() { return { scale: 1, x: 0, y: 0 }; }
 export { clamp, smooth };

@@ -45,7 +45,7 @@ test('real server holds Galaxy for actual voice, uses Thai Niwat/text once, pres
  await at(45499);assert.equal(liveWindow.messages.filter(m=>m.t==='ritual'&&m.active).length,1);
  await at(45500);const second=await until(()=>liveWindow.messages.find(m=>m.t==='ritual'&&m.active?.ritual.kind==='mushika'));
  assert.equal(second.active.count,1);assert.equal(second.active.id,progress.active.id);
- ctl('gift',{name:'ศิริพร',kind:'galaxy',diamonds:1000,count:1});await at(59500);await at(64000);const replay=await until(()=>speech()[1]);
+ ctl('gift',{name:'ศิริพร',kind:'galaxy',diamonds:1000,count:1});await at(61500);await at(66000);const replay=await until(()=>speech()[1]);
  assert.notEqual(replay.id,first.id);assert.equal(replay.url,first.url,'same sentence/voice uses cached asset');
  assert.equal(readFileSync(records,'utf8').trim().split('\n').map(JSON.parse).filter(r=>r.voice==='th-TH-NiwatNeural').length,1);
  ctl('clear');await until(()=>liveWindow.messages.some(m=>m.t==='state'&&m.stats.coins===3299&&m.active===null));

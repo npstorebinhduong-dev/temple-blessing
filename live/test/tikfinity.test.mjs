@@ -63,6 +63,12 @@ test('server serves UI and forwards TikFinity chat/likes to overlay', async t =>
   await until(()=>messages.some(m=>m.t==='gift-guide'));
   assert.equal(messages.find(m=>m.t==='gift-guide').settings.galaxyGiftName,'ชื่อของขวัญทดสอบ');
   assert.equal(messages.find(m=>m.t==='gift-guide').settings.galaxyGiftIcon,'https://example.test/actual-event-icon.png');
+  const corgi = JSON.stringify({event:'gift',data:{uniqueId:'tester',giftName:'Corgi',giftId:6267,diamondCount:299,repeatCount:3,repeatEnd:true,giftType:1,msgId:'corgi-combo'}});
+  source.send(corgi); source.send(corgi);
+  await until(()=>messages.some(m=>m.t==='gift'&&m.giftId==='6267'));
+  assert.equal(messages.filter(m=>m.t==='gift'&&m.giftId==='6267').length,1);
+  const mapped = messages.find(m=>m.t==='gift'&&m.giftId==='6267');
+  assert.equal(mapped.ritual.kind,'mushika'); assert.equal(mapped.coins,897); assert.equal(mapped.count,3);
   source.send(JSON.stringify({event:'gift',data:{uniqueId:'tester',giftName:'Unknown 299',giftId:123456,diamondCount:299,repeatCount:1,msgId:'unmapped-test'}}));
   await until(()=>messages.some(m=>m.t==='gift'&&m.giftId==='123456'));
   assert.equal(messages.find(m=>m.t==='gift'&&m.giftId==='123456').ritual,null);

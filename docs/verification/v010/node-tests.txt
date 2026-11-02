@@ -1,0 +1,64 @@
+
+> ganesha-live-th@0.10.0 test
+> node --test
+
+✔ browser playback interrupts an idle reminder for a gift and never overlaps speech (4.688389ms)
+✔ camera follows both premium processions, keeps the world covering the frame, and returns to wide (10.200129ms)
+✔ all four basic gifts zoom to the donor for their own duration without exposing the canvas edges (3.351056ms)
+✔ royal flower shower covers all quadrants, bursts at offering, and stays bounded through long use (382.750675ms)
+✔ music uses one native looping source, ducks for speech, replays without refetching and supports one-shot (13.642678ms)
+✔ disabling music while it loads cannot start unwanted audio; failed assets report an error (2.589661ms)
+✔ both ceremonies reach the altar, kneel, lift the correct offering and return within their duration (4.894002ms)
+✔ idle reminders start after ten gift-free seconds, then wait ten seconds after actual playback ends (1.045439ms)
+✔ reminder completion follows every audible window, handles disconnects and rejects stale receipts (0.326965ms)
+✔ muted or failed reminders recover without backlog, and busy gift speech delays the first reminder (0.747297ms)
+✔ gift speech removes waiting idle speech; no idle backlog while any voice is busy (12.055313ms)
+✔ avatar selection uses explicit comments and persists through subsequent activity (9.749858ms)
+✔ partial PNGs cannot poison the character cache; all poses appear after load (2.064211ms)
+✔ failed images never replace a ready character pose with an empty crop (0.319517ms)
+✔ 500 arrivals retain every record but expose only 88 render slots; no donations or seats are invented (20.05766ms)
+✔ far rows rotate without moving the front row or deleting a waiting person, even after a long live (45.919076ms)
+✔ demo crowd is labelled separately and never added to the true waiting count (0.812607ms)
+✔ a donor leaves the avatar crowd once and enters seat 11, keeping their chosen gender and origin (1.931814ms)
+✔ a donor stays in the crowd until a full room frees a seat; waiting preference survives (5.035846ms)
+✔ waiting state persists per room and clear keeps donation totals; every avatar fits the bottom band (1.850625ms)
+✔ every browser module parses before the LIVE bundle is shipped (1896.583996ms)
+✔ all six gifts require exact name and unit price, including the two 5-coin gifts (1.935691ms)
+✔ explicit IDs require correct unit price and prevent name fallback for the bound slot (1.309182ms)
+✔ Shamrock 9875 maps to Clover only at ten coins, including localized names and final streaks (5.963738ms)
+✔ upgrading the old Clover binding preserves the other five gift mappings (5.904812ms)
+✔ a 500-rose streak produces one lotus event and counts 500, including string final flags (1.460781ms)
+✔ crowd eviction never loses donations or the leaderboard; serialized totals restore (5.851695ms)
+✔ demo and live rooms have independent totals and participants (0.664498ms)
+✔ every separate final gift stays in FIFO order, including repeats by one donor, with no expiry or price priority (3.985065ms)
+✔ the first waiting donor cannot be overtaken and pending turns survive pause/restore (1.061837ms)
+✔ new gifts require verified ID or explicit configuration and correct unit price, never a 299/1000 price guess (0.490551ms)
+✔ server schedules reminders from playback receipts, ignores preview receipts and resets on gifts (5619.110284ms)
+✔ real bridge: streak accounting, isolation, capacity, persisted restore and local-only endpoints (2479.425831ms)
+✔ Mushika sends one directional light path then a reply within its 16 second ceremony (47.280049ms)
+✔ adjustable panel and standing figure stay inside broadcast safe regions (0.316666ms)
+✔ statue never caches arm crops from a PNG whose dimensions arrived before its pixels (2.381935ms)
+✔ turning background off and on during its exit restores the same ten slots (1.664287ms)
+✔ ten background actors keep fixed slots through fifty arrivals and repeated gifts (7.883987ms)
+✔ a full scene vacates the oldest seat before admitting FIFO, including all ten background actors (31.251368ms)
+✔ a full scene releases the least recent donor; repeat gifts renew priority but ordinary interactions do not (3.066903ms)
+✔ returning donors finish their exit and rejoin once; bursts retain every waiting donor with bounded actors (2.807968ms)
+✔ server owns ceremonies: a waiting premium is admitted first, then protected through its return (8.53659ms)
+✔ seat and devotion motion stays finite, staggered and bounded; reduced motion holds a wai (25.069297ms)
+✔ real server holds Galaxy for actual voice, uses Thai Niwat/text once, preserves FIFO, caches speech and cancels cleanly (4306.188372ms)
+✔ voice/banner share exact Thai text, follow all audible listeners and hold 2.5s after actual completion (4.875025ms)
+✔ no sound, failed playback, silent listeners and timeouts get a readable text fallback without hanging (0.563324ms)
+✔ all seats reach the actual whisper anchor, hold 3.6 seconds, and return without position discontinuities (134.492336ms)
+✔ FIFO cannot deadlock a full room whose later donors also have pending turns (4.978517ms)
+✔ restart removes previous voice timestamps and honours a disabled background crowd (0.432031ms)
+✔ normalizes events, counts final streak once and rejects malformed data (4.022036ms)
+✔ reconnects after socket closure; manual disconnect stops retries (248.823264ms)
+✔ server serves UI and forwards TikFinity chat/likes to overlay (1320.321819ms)
+ℹ tests 52
+ℹ suites 0
+ℹ pass 52
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7912.443597

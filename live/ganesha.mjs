@@ -6,7 +6,8 @@ export const DEFAULTS = Object.freeze({
   voice: 'th-TH-PremwadeeNeural', voiceEnabled: true, pitch: -5, rate: -8,
   music: true, musicLoop: true, musicVolume: 60, volume: 35, joinOnEnter: true, joinOnChat: false,
   effectsEnabled: true, effectsVolume: 75, voiceVolume: 100,
-  mushikaGiftId: '', mushikaGiftName: '', mushikaGiftIcon: '',
+  mushikaGiftId: '6267', mushikaGiftName: '', mushikaGiftIcon: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/148eef0884fdb12058d1c6897d1e02b9~tplv-obj.webp',
+  infoPanelX: 54, infoPanelY: 210,
   galaxyGiftId: '11046', galaxyGiftName: '',
   galaxyGiftIcon: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/79a02148079526539f7599150da9fd28.png~tplv-obj.webp',
   cinematicZoom: true, petalMode: 'full',
@@ -56,7 +57,7 @@ export class Room {
   }
   takeEntrance(viewer) {
     const standing = this.entrance.find(viewer.id);
-    if (standing?.lineSlot) viewer.entryFrom = entrancePosition(standing.lineSlot);
+    if (standing) { viewer.entryFrom = entrancePosition(standing.lineSlot || 5); viewer.entryLineSlot = standing.lineSlot || 5; }
     this.entrance.remove(viewer.id);
   }
   join(id, name, { avatar = '', demo = false, skin, now = Date.now() } = {}) {

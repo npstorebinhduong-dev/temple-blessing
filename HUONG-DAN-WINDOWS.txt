@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN 0.9
+GANESHA LIVE — BẢN 0.10
 
 CHẠY VÀ THỬ
 1. Đóng cửa sổ CHAY-LIVE của bản cũ. Giải nén toàn bộ ZIP vào thư mục
@@ -14,8 +14,8 @@ CHẠY VÀ THỬ
    10 nhân vật nền, chưa có người tặng/điểm. Mở màn hình LIVE riêng,
    bấm nút Thái “♫ เปิดเสียง” nếu hiện. Preview luôn tắt tiếng.
 5. Trong phần Thử tương tác:
-   - 100 / 300 / 500 avatar: thử hàng chờ đông ở mép dưới.
-   - Chọn nữ/nam, bấm Bạn đồng hành: thử nghi thức ghé tai Mushika.
+   - 100 / 300 / 500 người chờ: thử hàng chờ đông ở mép dưới.
+   - Chọn nữ/nam, bấm Corgi: thử nghi thức ghé tai Mushika.
    - Bấm Thiên hà: thử Ganesha hiển linh, giọng và banner tiếng Thái.
    - 5 lượt liên tiếp: cùng người, giữ từng lượt và thứ tự nhận.
    - Reset demo: dọn cả tiếng, camera, hiệu ứng và số liệu demo.
@@ -30,23 +30,27 @@ CHẠY VÀ THỬ
 8. Test một bình luận và một quà thật, xem nhật ký tên/ID/giá từng món.
    “Đã kết nối” chỉ xác nhận socket, chưa chứng minh có sự kiện TikTok.
 
-HAI QUÀ MỚI — PHẦN CẦN ĐỐI CHIẾU
-- Galaxy / Thiên hà: 1.000 xu, ID 11046 đối chiếu từ hai nguồn công khai.
-  Chưa xác nhận quà có trong tài khoản Thái và tên Thái của anh.
-- Bạn đồng hành 299 xu: CHƯA xác minh ID, tên Thái hoặc icon. Nghi thức
-  chạy đầy đủ trong DEMO, chưa tự nhận quà 299 xu thật khi chưa gán ID.
-- Trong Cảnh & âm thanh → Hai quà mới, nhập ID thật và tên quà đúng theo
-  TikTok Thái. Có thể nhập URL icon từ dữ liệu quà; để trống nếu chưa có.
-  Nếu một sự kiện LIVE đã khớp ID có tên tiếng Thái, app tự điền tên còn
-  trống. Không dùng bản dịch tự đoán, không nhận quà chỉ theo giá.
-- Bảng hướng dẫn LIVE thêm mục mới khi có tên và ID. DEMO hiển thị tên
-  nghi thức để thử, không giả làm tên quà TikTok chính thức.
-- Nguồn và chi tiết: docs/QUA-MOI.md .
+QUÀ 299 VÀ 1.000 XU
+- Corgi: 299 xu, ID 6267 → Mushika; thay Bạn đồng hành.
+- Galaxy: 1.000 xu, ID 11046 → Ganesha đứng hiển linh.
+- ID/giá/icon đối chiếu từ hai danh mục công khai. Danh mục tài khoản
+  Thái thật vẫn cần test. Nguồn: docs/QUA-MOI.md .
+- Khi chép dữ liệu bản cũ, app đổi ánh xạ Mushika cũ sang Corgi một lần.
+  Những lần chỉnh thủ công sau nâng cấp được giữ; sáu quà cũ/Galaxy giữ nguyên.
+- Icon mới tải từ URL TikTok đã cấu hình. Nếu mạng không tải được, hiện
+  dấu trang trí thay thế; sáu icon cũ giữ nguyên. Tên quà Thái có thể tự
+  nhận từ sự kiện khớp ID; mô tả trên bảng là tên tác dụng bằng tiếng Thái.
+- Hai quà này cố định ở hàng đầu của bảng. Sáu quà còn lại luân phiên
+  theo nhóm 8 giây; top công đức ba người ở cùng khung mờ 20%.
+- Cảnh & âm thanh → Khung thông tin: chỉnh ngang/dọc rồi Lưu. Khung luôn
+  ở trên tượng. Đưa khung quá cao sẽ ẩn mục tiêu/phụ đề/nhãn quà phía trên
+  để tránh chồng chữ; người đang làm lễ vẫn có tên trên cảnh/banner.
 
 NGHI THỨC VÀ THỨ TỰ
-Mushika: 14 giây. Đứng lên, đi tới tai chuột, khum tay/ghé tai 3,6 giây,
-gửi luồng sáng, chắp tay rồi về ghế. Có asset và tư thế riêng cho nam/nữ.
-Galaxy: khoảng 20 giây, tăng theo độ dài tiếng. Ganesha hiển linh có
+Mushika: 16 giây. Đứng lên, đi tới tai chuột, khum tay/ghé tai 3,6 giây,
+tụ ngọc sáng, chuột ngẩng đầu, dải vàng tới Ganesha, hào quang nhận lời,
+luồng sáng trở lại/hoa sen, chắp tay rồi về ghế. Có nam/nữ.
+Galaxy: khoảng 20 giây, tăng theo độ dài tiếng. Ganesha ĐỨNG riêng có
 bàn tay chuyển động, mandala, hoa sen, luồng sáng và cánh hoa nhiều lớp.
 Một combo chốt = một lượt có nhãn ×N, tính đủ xu. Các sự kiện kết thúc
 khác nhau giữ lượt riêng, cùng người cũng vậy. Camera chạy đúng thứ tự
@@ -76,10 +80,13 @@ thu đúng câu ở assets/ganesha/audio/ganesha-blessing-th.mp3 để thay TTS;
 xem nguyên văn câu trong README.md .
 
 HÀNG CHỜ, GHẾ VÀ CHỌN NHÂN VẬT
-Sự kiện member có ID tạo avatar/tên ở mép dưới. Giữ toàn bộ dữ liệu người
-chờ, chỉ vẽ tối đa 88 avatar (49 ở mức Nhẹ). Hàng xa luân phiên mỗi 12 giây;
-ảnh lỗi dùng chữ đầu tên. Tổng chờ không phải số người online và không
-cộng điểm. DEMO có nhãn riêng. Có thể tắt hàng bằng tùy chọn người vào phòng.
+Sự kiện member có ID tạo nhân vật nam/nữ từ đầu đến vai ở mép dưới,
+không tải ảnh đại diện TikTok. Giữ toàn bộ dữ liệu, vẽ tối đa 88 người
+(49 ở mức Nhẹ), bốn lớp so le, thở lệch nhịp, giữ lựa chọn ngoại hình.
+Tên lớp gần ưu tiên lớn; tên xa luân phiên các cặp 6 giây để tránh đè.
+Hồ sơ hàng xa luân phiên mỗi 12 giây, 10 người gần giữ vị trí. Người tới
+lượt có tên đầy đủ và ánh sáng đánh dấu. Tổng chờ không phải số online.
+DEMO có nhãn riêng. Có thể tắt bằng tùy chọn người vào phòng.
 60 ghế: 10 nhân vật nền ban đầu, người tặng bắt đầu từ 11–60. Đầy ghế thì
 người có lần tặng gần nhất cũ nhất rời đi, kể cả nhân vật nền; không xếp
 lại toàn bộ người còn lại. Chỉ người đang làm lễ/người kế tiếp giữ chỗ.
@@ -111,9 +118,9 @@ LƯU VÀ XỬ LÝ LỖI
 - Cổng 3000 bận: đóng CHAY-LIVE cũ. TikFinity không nối: kiểm tra cùng máy,
   đúng cổng, WebSocket server đã bật; bấm Ngắt để dừng thử nối lại.
 - Chậm: chọn chất lượng hiệu ứng Nhẹ, đóng overlay dư. Lớp hình giảm độ
-  phân giải nhưng chữ, bảng tên và avatar lớp gần giữ đúng đầu ra.
+  phân giải nhưng chữ, bảng tên và nhân vật lớp gần giữ đúng đầu ra.
   Kiểm tra trên máy đang encode OBS; không suy ra FPS máy anh từ cloud.
 
 Gói có đầy đủ artwork/nhạc/font; không chứa Node.js, node_modules,
 dữ liệu LIVE hay tài khoản. Giữ LICENSE và giấy phép font/nhạc.
-Báo cáo kiểm thử: docs/BAN-GIAO-V0.9.md .
+Báo cáo kiểm thử: docs/BAN-GIAO-V0.10.md .

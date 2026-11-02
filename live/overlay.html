@@ -21,18 +21,13 @@
     <p id="subtitle">โอม ศรี คเณศายะ นะมะฮา</p>
   </header>
   <div id="goal" class="goal"><span class="om">ॐ</span><div class="goal-main"><div class="goal-line"><span>ร่วมถวายด้วยศรัทธา</span><strong id="goalValue">0 / 4,995</strong></div><div class="goal-track"><i id="goalFill"></i></div></div><span class="goal-star">✧</span></div>
-  <section class="ranking glass" aria-label="ผู้ร่วมถวายสูงสุด"><h2>✦ อันดับผู้ถวาย</h2><ol id="ranking"></ol></section>
-  <section class="offerings" aria-label="ของขวัญและการเลือกตัวละคร"><h2>ของขวัญ (เหรียญ)</h2>
-    <div class="avatar-guide"><p>พิมพ์ <b>1</b> = หญิง</p><p>พิมพ์ <b>2</b> = ชาย</p></div>
-    <div class="offering-row"><span class="off-icon">🌹</span><p>กุหลาบ<small><b>1</b> เหรียญ</small></p></div>
-    <div class="offering-row"><span class="off-icon">🍑</span><p>ลูกพีช<small><b>5</b> เหรียญ</small></p></div>
-    <div class="offering-row"><span class="off-icon">👌</span><p>โอเค<small><b>5</b> เหรียญ</small></p></div>
-    <div class="offering-row"><span class="off-icon">🍀</span><p>แชมร็อก<small><b>10</b> เหรียญ</small></p></div>
-    <div class="offering-row"><span class="off-icon">💐</span><p>ช่อดอกไม้<small><b>100</b> เหรียญ</small></p></div>
-    <div class="offering-row"><span class="off-icon">🎈</span><p>บอลลูนรัก<small><b>500</b> เหรียญ</small></p></div>
-    <div id="mushikaGuide" class="offering-row new-gift" hidden><img class="off-icon" alt="" hidden><p><span class="new-gift-name"></span><small><b>299</b> เหรียญ</small></p></div>
-    <div id="galaxyGuide" class="offering-row new-gift" hidden><img class="off-icon" alt="" hidden><p><span class="new-gift-name"></span><small><b>1,000</b> เหรียญ</small></p></div>
-  </section>
+  <aside id="infoPanel" class="info-panel" aria-label="ของขวัญและผู้ถวายสูงสุด">
+    <div class="panel-grid">
+      <section class="gift-guide"><h2>ของขวัญ <small>· เหรียญ</small></h2><div id="giftGrid" class="gift-grid"></div><div class="character-guide">พิมพ์ <b>1</b> หญิง · <b>2</b> ชาย <span id="giftPageCount"></span></div></section>
+      <section class="ranking" aria-label="ผู้ถวายสูงสุด"><h2>ผู้ถวายสูงสุด</h2><ol id="ranking"></ol></section>
+    </div>
+    <p class="panel-focus">✧ พรจากพระพิฆเนศ ✧</p>
+  </aside>
   <div id="ritualWait" class="ritual-wait" hidden aria-live="polite"></div>
   <section id="blessingBanner" class="blessing-banner" hidden aria-live="polite">
     <h2>✧ พรจากพระพิฆเนศ ✧</h2><p id="blessingName" class="recipient"></p><p id="blessingText"></p><span class="banner-lotus" aria-hidden="true"><svg viewBox="0 0 60 32"><path d="M30 29C15 17 22 8 30 2C38 8 45 17 30 29ZM30 29C13 29 5 21 3 11C17 11 27 17 30 29ZM30 29C47 29 55 21 57 11C43 11 33 17 30 29Z"/></svg></span>

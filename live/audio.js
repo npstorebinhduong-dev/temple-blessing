@@ -64,6 +64,19 @@ export class SceneAudio {
       osc.onended = () => { osc.disconnect(); gain.disconnect(); this.effects.delete(osc); };
     }
   }
+  ritualCue(phase) {
+    if (this.ctx?.state !== 'running' || this.settings.effectsEnabled === false) return;
+    if (phase === 'receive') { this.bell('marigold'); return; }
+    const notes = phase === 'gather' ? [392, 587.33, 783.99] : phase === 'reply' ? [523.25, 659.25, 783.99] : [261.63, 392, 523.25];
+    for (const [i,f] of notes.entries()) {
+      const at=this.ctx.currentTime+i*.09, duration=phase==='light-stream'?1.55:1.1;
+      const osc=this.ctx.createOscillator(),g=this.ctx.createGain();osc.type=phase==='light-stream'?'triangle':'sine';
+      osc.frequency.setValueAtTime(f,at);osc.frequency.exponentialRampToValueAtTime(f*(phase==='light-stream'?2.25:1.05),at+duration);
+      g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(.095/(i+1),at+.18);g.gain.exponentialRampToValueAtTime(.0001,at+duration);
+      osc.connect(g);g.connect(this.fxGain||this.master);this.effects.add(osc);osc.start(at);osc.stop(at+duration+.05);
+      osc.onended=()=>{osc.disconnect();g.disconnect();this.effects.delete(osc);};
+    }
+  }
   giftPriority() {
     const removed = this.queue.filter(item => item.tag === 'idle');
     this.queue = this.queue.filter(item => item.tag !== 'idle');

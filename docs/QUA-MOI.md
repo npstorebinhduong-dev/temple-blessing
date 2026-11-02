@@ -11,17 +11,22 @@ Hai nguồn ghi cùng **giftId 11046**, giá **1.000**, cùng URL icon:
 
 Icon từ dữ liệu: `https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/79a02148079526539f7599150da9fd28.png~tplv-obj.webp`.
 
-Đây là **đối chiếu dữ liệu công khai**, chưa phải xác nhận quà hiện có trên tài khoản/phiên LIVE Thái của chủ dự án. Không có tên Thái chính thức trong các nguồn đã đọc. Bản 0.9 nhận ID 11046 + đúng 1.000 xu; có ô thay ID.
+Đây là **đối chiếu dữ liệu công khai**, chưa phải xác nhận quà hiện có trên tài khoản/phiên LIVE Thái của chủ dự án. Không có tên Thái chính thức trong các nguồn đã đọc. Bản 0.10 nhận ID 11046 + đúng 1.000 xu; có ô thay ID.
 
-## “Bạn đồng hành” — 299 xu
+## Corgi — 299 xu (thay “Bạn đồng hành” theo yêu cầu)
 
-**Chưa xác minh được giftId, tên Thái và icon.** Có nhiều quà 299 xu trong nguồn công khai (Corgi, Fruit Friends, Music Mate, v.v.); không thể suy ra món nào là “Bạn đồng hành” từ giá hoặc bản dịch tên. Không gắn bất kỳ món nào trong số đó vào nghi thức Mushika mặc định.
+Hai nguồn ghi cùng **giftId 6267**, giá **299**, cùng URL icon:
 
-Trong bảng điều khiển → **Hai quà mới**, điền ID thật khi thấy trong nhật ký, tên từ danh mục TikTok Thái và URL icon nếu có. Ô ID để trống nghĩa là nghi thức 299 chỉ dùng được bằng nút DEMO hoặc ID được người vận hành gắn trong phần nâng cao (`ID=mushika`).
+- [WaGi-Coding/tiktok-gift-ids](https://github.com/WaGi-Coding/tiktok-gift-ids/blob/d402f8673e53e3b73204dd3bfe1bf82b625749a5/gift-ids.json#L3243): `Corgi`, `id: 6267`, `coins: 299`.
+- [kkkaoru/tiktok-gift-list-per-regison, LIVE Nhật 22/10/2026](https://github.com/kkkaoru/tiktok-gift-list-per-regison/blob/53a95d05e952a421d072f6da2148e044f9b30e87/results/2026-10-22/live/signed-in.json): `コーギー`, `giftId: "6267"`, `coins: 299`.
+
+Icon từ dữ liệu: `https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/148eef0884fdb12058d1c6897d1e02b9~tplv-obj.webp`.
+
+Cài mới nhận **ID 6267 + đúng 299 xu** để chạy Mushika 16 giây. Khi nâng dữ liệu trước 0.10, thay ô ID/icon Mushika và các dòng nâng cao gắn nghi thức cũ bằng Corgi một lần. Sáu quà cũ/Galaxy giữ nguyên, các sửa thủ công sau đó giữ nguyên. Không nhận bất kỳ quà nào chỉ vì giá 299 xu. Danh mục có thể khác theo tài khoản/khu vực/thời điểm; cần đối chiếu nhật ký LIVE Thái của anh. Chưa có tên Thái chính thức trong hai nguồn đã đọc.
 
 ## Hiển thị và tự nhận metadata
 
-- Trong DEMO, hai mục mới có thể dùng **tên nghi thức tiếng Thái**, không trình bày chúng là tên chính thức của quà TikTok.
-- Trong LIVE, chỉ hiện mục mới trên bảng quà khi đã có tên quà Thái và ID. Nếu một sự kiện LIVE có ID đã khớp và tên chứa tiếng Thái, ứng dụng tự điền tên còn trống/icon từ sự kiện đó. Không ghi đè tên người vận hành đã nhập.
-- Icon Galaxy dùng URL thật ở trên; trình duyệt tải một lần và ẩn nếu lỗi. Mushika không có icon TikTok giả. Hai hình nghi thức mới là artwork của ứng dụng, không phải icon quà.
-- Mỗi ID vẫn phải khớp **giá của một món**. Combo 3 × 1.000 vẫn là Galaxy, không đổi thành quà 3.000 xu. Một combo đã kết thúc = một lượt có nhãn ×3. Các sự kiện kết thúc khác nhau giữ các lượt riêng theo FIFO.
+- Bảng hướng dẫn dùng **mô tả tác dụng tiếng Thái**, không tự đặt tên chính thức của quà. Hai quà mới luôn ở hàng đầu khi đã gán ID; chưa gán sẽ ghi chờ cấu hình. DEMO thử được cả hai.
+- Nếu sự kiện LIVE khớp ID có tên chứa tiếng Thái, app tự điền ô tên còn trống/icon từ dữ liệu đó; không ghi đè tên người vận hành đã nhập.
+- Icon dùng hai URL TikTok thật ở trên; không đóng gói lại ảnh từ CDN vì cloud bị chặn host này. Trình duyệt máy LIVE tải theo cấu hình; lỗi thì hiện dấu trang trí `✧`. Ảnh kiểm tra cloud thể hiện đúng trạng thái thiếu icon, không ghép icon giả vào ảnh.
+- ID vẫn phải khớp **giá một món**. Combo 3 × Corgi = 897 xu, một lượt Mushika có nhãn ×3. Các sự kiện kết thúc khác nhau giữ các lượt FIFO riêng. Galaxy vẫn 1.000 xu, ID 11046.

@@ -1,5 +1,5 @@
 // All waiting data stays on the server. The broadcast receives at most 88
-// avatars: ten stable front places plus rotating groups behind them.
+// game characters: ten stable front places plus rotating groups behind them.
 export const ENTRANCE_SIZE = 88;
 export const FRONT_SIZE = 10;
 export const ENTRANCE_ROTATE_MS = 12000;
@@ -61,7 +61,7 @@ export class EntranceLine {
     this.fill(now);
     if (!this.waiting.size || now - this.lastRotation < ENTRANCE_ROTATE_MS) return;
     this.lastRotation = now;
-    // Swap only one far row. Retired avatars return to the data queue's tail.
+    // Swap only one far row. Retired characters return to the data queue's tail.
     const row = Math.floor(now / ENTRANCE_ROTATE_MS) % 3;
     const swap = [...this.people.values()].filter(p => p.lineSlot > FRONT_SIZE && Math.floor((p.lineSlot - FRONT_SIZE - 1) / 26) === row);
     const available = Math.min(swap.length, this.waiting.size);

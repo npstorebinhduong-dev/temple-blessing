@@ -59,12 +59,13 @@ export class PetalPainter {
     g.strokeStyle = '#fff2c46b'; g.lineWidth = 1.7; g.beginPath(); g.moveTo(-3, 32); g.quadraticCurveTo(0, 0, 7, -31); g.stroke();
     this.textures.set(color, c); return c;
   }
-  draw(ctx, items, now) {
-    ctx.clearRect(0, 0, 1080, 1920);
+  draw(ctx, items, now, { clear = true, opacity = 1, exclusions = [] } = {}) {
+    if (clear) ctx.clearRect(0, 0, 1080, 1920);
     for (const p of items) {
+      if (exclusions.some(r=>p.x+p.size>r.x && p.x-p.size<r.x+r.w && p.y+p.size>r.y && p.y-p.size<r.y+r.h)) continue;
       ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle);
       const flip = .28 + .72 * Math.abs(Math.sin(now / 900 + p.phase));
-      ctx.scale(flip, 1); ctx.globalAlpha = Math.min(.88, p.age * 1.8, (p.life - p.age) / 1.5);
+      ctx.scale(flip, 1); ctx.globalAlpha = Math.max(0, opacity * Math.min(.88, p.age * 1.8, (p.life - p.age) / 1.5));
       ctx.drawImage(this.texture(p.color), -p.size * .7, -p.size, p.size * 1.4, p.size * 2); ctx.restore();
     }
   }

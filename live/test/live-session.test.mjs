@@ -13,7 +13,7 @@ async function until(fn) { for (let i = 0; i < 100; i++) { const result = fn(); 
 
 test('real bridge: streak accounting, isolation, capacity, persisted restore and local-only endpoints', async t => {
   const dir = mkdtempSync(path.join(tmpdir(), 'ganesha-session-'));
-  writeFileSync(path.join(dir, 'session.json'), JSON.stringify({ version: 1, settings: { voiceEnabled: false, giftMap: '4444=aarti' } }));
+  writeFileSync(path.join(dir, 'session.json'), JSON.stringify({ version: 1, settings: { voiceEnabled: false, giftMap: '4444=aarti\n8123=mushika', mushikaGiftId: '8123', mushikaGiftName: 'Old gift', mushikaGiftIcon: 'https://example.test/old.png' } }));
   const mock = new WebSocketServer({ host: '127.0.0.1', port: 0 }); await once(mock, 'listening');
   const sockets = []; let child;
   async function start() {
@@ -35,8 +35,14 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   assert.equal(initial.settings.joinOnChat, false); assert.equal(initial.settings.joinOnEnter, true);
   assert.equal(initial.entrance.people.length, 0);
   assert.equal(initial.settings.giftMap, '9875=aarti');
-  control.send('settings', { settings: { giftMap: '9001=garland', goal: 900, voiceEnabled: false } });
+  assert.equal(initial.settings.mushikaGiftId, '6267');
+  assert.equal(initial.settings.mushikaGiftName, '');
+  assert.match(initial.settings.mushikaGiftIcon, /148eef0884fdb12058d1c6897d1e02b9/);
+  assert.equal(initial.settings.galaxyGiftId, '11046');
+  control.send('settings', { settings: { giftMap: '9001=garland', goal: 900, voiceEnabled: false, mushikaGiftId: '7777', infoPanelX: -900, infoPanelY: 900 } });
   await until(() => overlay.messages.some(m => m.t === 'settings' && !m.settings.voiceEnabled));
+  const configured = overlay.messages.filter(m => m.t === 'settings').at(-1).settings;
+  assert.equal(configured.infoPanelX, 18); assert.equal(configured.infoPanelY, 235);
   const connected = once(mock, 'connection');
   control.send('connect', { source: 'tikfinity', url: `ws://127.0.0.1:${mock.address().port}/` });
   const [source] = await connected;
@@ -108,6 +114,8 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   const stored = await until(() => restored.messages.find(m => m.t === 'state' && m.mode === 'live'));
   assert.equal(stored.stats.coins, 125); assert.equal(stored.settings.goal, 900); assert.equal(stored.settings.giftMap, '9001=garland');
   assert.equal(stored.settings.voiceEnabled, false); // v0.2 preserves an explicit mute after the one-time upgrade.
+  assert.equal(stored.settings.mushikaGiftId, '7777'); // A future manual binding survives the one-time Corgi upgrade.
+  assert.equal(stored.settings.infoPanelX, 18); assert.equal(stored.settings.infoPanelY, 235);
   assert.equal(stored.settings.joinOnEnter, false); // v0.8 enables once, then preserves the operator's choice.
   assert.equal(stored.entrance.people.length, 0);
   assert.equal(stored.top[0].name, 'น้องพลอย');

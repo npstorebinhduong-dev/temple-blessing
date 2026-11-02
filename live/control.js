@@ -7,7 +7,7 @@ const soundCheck = new SceneAudio({ onMusicStatus: status => {
   $('musicPreviewStatus').textContent = ({ loading: 'Đang tải bản nhạc…', playing: 'Đang nghe thử tại bảng điều khiển.', ended: 'Đã phát hết bản nhạc. Bật lặp hoặc bấm nghe thử lại.', error: 'Không tải được nhạc. Tải lại trang hoặc kiểm tra gói cài đặt.' })[status.state] || '';
   if (['ended', 'error'].includes(status.state)) stopMusicPreview();
 } });
-const SETTINGS = ['title', 'subtitle', 'goal', 'joinOnEnter', 'joinOnChat', 'statueMotion', 'statueMotionLevel', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode', 'effectsEnabled', 'effectsVolume', 'voiceVolume', 'mushikaGiftId', 'mushikaGiftName', 'mushikaGiftIcon', 'galaxyGiftId', 'galaxyGiftName', 'galaxyGiftIcon'];
+const SETTINGS = ['title', 'subtitle', 'goal', 'joinOnEnter', 'joinOnChat', 'statueMotion', 'statueMotionLevel', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode', 'effectsEnabled', 'effectsVolume', 'voiceVolume', 'mushikaGiftId', 'mushikaGiftName', 'mushikaGiftIcon', 'galaxyGiftId', 'galaxyGiftName', 'galaxyGiftIcon', 'infoPanelX', 'infoPanelY'];
 let socket, mode = 'demo', bots = false, toastTimer;
 const people = new Map(), numbers = new Intl.NumberFormat('en-US');
 const obsURL = location.origin + '/live/overlay.html'; $('obsURL').textContent = obsURL;
@@ -22,7 +22,7 @@ function readSettings() { return Object.fromEntries(SETTINGS.map(k => { const el
 function stats(m) { if (!m.stats) return; $('coins').textContent = numbers.format(m.stats.coins); $('giftTotal').textContent = numbers.format(m.stats.gifts); $('likes').textContent = numbers.format(m.stats.likes); }
 function seating(m) {
   $('count').textContent = m.seated;
-  $('queueStatus').textContent = `${m.ambient} nhân vật nền · ${m.seated} người ở khu quỳ · ${m.waiting} người chờ ghế · ${m.departing} người đang rời chỗ · ${(m.standing || 0) + (m.entryWaiting || 0)} người chờ · vẽ tối đa ${m.standing || 0} avatar · ${m.rituals || 0} lượt nghi thức đang chờ`;
+  $('queueStatus').textContent = `${m.ambient} nhân vật nền · ${m.seated} người ở khu quỳ · ${m.waiting} người chờ ghế · ${m.departing} người đang rời chỗ · ${(m.standing || 0) + (m.entryWaiting || 0)} người chờ · vẽ tối đa ${m.standing || 0} đầu–vai · ${m.rituals || 0} lượt nghi thức đang chờ`;
 }
 function sourceStatus(m) {
   const label = { idle: 'Chưa kết nối', connecting: 'Đang kết nối…', connected: 'Đã kết nối nguồn', reconnecting: 'Đang kết nối lại…', disconnected: 'Đã mất kết nối', error: 'Lỗi kết nối' }[m.status] || m.status;

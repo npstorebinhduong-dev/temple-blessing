@@ -36,6 +36,7 @@ const SETTING_RULES = {
   mushikaGiftId: giftIdSetting, galaxyGiftId: giftIdSetting,
   mushikaGiftName: v => String(v || '').normalize('NFC').slice(0, 100), galaxyGiftName: v => String(v || '').normalize('NFC').slice(0, 100),
   mushikaGiftIcon: giftIconSetting, galaxyGiftIcon: giftIconSetting,
+  infoPanelX: v => clamp(v, 18, 90), infoPanelY: v => clamp(v, 140, 235),
   petalMode: v => v === 'light' ? 'light' : 'full',
   idlePrompts: Boolean, ambientCrowd: Boolean,
   characterMode: v => ['mixed', 'male', 'female'].includes(v) ? v : 'mixed',
@@ -73,6 +74,13 @@ if ((saved.version || 0) < 3) { settings.joinOnEnter = false; settings.joinOnCha
 if ((saved.version || 0) < 4) settings.giftMap = upgradeShamrockMap(settings.giftMap);
 // v0.8 routes room-entry events to the bottom welcome line, never to a seat.
 if ((saved.version || 0) < 5) settings.joinOnEnter = true;
+// v0.10 explicitly replaces the old 299 gift with the user-selected Corgi.
+// Other six bindings and Galaxy stay unchanged; future manual edits are kept.
+if ((saved.version || 0) < 7) {
+  if (settings.mushikaGiftId !== DEFAULTS.mushikaGiftId) settings.mushikaGiftName = '';
+  settings.mushikaGiftId = DEFAULTS.mushikaGiftId; settings.mushikaGiftIcon = DEFAULTS.mushikaGiftIcon;
+  settings.giftMap = Object.entries(parseGiftMap(settings.giftMap)).filter(([id,kind])=>kind!=='mushika'&&id!==DEFAULTS.mushikaGiftId).map(([id,kind])=>`${id}=${kind}`).join('\n');
+}
 const newRoom = savedRoom => new Room(savedRoom, { ambient: settings.ambientCrowd });
 const rooms = { demo: newRoom(), live: newRoom(saved.live) };
 const engagement = new EngagementClock();
@@ -95,7 +103,7 @@ function persist() {
   clearTimeout(persistTimer); persistTimer = null;
   try {
     const file = path.join(DATA, 'session.json');
-    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 6, settings, live: rooms.live.serialize() }));
+    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 7, settings, live: rooms.live.serialize() }));
     fs.renameSync(file + '.tmp', file);
     return true;
   } catch (e) { addLog('Không lưu được phiên: ' + e.message); return false; }

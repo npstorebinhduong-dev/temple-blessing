@@ -47,7 +47,7 @@ test('upgrading the old Clover binding preserves the other five gift mappings', 
   assert.equal(upgraded['100'], 'marigold'); assert.equal(upgraded['500'], 'royal');
   assert.equal(giftRitual('Shamrock', 10, '9875', upgraded)?.kind, 'aarti');
   assert.equal(giftRitual('Other ten coin gift', 10, '99', upgraded), null);
-  assert.deepEqual(Object.values(RITUALS).map(r => r.duration), [4500,5500,6000,8000,23000,28000,14000,20000]);
+  assert.deepEqual(Object.values(RITUALS).map(r => r.duration), [4500,5500,6000,8000,23000,28000,16000,20000]);
 });
 test('a 500-rose streak produces one lotus event and counts 500, including string final flags', () => {
   const result = [], room = new Room();
@@ -95,12 +95,16 @@ test('the first waiting donor cannot be overtaken and pending turns survive paus
  assert.equal(q.tick(20,item=>item.id==='seated'),null);
  assert.equal(q.tick(21).id,'outside');q.pause();assert.equal(q.pending.length,2);
  const restored=new RitualQueue();restored.restore(JSON.parse(JSON.stringify(q.serialize())));
- assert.equal(restored.tick(30).id,'outside');assert.equal(restored.tick(14030).id,'seated');
+ assert.equal(restored.tick(30).id,'outside');assert.equal(restored.tick(16030).id,'seated');
 });
 test('new gifts require verified ID or explicit configuration and correct unit price, never a 299/1000 price guess',()=>{
  assert.equal(giftRitual('localized',1000,'11046').kind,'galaxy');assert.equal(giftRitual('Galaxy',1000).kind,'galaxy');
  assert.equal(giftRitual('Galaxy',299,'11046'),null);assert.equal(giftRitual('Unknown',1000,'42'),null);
  assert.equal(giftRitual('Bạn đồng hành',299,'42'),null);
+ assert.equal(giftRitual('Corgi',299,'6267').kind,'mushika');
+ assert.equal(giftRitual('localized',299,'6267').kind,'mushika');
+ assert.equal(giftRitual('Corgi',499,'6267'),null);
+ assert.equal(giftRitual('Other 299',299,'9999'),null);
  const overrides=parseGiftMap('42=mushika\n99=galaxy');
  assert.equal(giftRitual('localized',299,'42',overrides).kind,'mushika');
  assert.equal(giftRitual('Galaxy',1000,'11046',overrides),null);
