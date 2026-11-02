@@ -1,0 +1,1 @@
+PASS: arm waits for speech/text start, rises with banner; no browser errors

@@ -513,7 +513,10 @@ function frame(now) {
       lastSpecialPhase = pose.phase;
     }
     if (galaxy) {
-      const art = specialArt.apparition(ctx, now - active.beganAt, active.until - active.beganAt, t, lotus, { light: settings.petalMode === 'light', reduced });
+      const art = specialArt.apparition(ctx, now - active.beganAt, active.until - active.beganAt, t, lotus, {
+        light: settings.petalMode === 'light', reduced,
+        blessingElapsedMs: Number.isFinite(active.speech?.startedAt) ? now - active.speech.startedAt : null,
+      });
       canvas.dataset.apparition = art.opacity.toFixed(3); canvas.dataset.blessingArm = art.angle.toFixed(4);
       if (now >= active.until - 3200 && royalPetals.active) royalPetals.stop();
     } else specialArt.whisper(ctx, now - active.beganAt, pose, t, lotus, settings.petalMode === 'light');

@@ -9,7 +9,7 @@ Bản nâng cấp dùng engine Canvas 2.5D hiện có, giữ sáu quà cũ và b
 - Bảng công đức có nền 20%, blur 3 px, viền vàng mảnh, chữ không bị giảm opacity. Mức Nhẹ tắt blur. Bảng quà mới gọn hơn, có hướng dẫn bình luận 1/2.
 - Mushika 299: artwork chuột riêng, atlas tư thế nam/nữ, đi tới vị trí tai, khum tay/ghé 3,6 giây, luồng sáng, hoa sen, chắp tay và quay về. Camera riêng; toàn nghi thức 14 giây.
 - Galaxy 1.000: artwork Ganesha bốn tay riêng, bàn tay ban phước chuyển động, mandala hai lớp, ánh sáng tới người nhận, hoa sen/cánh hoa, dịu ánh sáng nền và thu hồi hiệu ứng. Thời lượng tối thiểu 20 giây, kéo dài theo tiếng nói.
-- Luồng giọng nam Thái Niwat đã nối vào Edge TTS của ứng dụng, kèm bass/vang nhẹ. Một câu Thái dùng chung cho giọng và banner; tên người nhận riêng. Banner theo sự kiện phát thật, giữ thêm 2,5 giây rồi tan 0,7 giây; nếu tiếng lỗi/tắt, dùng bản chữ đủ thời gian đọc. Nhạc tự nhỏ; nhạc, hiệu ứng, giọng có âm lượng và bật/tắt riêng.
+- Luồng giọng nam Thái Niwat đã nối vào Edge TTS của ứng dụng, kèm bass/vang nhẹ. Một câu Thái dùng chung cho giọng và banner; tên người nhận riêng. Bàn tay và luồng sáng chờ tín hiệu bắt đầu giọng hoặc chế độ chữ thay thế. Banner theo sự kiện phát thật, giữ thêm 2,5 giây rồi tan 0,7 giây; nếu tiếng lỗi/tắt, dùng bản chữ đủ thời gian đọc. Nhạc tự nhỏ; nhạc, hiệu ứng, giọng có âm lượng và bật/tắt riêng.
 - Mỗi sự kiện quà kết thúc giữ một lượt, kể cả cùng người; một combo ×N là một nghi thức ×N và tính đủ N món. Chạy FIFO, không hết hạn, không tranh camera. Người mới vẫn vào hàng trong lúc làm lễ. Người chờ đầu hàng được cấp ghế hợp lệ trước khi bắt đầu.
 - Giữ ghế/hàng chờ/lượt quà qua khởi động lại; lượt đang dở chạy lại từ đầu, không cộng lại xu. Chế độ DEMO độc lập. Reset dọn camera, banner, giọng, ánh sáng và hiệu ứng.
 - Đã kèm ba PNG alpha mới, font Thái, nhạc thiền Á Đông 4:40 lặp sẵn, tám nút quà, 100/300/500 avatar, năm lượt liên tiếp và Reset demo.
@@ -30,6 +30,7 @@ Khi nâng cấp, có thể chép `live/data/session.json` từ bản cũ **sau k
 - Kiểm tra đường đi từ cả 60 ghế với bước thời gian 16 ms; tọa độ hữu hạn, không nhảy vị trí; giữ pha ghé tai 3,6 giây. Đây là kiểm tra kỹ thuật kết hợp xem ảnh, không thay thế việc xem chuyển động trên máy phát.
 - Chromium thực ở 1080×1920: 60 nhân vật, 500 hồ sơ qua nguồn giả lập, avatar ảnh cục bộ và ảnh hỏng, 88/49 hình được vẽ đúng, không tăng DOM theo số người, không lỗi JavaScript. Đã xem khung điện thoại 390×844. Ảnh trong thư mục dưới là **ảnh chụp ứng dụng**, dữ liệu người xem là fixture/DEMO, không phải LIVE TikTok thật.
 - Ba lượt Galaxy liên tiếp dùng **MP3 tín hiệu thử 7,8 giây**, phát qua Audio/Web Audio thật và thông báo bắt đầu/kết thúc thật. Banner vẫn hiện sau 2,1 giây kể từ `ended`, sau đó giữ/mờ theo lịch; camera/ánh sáng về bình thường. JS heap cuối lượt khoảng 4,71 / 4,73 / 4,73 MB, cache sprite 175 và bảng tên 51 ổn định, không còn âm hiệu ứng sau reset. Số liệu ngắn hạn này không chứng minh LIVE nhiều giờ không tăng bộ nhớ.
+- Kiểm tra thêm trong Chromium: tay chưa giơ khi đang chờ giọng/chữ; giơ lên cùng banner. Ảnh Galaxy bàn giao chụp người nhận nữ ở mức Rực rỡ sau chỉnh đồng bộ.
 - Đã bấm các nút qua giao diện điều khiển thật: lưu ID/âm lượng, 500 avatar, 50 người quỳ, chọn nam, Mushika, Galaxy, reset giữa lúc ban phước và gửi năm lượt liên tiếp. Đủ năm lượt, tổng 2.601 xu, không lỗi JavaScript.
 - File MP3 thử chỉ nằm ngoài bản phát hành. **Không dùng tín hiệu thử để giả làm giọng Thái.** Test TTS kiểm tra đúng tên Niwat, đúng câu, tốc độ/cao độ, cache và đồng bộ; chưa nghe được kết quả dịch vụ Thái thật từ cloud.
 
@@ -49,7 +50,7 @@ Chromium headless trên Linux cloud, giới hạn CPU 4 lõi, đồ họa phần
 
 Lượt chẩn đoán ghi thời gian JavaScript khoảng 0,33–0,44 giây trong 6 giây; phần lớn tải nằm ở trình dựng hình phần mềm. Có khựng rõ khi nạp hàng loạt và tốc độ còn dao động trên môi trường này. **Chưa đạt hoặc xác nhận 30 FPS ổn định.** Mức Nhẹ giảm ảnh/hạt/blur nhưng không đảm bảo nhanh hơn trong mọi lần đo trên bộ dựng đồ họa phần mềm. Cần chạy phiếu test với OBS/LIVE Studio trên máy Windows thật; bản bàn giao không phải chứng nhận sẵn sàng LIVE không cần thử.
 
-Các số đo gốc: [hiệu năng](verification/performance.json), [kiểm tra giao diện](verification/control-check.json), [ba lượt âm thanh](verification/audio-playback.json), [chẩn đoán dựng hình](verification/render-profile.txt).
+Các số đo gốc: [hiệu năng](verification/performance.json), [kiểm tra giao diện](verification/control-check.json), [ba lượt âm thanh](verification/audio-playback.json), [chẩn đoán dựng hình](verification/render-profile.txt), [đồng bộ động tác](verification/gesture-check.txt).
 
 ## Còn cần đối chiếu trên máy anh
 

@@ -94,7 +94,7 @@ export class SpecialArt {
     }
     if(seconds>8.6) {pen.save();pen.globalAlpha=strength*smooth((seconds-8.6)/.4);lotus(pose.x,pose.y+6,.7,t);pen.restore();}
   }
-  apparition(pen, elapsedMs, untilMs, t, lotus, { light = false, reduced = false } = {}) {
+  apparition(pen, elapsedMs, untilMs, t, lotus, { light = false, reduced = false, blessingElapsedMs = null } = {}) {
     this.prepareDeity(); if (!this.deity) return { opacity: 0, angle: 0 };
     const sec=elapsedMs/1000, end=untilMs/1000;
     const gather=smooth((sec-1.7)/2.6), dissolve=1-smooth((sec-end+3.4)/2.4), opacity=gather*dissolve;
@@ -108,15 +108,18 @@ export class SpecialArt {
       pen.save();pen.translate(x+w*.52,y+285);pen.rotate(reduced?0:t*(layer?-.016:.022));
       const s=(layer?.89:1.05)*(.75+gather*.25);pen.scale(s,s);pen.globalAlpha=opacity*(layer?.19:.42);pen.drawImage(mandala,-360,-360);pen.restore();
     }
-    const settle=smooth((sec-3)/2), scale=h/this.deity.h;
+    // Voice generation may be slow. Start the blessing hand and recipient ray
+    // from the actual playback receipt (or readable-text fallback), not a timer
+    // measured from the beginning of the ceremony.
+    const settle=blessingElapsedMs === null ? 0 : smooth(blessingElapsedMs/1200), scale=h/this.deity.h;
     const angle=(reduced?0:(-.13+Math.sin(t*.75)*.025)*settle*dissolve);
     pen.save();pen.translate(x,y+breath);pen.scale(scale,scale);
     const {body,arm,pivotX,pivotY}=this.deity;
     pen.save();pen.translate(pivotX,pivotY);pen.rotate(angle);pen.translate(-pivotX,-pivotY);pen.drawImage(arm,0,0);pen.restore();pen.drawImage(body,0,0);pen.restore();
     // A descending blessing ray reaches the recipient; colour stays below
     // full-white so the deity, hands and costume retain their detail.
-    if(sec>4.3) {
-      const blessing=smooth((sec-4.3)/1.2)*dissolve;
+    if(settle>0) {
+      const blessing=settle*dissolve;
       pen.save();pen.globalAlpha=blessing;
       const beam=pen.createLinearGradient(390,830,792,1320);beam.addColorStop(0,'#ffde9a00');beam.addColorStop(.35,'#ffdf9c35');beam.addColorStop(1,'#ffca6c0a');
       pen.fillStyle=beam;pen.beginPath();pen.moveTo(405,820);pen.quadraticCurveTo(700,850,895,1335);pen.lineTo(690,1335);pen.quadraticCurveTo(645,900,380,820);pen.fill();
