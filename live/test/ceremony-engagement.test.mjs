@@ -15,13 +15,13 @@ test('both ceremonies reach the altar, kneel, lift the correct offering and retu
     assert.equal(pose(6800).phase, 'kneel'); assert.equal(pose(6800).y, ALTAR.y);
     assert.equal(pose(9000).phase, 'offer'); assert.equal(pose(9000).carrierFrame, 3);
     assert.equal(pose(9000).lift, 1); assert.equal(pose(9000).prop, true);
-    const duration = kind === 'royal' ? 24000 : 20000;
+    const duration = kind === 'royal' ? 28000 : 23000;
     assert.equal(pose(duration - 2000).prop, false);
     assert.equal(pose(duration - 10).phase, 'done');
     assert.equal(pose(duration).x, seat.x); assert.equal(pose(duration).y, seat.y);
   }
-  assert.equal(processionPose('royal', 15000, from, seat).phase, 'offer');
-  assert.equal(processionPose('marigold', 15000, from, seat).phase, 'return');
+  assert.equal(processionPose('royal', 18000, from, seat).phase, 'offer');
+  assert.equal(processionPose('marigold', 18000, from, seat).phase, 'return');
 });
 
 test('idle reminders start after ten gift-free seconds, then wait ten seconds after actual playback ends', () => {
@@ -80,6 +80,9 @@ test('gift speech removes waiting idle speech; no idle backlog while any voice i
 test('avatar selection uses explicit comments and persists through subsequent activity', () => {
   const room = new Room();
   assert.equal(skinFromComment(' ชาย '), 'male'); assert.equal(skinFromComment('หญิง'), 'female');
+  for (const text of ['1', ' 1 ', '１', '๑']) assert.equal(skinFromComment(text), 'female');
+  for (const text of ['2', ' 2 ', '２', '๒']) assert.equal(skinFromComment(text), 'male');
+  for (const text of ['12', '21', '1 2', '123', 'hi 1', '1 xu']) assert.equal(skinFromComment(text), null);
   assert.equal(skinFromComment('ขอบคุณชาย'), null);
   room.join('u', 'Name', { skin: 'male' }); room.join('u', 'Updated name'); room.gift('u', 'Name', 1, 500);
   assert.equal(room.viewers.get('u').skin, 'male');

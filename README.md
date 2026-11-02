@@ -2,9 +2,9 @@
 
 Cảnh livestream tương tác 1080 × 1920 dành cho người xem Thái: Ganesha ở trung tâm, nhân vật áo trắng/vàng đi vào, quỳ chắp tay và cúi lạy, bảng tên, xếp hạng, mục tiêu và sáu hiệu ứng dâng lễ, nhân vật nam/nữ và lời cầu chúc tiếng Thái. Bảng điều khiển bằng tiếng Việt cho người vận hành.
 
-## Chạy bản 0.6
+## Chạy bản 0.7
 
-Bản 0.6 thêm zoom theo người tặng cho cả sáu quà và đổi lời nhắc tim/chia sẻ sang chờ 10 giây sau khi câu trước đọc xong. Giữ bản sửa nhân vật biến mất khi quỳ/lạy của 0.5.1.
+Bản 0.7 thêm bình luận **1 = nữ, 2 = nam**, hiện hướng dẫn ngay trên bảng quà; tăng cỡ chữ bảng quà/xếp hạng để đọc trên điện thoại, kéo dài thời gian zoom và nhận đúng **Shamrock · ID 9875 · 10 xu**. Giữ lịch nhắc tim/chia sẻ sau 10 giây vắng quà, nghỉ 10 giây từ lúc câu trước đọc xong và bản sửa nhân vật biến mất khi quỳ/lạy.
 
 Cài **Node.js 24 trở lên**. Trên Windows, giải nén toàn bộ gói và chạy `CHAY-LIVE.bat`. Hướng dẫn thao tác đầy đủ trong [HUONG-DAN-WINDOWS.txt](HUONG-DAN-WINDOWS.txt).
 
@@ -34,7 +34,7 @@ Nguồn Browser Source cho OBS: `http://localhost:3000/live/overlay.html`, rộn
 1. Mở TikFinity Desktop trên **cùng máy** chạy Ganesha LIVE.
 2. Kết nối TikFinity với kênh đang LIVE và bật WebSocket server.
 3. Chọn TikFinity Desktop, dùng địa chỉ nó cung cấp (thường `ws://127.0.0.1:21213/`), bấm **Kết nối LIVE**.
-4. Ứng dụng đổi sang dữ liệu LIVE riêng, bỏ nhân vật demo khỏi màn hình. Bình luận tạo nhân vật; quà kích hoạt hiệu ứng và cộng xu. Lượt thích tạo tim; lượt theo dõi tạo điểm sáng. Có thể bật cho người vừa vào phòng xuất hiện.
+4. Ứng dụng đổi sang dữ liệu LIVE riêng, bỏ nhân vật demo khỏi màn hình. Mặc định quà mới đưa người vào cảnh, kích hoạt hiệu ứng và cộng xu; bình luận 1/2 chọn nhân vật trước hoặc sau khi tặng. Lượt thích tạo tim; lượt theo dõi tạo điểm sáng. Có thể bật cho người vừa vào phòng xuất hiện.
 5. Thử một bình luận và một quà thật. “Đã kết nối nguồn” chỉ xác nhận kết nối tới TikFinity, chưa xác nhận kênh đang phát sự kiện.
 
 TikFinity tự kết nối lại sau 2 giây khi mất socket. Chế độ TikTok trực tiếp là lựa chọn thử nghiệm, phụ thuộc thư viện và dịch vụ bên ngoài; cần kết nối lại thủ công khi bị ngắt. Không nhập hoặc lưu cookie, mật khẩu TikTok trong ứng dụng.
@@ -46,15 +46,17 @@ TikFinity tự kết nối lại sau 2 giây khi mất socket. Chế độ TikTo
 | Hoa hồng · Rose | 1 | `lotus` · Dâng hoa sen |
 | Quả đào · Peach | 5 | `incense` · Dâng hương |
 | OK | 5 | `garland` · Dâng vòng hoa |
-| Cỏ 4 lá · Clover | 10 | `aarti` · Nghi lễ ánh sáng |
-| Bó hoa · Bouquet | 100 | `marigold` · **Golden Marigold Offering** · 20 giây |
-| Bóng tình yêu · Love Balloon | 500 | `royal` · **Royal Ganesha Offering** · 24 giây |
+| Cỏ 4 lá · Shamrock / Clover | 10 | `aarti` · Nghi lễ ánh sáng |
+| Bó hoa · Bouquet | 100 | `marigold` · **Golden Marigold Offering** · 23 giây |
+| Bóng tình yêu · Love Balloon | 500 | `royal` · **Royal Ganesha Offering** · 28 giây |
 
-Với Bó hoa, nhân vật mang vòng hoa vạn thọ vàng cam lên bàn thờ, quỳ nâng hoa, rồi trở về chỗ. Với Bóng tình yêu, nhân vật mang mâm vàng/đỏ gồm Modak, trái cây, dừa, hoa vạn thọ và đèn lễ; có ánh sáng, cánh hoa vàng, đèn hai bên và chuông trầm riêng. Nghi lễ hoạt động cho cả nhân vật nam và nữ. Từ v0.3, góc nhìn phóng theo nhân vật khi đi lên (1,45× với 100 xu; 1,62× với 500 xu), giữ cảnh cận khi dâng rồi trở về toàn cảnh. Tượng, nền và nhân vật phóng đồng bộ; bảng quà, xếp hạng và chữ trên màn hình giữ vị trí. Từ v0.6, bốn quà cơ bản cũng zoom theo đúng nhân vật đang đi vào hoặc đang ngồi: Hoa hồng 3,2 giây (1,55×), Đào 4,2 giây (1,6×), OK 5 giây (1,6×), Cỏ bốn lá 6,5 giây (1,7×). Mỗi lượt gồm chuyển vào và thu về; quà 100/500 giữ tiến trình 20/24 giây. Khi có nhiều quà, camera theo hàng đợi hiệu ứng, không nhảy qua người khác giữa lượt. Có thể tắt zoom. Thiết lập Giảm chuyển động của trình duyệt sẽ tắt zoom và giảm mưa hoa.
+Với Bó hoa, nhân vật mang vòng hoa vạn thọ vàng cam lên bàn thờ, quỳ nâng hoa, rồi trở về chỗ. Với Bóng tình yêu, nhân vật mang mâm vàng/đỏ gồm Modak, trái cây, dừa, hoa vạn thọ và đèn lễ; có ánh sáng, cánh hoa vàng, đèn hai bên và chuông trầm riêng. Nghi lễ hoạt động cho cả nhân vật nam và nữ. Từ v0.3, góc nhìn phóng theo nhân vật khi đi lên (1,45× với 100 xu; 1,62× với 500 xu), giữ cảnh cận khi dâng rồi trở về toàn cảnh. Tượng, nền và nhân vật phóng đồng bộ; bảng quà, xếp hạng và chữ trên màn hình giữ vị trí. Bốn quà cơ bản cũng zoom theo đúng nhân vật đang đi vào hoặc đang ngồi. Thời lượng v0.7: Hoa hồng 4,5 giây (1,55×), Đào 5,5 giây (1,6×), OK 6 giây (1,6×), Cỏ bốn lá 8 giây (1,7×). Mỗi lượt gồm chuyển vào và thu về; quà 100/500 kéo dài thành 23/28 giây. Thời gian tăng thêm nằm ở đoạn giữ cận cảnh; nhịp đi lên và trở về giữ nguyên. Khi có nhiều quà, camera theo hàng đợi hiệu ứng, không nhảy qua người khác giữa lượt. Có thể tắt zoom. Thiết lập Giảm chuyển động của trình duyệt sẽ tắt zoom và giảm mưa hoa.
 
 Quà 500 xu có mưa hoa vàng/hồng phủ toàn màn hình, cùng một đợt hoa bung khi nâng mâm. Giới hạn 320 cánh hoa để giữ tài nguyên ổn định; chế độ Nhẹ và thiết lập giảm chuyển động của trình duyệt giảm số cánh hoa. Khi kết thúc, hoa mờ hết trong khoảng 2 giây; đổi DEMO/LIVE hoặc tải lại sẽ xóa toàn bộ hiệu ứng.
 
 Nhận diện bằng **đúng tên quà + giá một món**, hỗ trợ tên tiếng Anh/Thái/Việt. Giá trên là cấu hình bạn đã chọn; kiểm tra lại dữ liệu TikFinity trên kênh thật vì danh mục có thể thay đổi. Combo 500 Hoa hồng 1 xu vẫn tạo hoa sen, cộng đủ 500 xu. Combo chỉ tính khi kết thúc (`giftType`, `repeatEnd`, `repeatCount`). Các gói cùng `msgId` được lọc trùng trong 5 phút; không có ID thì không đảm bảo chống phát lại. Bộ nhớ chống trùng không giữ qua lần khởi động server mới.
+
+**Shamrock ID 9875, giá 10 xu** đã được nhận sẵn, kể cả khi tên được TikTok dịch sang ngôn ngữ khác. Khi nâng dữ liệu cũ lên 0.7, các dòng ID đã gán cho Cỏ bốn lá được sửa một lần thành `9875=aarti`; các ánh xạ khác được giữ lại. Những lần sửa ID thủ công sau nâng cấp được giữ nguyên. Không dùng riêng mức giá 10 xu để nhận quà: Rosa và các quà 10 xu khác không bị gán nhầm.
 
 Lấy ID từ nhật ký rồi vào **Cảnh & âm thanh → Ánh xạ ID quà thật**, nhập `ID=loại` bằng ID số thật. Ví dụ cú pháp `123456=marigold` (ID minh họa). ID vẫn cần đúng giá một món. Khi một loại đã gán ID, nhận diện bằng tên cho loại đó được tắt. Quà chưa khớp vẫn cộng điểm và có lời cảm ơn; nhật ký ghi “chưa gán hiệu ứng”. Các nút demo luôn thử được sáu loại, kể cả khi đã cài ID thật.
 
@@ -74,7 +76,7 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 
 ## Nhân vật, lời cầu chúc và lúc vắng quà
 
-- Mặc định xen kẽ nhân vật nam/nữ theo mã người xem. Gõ đúng `ชาย` (nam) hoặc `หญิง` (nữ) để đổi nhân vật; cũng nhận `male`, `female`, `nam`, `nữ`. Đây là lựa chọn avatar, không suy đoán giới tính thật. Có thể chọn toàn nam/toàn nữ cho người mới trong bảng điều khiển.
+- Mặc định xen kẽ nhân vật nam/nữ theo mã người xem. Bình luận đúng **`1` = nữ, `2` = nam** để chọn hoặc đổi ngay, kể cả trong lúc dâng lễ; hướng dẫn tiếng Thái nằm đầu bảng quà. Lựa chọn trước khi tặng quà được nhớ trong phiên, chưa đưa người xem vào cảnh. Chỉ nhận một số riêng lẻ, không lấy số từ bình luận dài. Vẫn nhận `หญิง` (nữ), `ชาย` (nam), `female`, `male`, `nữ`, `nam` và chữ số Thái `๑` / `๒`. Đây là lựa chọn avatar, không suy đoán giới tính thật. Có thể chọn toàn nam/toàn nữ cho người mới trong bảng điều khiển.
 - Mỗi sự kiện quà đã chốt tạo lời cảm ơn và cầu chúc tiếng Thái; hai nghi lễ lớn có lời riêng. Giọng **bật sẵn**, dùng Edge TTS với Premwadee (nữ) hoặc Niwat (nam). Cần Internet, không cần cài gói tiếng Thái trên Windows hay mở Edge.
 - Sau **10 giây không có quà**, bắt đầu lời nhắc thả tim và chia sẻ LIVE. Câu tiếp theo chờ **10 giây từ lúc câu trước đọc xong**, lấy tín hiệu kết thúc âm thanh từ cửa sổ LIVE/OBS. Ví dụ đọc từ giây 10 đến 17 thì câu tiếp theo sớm nhất ở giây 27. Quà mới cắt lời nhắc, bỏ lời nhắc đang chờ và tính lại từ quà mới nhất. Khi còn lời cầu chúc, đợi đọc xong để không chồng tiếng. Có thể chỉnh khoảng chờ trong bảng điều khiển; mặc định 10 giây cho cả hai mốc.
 - Chỉ cửa sổ đã mở tiếng và bật giọng tham gia tính thời điểm đọc xong; khung xem trước không ảnh hưởng. Nếu mở nhiều cửa sổ có tiếng, chờ tất cả đọc xong. Đóng cửa sổ, tắt giọng hoặc lỗi phát âm thanh không làm bộ đếm kẹt. Khi tắt giọng, lời nhắc chữ vẫn xuất hiện theo khoảng chờ.
@@ -96,7 +98,7 @@ Hàng đợi ưu tiên nghi lễ 100/500 xu sau lượt đang chạy. Tối đa 
 - Hình ảnh, font Thái, bản nhạc MP3 và chuông chạy cục bộ; chuông được tổng hợp bằng Web Audio. Nhạc nền hiện tại là bản ghép CC0, độc lập với concept trước.
 - Edge TTS cần truy cập `speech.platform.bing.com`. File âm thanh tạm ở `live/tts/`, không đưa vào Git hay gói chia sẻ. Khi nâng dữ liệu v0.1 lên v0.2, giọng được bật một lần; các lần sau giữ lựa chọn của bạn.
 
-## Kiểm thử và giới hạn bản 0.6
+## Kiểm thử và giới hạn bản 0.7
 
 ```sh
 cd live

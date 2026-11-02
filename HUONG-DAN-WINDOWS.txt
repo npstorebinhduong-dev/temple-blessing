@@ -1,4 +1,4 @@
-GANESHA LIVE — BẢN THỬ NGHIỆM 0.6
+GANESHA LIVE — BẢN THỬ NGHIỆM 0.7
 
 1. Giải nén toàn bộ ZIP vào một thư mục riêng. Không chạy bên trong ZIP.
 2. Cài Node.js 24 LTS hoặc mới hơn từ https://nodejs.org/ nếu chưa có.
@@ -24,7 +24,7 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.6
 10. Giọng cầu chúc Thái đã bật sẵn. Chọn Premwadee (nữ) hoặc Niwat (nam),
     lưu cấu hình rồi bấm Thử giọng Thái. Cần Internet; không cần cài tiếng
     Thái trên Windows hoặc mở trình duyệt Edge. Kiểm tra nguồn âm OBS.
-11. Bấm thử cả Bó hoa và Bóng tình yêu; chờ lần lượt 20 và 24 giây để thấy
+11. Bấm thử cả Bó hoa và Bóng tình yêu; chờ lần lượt 23 và 28 giây để thấy
     đủ bước đi lên bàn thờ, zoom theo nhân vật, quỳ dâng và trở lại toàn cảnh.
     Quà 500 xu có mưa hoa phủ màn hình. Chọn nhân vật Nam/Nữ khi thử.
 12. Khi vắng quà 10 giây, bắt đầu lời nhắc thả tim/chia sẻ. Sau khi đọc xong
@@ -41,9 +41,9 @@ GANESHA LIVE — BẢN THỬ NGHIỆM 0.6
     bật Cho người bình luận vào hàng chờ rồi Lưu cấu hình. Chỗ đang đi ra
     chỉ được dùng lại khi nhân vật ra hết; người đang dâng lễ được giữ chỗ.
 
-ZOOM SÁU QUÀ (BẢN 0.6)
-Hoa hồng: 3,2 giây; Đào: 4,2 giây; OK: 5 giây; Cỏ bốn lá: 6,5 giây;
-Bó hoa: 20 giây; Bóng tình yêu: 24 giây. Thời lượng gồm phóng to và thu về.
+ZOOM SÁU QUÀ (BẢN 0.7)
+Hoa hồng: 4,5 giây; Đào: 5,5 giây; OK: 6 giây; Cỏ bốn lá: 8 giây;
+Bó hoa: 23 giây; Bóng tình yêu: 28 giây. Thời lượng gồm phóng to và thu về.
 Zoom theo đúng người tặng của lượt hiệu ứng, giữ vị trí ngồi của mọi người.
 Bật Zoom theo người tặng quà và Lưu cấu hình để dùng.
 
@@ -63,7 +63,7 @@ SÁU QUÀ ĐÃ CHỌN
 Hoa hồng 1 xu -> hoa sen (lotus).
 Quả đào 5 xu -> hương (incense).
 OK 5 xu -> vòng hoa (garland).
-Cỏ 4 lá 10 xu -> Aarti (aarti).
+Cỏ 4 lá / Shamrock, ID 9875, 10 xu -> Aarti (aarti), đã nhận sẵn.
 Bó hoa 100 xu -> Golden Marigold Offering (marigold): dâng vòng vạn thọ.
 Bóng tình yêu 500 xu -> Royal Ganesha Offering (royal): dâng mâm đại lễ.
 Nhận bằng đúng tên + giá một món. Combo không đổi loại hiệu ứng.
@@ -72,23 +72,29 @@ Nếu nhật ký báo chưa gán hiệu ứng, lấy ID quà thật rồi nhập
 ID cũng cần đúng giá. Khi đã gán ID, tên không dùng để nhận diện loại đó.
 
 CHỌN NHÂN VẬT
-Mặc định có nam và nữ. Người xem gõ ชาย để chọn nam, หญิง để chọn nữ.
-Có thể dùng male/female hoặc nam/nữ. Không đoán giới tính từ tên người xem.
+Người xem bình luận đúng 1 để chọn nữ, 2 để chọn nam. Hướng dẫn trên bảng
+quà: พิมพ์ 1 = หญิง / พิมพ์ 2 = ชาย. Chữ bảng quà và xếp hạng đã tăng lớn.
+Có thể chọn trước khi tặng quà hoặc đổi ngay trong lúc dâng lễ. Nếu chưa
+tặng quà, bình luận chọn nhân vật chỉ ghi nhớ lựa chọn trong phiên.
+Vẫn nhận หญิง / ชาย, female / male, nữ / nam; mặc định xen kẽ nam và nữ.
 
-NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3 / 0.4 / 0.5 / 0.5.1
-Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.6 vào thư mục riêng.
+NÂNG TỪ BẢN 0.1 / 0.2 / 0.2.1 / 0.3 / 0.4 / 0.5 / 0.5.1 / 0.6
+Đóng cửa sổ CHAY-LIVE cũ. Giải nén bản 0.7 vào thư mục riêng.
 Nếu muốn giữ điểm và cấu hình, sao chép thư mục live/data của bản cũ
 sang live/data của bản mới trước khi chạy. Chỉ bản 0.1 được bật giọng
 một lần khi nâng cấp; bản 0.2 trở lên giữ cài đặt giọng của bạn.
-Kiểm tra lại ID quà đã gán vì bảng giá và các loại hiệu ứng đã thay đổi.
+Bản 0.7 sửa một lần ID đã gán cho Cỏ bốn lá thành 9875=aarti. Các ánh xạ
+khác được giữ nguyên. Các lần chỉnh ID thủ công sau đó không bị ghi đè.
+Shamrock phải có giá một món 10 xu; quà 10 xu khác không bị nhận nhầm.
 Bản 0.4 thay cấu hình 24/36/60 cũ bằng 60 chỗ cố định và 10 nhân vật nền.
 Chế độ vào cảnh khi bình luận/vào phòng được tắt một lần khi nâng cấp;
-âm lượng, nhạc, giọng, ID quà và điểm LIVE vẫn giữ theo cấu hình đã lưu.
+âm lượng, nhạc, giọng và điểm LIVE vẫn giữ theo cấu hình đã lưu.
 Từ bản 0.4 lên 0.5, giữ nguyên quy tắc vào cảnh khi tặng quà và các cài đặt
 âm thanh. Chuyển động tay mới mặc định Rõ; nhạc đổi sang bản 4:40. Nếu đã
 tắt Lặp nhạc ở bản cũ, bật lại và Lưu cấu hình để nhạc phát liên tục.
 Bản 0.5.1 sửa lỗi nhân vật mất hình vài giây khi quỳ/lạy. Sau khi chạy bản
-mới, tải lại cửa sổ LIVE bằng Ctrl+F5 hoặc làm mới nguồn trình duyệt OBS.
+0.7, tải lại cả bảng điều khiển và cửa sổ LIVE bằng Ctrl+F5; trong OBS,
+làm mới bộ nhớ đệm của nguồn trình duyệt để nhận chữ và mã mới.
 Không sao chép node_modules từ bản cũ.
 
 KHỞI ĐỘNG LẠI

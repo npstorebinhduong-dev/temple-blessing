@@ -8,11 +8,12 @@ import { RITUALS } from '../gift-rituals.mjs';
 
 test('camera follows both premium processions, keeps the world covering the frame, and returns to wide', () => {
   const from = { x: 880, y: 1710 }, seat = { x: 880, y: 1710 };
-  for (const [kind, duration, peak] of [['marigold', 20000, 1.45], ['royal', 24000, 1.62]]) {
+  for (const [kind, duration, peak] of [['marigold', 23000, 1.45], ['royal', 28000, 1.62]]) {
     const camera = ms => ceremonyCamera(kind, ms, processionPose(kind, ms, from, seat));
     assert.deepEqual(camera(0), { scale: 1, x: 0, y: 0 });
     assert.ok(camera(3000).scale > 1.2);
     assert.equal(camera(9000).scale, peak);
+    assert.ok(camera(kind === 'royal' ? 24000 : 20000).scale > 1, 'keep following beyond the previous duration');
     for (let t = 0; t <= duration; t += 100) {
       const c = camera(t);
       assert.ok(c.x <= 0 && c.y <= 0);

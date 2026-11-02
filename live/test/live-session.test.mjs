@@ -12,7 +12,7 @@ async function until(fn) { for (let i = 0; i < 100; i++) { const result = fn(); 
 
 test('real bridge: streak accounting, isolation, capacity, persisted restore and local-only endpoints', async t => {
   const dir = mkdtempSync(path.join(tmpdir(), 'ganesha-session-'));
-  writeFileSync(path.join(dir, 'session.json'), JSON.stringify({ version: 1, settings: { voiceEnabled: false } }));
+  writeFileSync(path.join(dir, 'session.json'), JSON.stringify({ version: 1, settings: { voiceEnabled: false, giftMap: '4444=aarti' } }));
   const mock = new WebSocketServer({ host: '127.0.0.1', port: 0 }); await once(mock, 'listening');
   const sockets = []; let child;
   async function start() {
@@ -32,19 +32,24 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   assert.equal(initial.mode, 'demo'); assert.equal(initial.settings.voiceEnabled, true); assert.equal(initial.viewers.length, 0);
   assert.equal(initial.actors.length, 10); assert.equal(initial.seating.ambient, 10);
   assert.equal(initial.settings.joinOnChat, false); assert.equal(initial.settings.joinOnEnter, false);
+  assert.equal(initial.settings.giftMap, '9875=aarti');
   control.send('settings', { settings: { giftMap: '9001=garland', goal: 900, voiceEnabled: false } });
   await until(() => overlay.messages.some(m => m.t === 'settings' && !m.settings.voiceEnabled));
   const connected = once(mock, 'connection');
   control.send('connect', { source: 'tikfinity', url: `ws://127.0.0.1:${mock.address().port}/` });
   const [source] = await connected;
   await until(() => overlay.messages.some(m => m.t === 'state' && m.mode === 'live' && m.stats.coins === 0));
+  source.send(JSON.stringify({ event: 'chat', data: { uniqueId: 'thai', nickname: 'น้องพลอย', comment: '1' } }));
+  await until(() => overlay.messages.some(m => m.t === 'chat' && m.text === '1'));
+  assert.equal(overlay.messages.some(m => m.t === 'join' && m.v.id === 'thai'), false);
   const gift = { event: 'gift', data: { uniqueId: 'thai', nickname: 'น้องพลอย', giftName: 'โอเค', giftId: 9001, giftType: 1, repeatEnd: false, repeatCount: 3, diamondCount: 5, msgId: 'one' } };
   source.send(JSON.stringify(gift)); gift.data.repeatEnd = true; source.send(JSON.stringify(gift)); source.send(JSON.stringify(gift));
   const result = await until(() => overlay.messages.find(m => m.t === 'gift'));
   assert.equal(result.coins, 15); assert.equal(result.ritual.kind, 'garland'); assert.equal(result.giftId, '9001');
   assert.equal(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.slot, 11);
+  assert.equal(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.skin, 'female');
   await until(() => overlay.messages.some(m => m.t === 'stats' && m.stats.coins === 15));
-  source.send(JSON.stringify({ event: 'chat', data: { uniqueId: 'thai', nickname: 'น้องพลอย', comment: 'ชาย' } }));
+  source.send(JSON.stringify({ event: 'chat', data: { uniqueId: 'thai', nickname: 'น้องพลอย', comment: '2' } }));
   await until(() => overlay.messages.some(m => m.t === 'character' && m.v.id === 'thai' && m.v.skin === 'male'));
   source.send(JSON.stringify({ event: 'gift', data: { uniqueId: 'thai', nickname: 'น้องพลอย', giftName: 'Unmapped 100', diamondCount: 100, repeatCount: 1, msgId: 'unknown' } }));
   const unmatched = await until(() => overlay.messages.find(m => m.t === 'gift' && m.giftName === 'Unmapped 100'));

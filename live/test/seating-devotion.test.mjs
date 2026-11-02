@@ -94,10 +94,10 @@ test('server owns ceremonies: a waiting premium is admitted first, then protecte
   assert.equal(room.rituals.active.id,'u60');
   const slot=room.find('u60').slot;
   for(let i=61;i<130;i++) room.join(`u${i}`,`Name ${i}`,{now:27000+i});
-  for(let now=27000;now<50000;now+=250) {
+  for(let now=27000;now<54000;now+=250) {
     room.advance(now); assert.equal(room.find('u60').slot,slot); assert.notEqual(room.find('u60').seatState,'leaving');
   }
-  assert.equal(room.rituals.active.id,'u60'); room.advance(50200); assert.equal(room.rituals.active,null);
+  assert.equal(room.rituals.active.id,'u60'); room.advance(54200); assert.equal(room.rituals.active,null);
 });
 
 test('seat and devotion motion stays finite, staggered and bounded; reduced motion holds a wai', () => {

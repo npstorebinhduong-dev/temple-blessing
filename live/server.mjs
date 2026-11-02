@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
 import { connectTikFinity, createEventHandler } from './tikfinity.mjs';
-import { RITUALS, giftRitual, parseGiftMap } from './gift-rituals.mjs';
+import { RITUALS, giftRitual, parseGiftMap, upgradeShamrockMap } from './gift-rituals.mjs';
 import { DEFAULTS, DEMO_NAMES, Room, cleanName, positive, defaultSkin, skinFromComment } from './ganesha.mjs';
 import { EngagementClock, SpeechQueue, blessingForGift } from './engagement.mjs';
 
@@ -49,6 +49,9 @@ try { applySettings(saved.settings); } catch { console.warn('Cấu hình lưu kh
 if (saved.version === 1) settings.voiceEnabled = true;
 // v0.4 starts real admissions with gifts. Older crowd-size settings are retired.
 if ((saved.version || 0) < 3) { settings.joinOnEnter = false; settings.joinOnChat = false; }
+// v0.7 uses the confirmed Thai LIVE gift: Shamrock, ID 9875, 10 coins.
+// Other gifts/settings are preserved; future manual edits are not rewritten.
+if ((saved.version || 0) < 4) settings.giftMap = upgradeShamrockMap(settings.giftMap);
 const newRoom = savedRoom => new Room(savedRoom, { ambient: settings.ambientCrowd });
 const rooms = { demo: newRoom(), live: newRoom(saved.live) };
 const engagement = new EngagementClock();
@@ -70,7 +73,7 @@ function persist() {
   clearTimeout(persistTimer); persistTimer = null;
   try {
     const file = path.join(DATA, 'session.json');
-    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 3, settings, live: rooms.live.serialize() }));
+    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 4, settings, live: rooms.live.serialize() }));
     fs.renameSync(file + '.tmp', file);
     return true;
   } catch (e) { addLog('Không lưu được phiên: ' + e.message); return false; }

@@ -13,7 +13,7 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-if not exist "node_modules\.ganesha-v06-installed" (
+if not exist "node_modules\.ganesha-v07-installed" (
   echo Installing Ganesha LIVE dependencies...
   call npm ci --no-audit --no-fund
   if errorlevel 1 (
@@ -21,10 +21,10 @@ if not exist "node_modules\.ganesha-v06-installed" (
     pause
     exit /b 1
   )
-  echo installed>"node_modules\.ganesha-v06-installed"
+  echo installed>"node_modules\.ganesha-v07-installed"
 )
 echo.
-echo GANESHA LIVE v0.6 - Thai interactive scene
+echo GANESHA LIVE v0.7 - Thai interactive scene
 echo Keep this window open while streaming.
 echo Open http://localhost:3000/live/control.html in your browser.
 echo.

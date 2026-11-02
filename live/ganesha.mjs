@@ -21,9 +21,9 @@ export function defaultSkin(id, mode = 'mixed') {
   return hash % 2 ? 'male' : 'female';
 }
 export function skinFromComment(text) {
-  const value = String(text || '').normalize('NFC').trim().toLocaleLowerCase();
-  if (['ชาย', 'ผู้ชาย', 'male', 'nam'].includes(value)) return 'male';
-  if (['หญิง', 'ผู้หญิง', 'female', 'nữ'].includes(value)) return 'female';
+  const value = String(text || '').normalize('NFKC').trim().toLocaleLowerCase();
+  if (['2', '๒', 'ชาย', 'ผู้ชาย', 'male', 'nam'].includes(value)) return 'male';
+  if (['1', '๑', 'หญิง', 'ผู้หญิง', 'female', 'nữ'].includes(value)) return 'female';
   return null;
 }
 

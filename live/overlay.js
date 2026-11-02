@@ -150,7 +150,11 @@ function connect() {
     if (m.t === 'settings') updateSettings(m);
     if (m.t === 'stats') updateStats(m);
     if (m.t === 'join') addViewer(m.v);
-    if (m.t === 'character') addViewer(m.v);
+    if (m.t === 'character') {
+      addViewer(m.v);
+      if (hero?.id === m.v.id) hero.skin = m.v.skin;
+      if (remoteRitual?.id === m.v.id) remoteRitual.skin = m.v.skin;
+    }
     if (m.t === 'depart') depart(m.v);
     if (m.t === 'settle') settle(m.v);
     if (m.t === 'leave') { visitors.delete(m.id); attendance(); }
@@ -399,7 +403,7 @@ function frame(now) {
   }
   if (inviteUntil <= now) {
     $('inviteText').textContent = settings.joinOnChat ? 'พิมพ์ “สาธุ” เพื่อร่วมบูชา' : 'ร่วมถวายด้วยใจศรัทธา';
-    $('inviteSub').textContent = 'เลือกตัวละคร: พิมพ์ ชาย หรือ หญิง';
+    $('inviteSub').textContent = 'พิมพ์ 1 = หญิง · 2 = ชาย';
   }
   $('invitation').classList.toggle('call-to-action', inviteUntil > now && !hero);
   ritualArt(active, t);

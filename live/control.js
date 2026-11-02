@@ -61,7 +61,7 @@ $('disconnect').onclick = () => send('disconnect');
 $('demo').onclick = () => send('demo'); $('showLive').onclick = () => send('live');
 $('chat').onclick = () => send('chat', { name: $('simName').value, text: $('simText').value, skin: $('simSkin').value });
 $('simText').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('chat').click(); } };
-for (const b of document.querySelectorAll('[data-gift]')) b.onclick = () => send('gift', { name: $('simName').value, gift: b.dataset.name, kind: b.dataset.gift, skin: $('simSkin').value, count: +$('repeat').value, diamonds: +b.dataset.unit });
+for (const b of document.querySelectorAll('[data-gift]')) b.onclick = () => send('gift', { name: $('simName').value, gift: b.dataset.name, giftId: b.dataset.id, kind: b.dataset.gift, skin: $('simSkin').value, count: +$('repeat').value, diamonds: +b.dataset.unit });
 for (const b of document.querySelectorAll('[data-fill]')) b.onclick = () => send('fill', { n: +b.dataset.fill });
 $('bots').onclick = () => send('bots', { on: !bots, pace: $('botPace').value });
 $('settingsForm').onsubmit = e => { e.preventDefault(); send('settings', { settings: readSettings() }); };

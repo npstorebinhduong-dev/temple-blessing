@@ -1,4 +1,5 @@
 // Accounting is independent of this visual queue. Basic gifts cannot evict ceremonies.
+import { MAX_RITUAL_MS } from './ritual-timing.js';
 export class RitualQueue {
   constructor({ limit = 8, maxAge = 40000, premiumLimit = 64, premiumMaxAge = 1800000 } = {}) {
     this.limit = limit; this.maxAge = maxAge; this.premiumLimit = premiumLimit; this.premiumMaxAge = premiumMaxAge;
@@ -28,7 +29,7 @@ export class RitualQueue {
       const index = firstPremium >= 0 ? firstPremium : this.pending.findIndex(eligible);
       if (index < 0) return null;
       const [message] = this.pending.splice(index, 1);
-      this.active = { ...message, beganAt: now, until: now + Math.min(24000, message.ritual.duration || 3200) };
+      this.active = { ...message, beganAt: now, until: now + Math.min(MAX_RITUAL_MS, message.ritual.duration || 4500) };
     }
     return this.active;
   }

@@ -1,11 +1,12 @@
 // Shared deterministic ceremony timeline; rendering and tests use the same poses.
+import { RITUAL_TIMING } from './ritual-timing.js';
 export const ALTAR = Object.freeze({ x: 540, y: 1160 });
 const clamp = n => Math.max(0, Math.min(1, n));
 const ease = n => { n = clamp(n); return n * n * (3 - 2 * n); };
 const lerp = (a, b, n) => a + (b - a) * ease(n);
 export function processionPose(kind, elapsedMs, from, seat, initiallySeated = true) {
   const t = Math.max(0, elapsedMs) / 1000;
-  const hold = kind === 'royal' ? 9 : 5;
+  const hold = RITUAL_TIMING[kind]?.hold ?? RITUAL_TIMING.marigold.hold;
   const standAt = 7.2 + hold, backAt = standAt + .8, sideAt = backAt + 3.8, kneelAt = sideAt + 2;
   const pose = { x: from.x, y: from.y, frame: 7, carrier: false, carrierFrame: 0, phase: 'rise', focus: 0, lift: 0, bow: 0, prop: true };
   const walk = () => { pose.frame = Math.floor(t * 7) % 4; pose.carrier = true; pose.carrierFrame = Math.floor(t * 4) % 2; };

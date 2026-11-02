@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { giftRitual, parseGiftMap } from '../gift-rituals.mjs';
+import { giftRitual, parseGiftMap, upgradeShamrockMap, RITUALS } from '../gift-rituals.mjs';
 import { createEventHandler } from '../tikfinity.mjs';
 import { Room } from '../ganesha.mjs';
 import { RitualQueue } from '../ritual-queue.js';
@@ -23,6 +23,31 @@ test('explicit IDs require correct unit price and prevent name fallback for the 
   assert.equal(giftRitual('Peach', 5, '99', map).kind, 'incense');
   assert.equal(giftRitual('localized balloon', 500, '900', map).kind, 'royal');
   for (const text of ['42=offering', '__proto__=lotus', 'foo', '42=aarti\ninvalid', '42=incense\n42=garland']) assert.throws(() => parseGiftMap(text));
+});
+test('Shamrock 9875 maps to Clover only at ten coins, including localized names and final streaks', () => {
+  for (const name of ['Shamrock', ' SHAMROCK ', 'Shamrock\u200b', 'แชมร็อก']) assert.equal(giftRitual(name, 10)?.kind, 'aarti');
+  assert.equal(giftRitual('ชื่อใหม่', 10, '9875')?.kind, 'aarti');
+  for (const coins of [1,5,100,500]) assert.equal(giftRitual('Shamrock', coins, '9875'), null);
+  for (const name of ['Rosa', 'Lucky Pig', 'Unknown gift']) assert.equal(giftRitual(name, 10, '1234'), null);
+  const seen = [];
+  const receive = createEventHandler({ gift: (id, name, gift, count, price, avatar, giftId) => seen.push({ count, price, giftId, ritual: giftRitual(gift, price, giftId) }) });
+  const data = { uniqueId: 'thai', giftName: 'Shamrock', giftId: 9875, diamondCount: 10, giftType: 1, repeatCount: 3, repeatEnd: false, msgId: 'shamrock' };
+  receive(JSON.stringify({ event: 'gift', data })); data.repeatEnd = true;
+  receive(JSON.stringify({ event: 'gift', data })); receive(JSON.stringify({ event: 'gift', data }));
+  assert.equal(seen.length, 1); assert.equal(seen[0].giftId, '9875');
+  assert.equal(seen[0].count * seen[0].price, 30); assert.equal(seen[0].ritual.kind, 'aarti');
+  assert.equal(seen[0].ritual.duration, 8000);
+});
+test('upgrading the old Clover binding preserves the other five gift mappings', () => {
+  assert.equal(upgradeShamrockMap(''), '');
+  assert.equal(upgradeShamrockMap('42=garland'), '42=garland');
+  const upgraded = parseGiftMap(upgradeShamrockMap('1=lotus\n2=incense\n42=garland\n99=aarti\n100=marigold\n500=royal'));
+  assert.equal(upgraded['9875'], 'aarti'); assert.equal(upgraded['99'], undefined);
+  assert.equal(upgraded['1'], 'lotus'); assert.equal(upgraded['2'], 'incense'); assert.equal(upgraded['42'], 'garland');
+  assert.equal(upgraded['100'], 'marigold'); assert.equal(upgraded['500'], 'royal');
+  assert.equal(giftRitual('Shamrock', 10, '9875', upgraded)?.kind, 'aarti');
+  assert.equal(giftRitual('Other ten coin gift', 10, '99', upgraded), null);
+  assert.deepEqual(Object.values(RITUALS).map(r => r.duration), [4500,5500,6000,8000,23000,28000]);
 });
 test('a 500-rose streak produces one lotus event and counts 500, including string final flags', () => {
   const result = [], room = new Room();
@@ -73,9 +98,9 @@ test('premium ceremonies survive a basic gift burst and run before waiting basic
   queue.enqueue(message('royal', 'Love Balloon', 500), 1);
   queue.enqueue(message('golden', 'Bouquet', 100), 2);
   for (let i = 0; i < 50; i++) queue.enqueue(message('basic'+i, 'Rose', 1), 3);
-  const royal = queue.tick(4000); assert.equal(royal.id, 'royal'); assert.equal(royal.until - royal.beganAt, 24000);
-  assert.equal(queue.tick(27999).id, 'royal');
-  assert.equal(queue.tick(28000).id, 'golden');
-  assert.equal(queue.tick(48000), null);
+  const royal = queue.tick(4500); assert.equal(royal.id, 'royal'); assert.equal(royal.until - royal.beganAt, 28000);
+  assert.equal(queue.tick(32499).id, 'royal');
+  assert.equal(queue.tick(32500).id, 'golden');
+  assert.equal(queue.tick(55500), null);
   queue.clear(); assert.equal(queue.dropped, 0);
 });
