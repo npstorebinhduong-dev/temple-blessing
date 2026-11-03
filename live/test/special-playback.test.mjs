@@ -17,7 +17,7 @@ test('real server holds Galaxy for actual voice, uses Thai Niwat/text once, pres
  symlinkSync(path.join(source,'node_modules'),path.join(live,'node_modules'),'junction');
  const clockFile=path.join(root,'clock.txt'),clockModule=path.join(root,'clock.mjs'),records=path.join(root,'speech.jsonl');writeFileSync(clockFile,'0');
  writeFileSync(clockModule,`import {readFileSync} from 'node:fs';Date.now=()=>Number(readFileSync(${JSON.stringify(clockFile)},'utf8'));`);
- writeFileSync(path.join(live,'fake-edge.mjs'),`import {Readable} from 'node:stream';import {appendFileSync} from 'node:fs';export const OUTPUT_FORMAT={};export class MsEdgeTTS {async setMetadata(voice){this.voice=voice;}toStream(text,options){appendFileSync(${JSON.stringify(records)},JSON.stringify({voice:this.voice,text,options})+'\\n');return {audioStream:Readable.from([Buffer.alloc(1200)])};}close(){}}`);
+ writeFileSync(path.join(live,'fake-edge.mjs'),`import {Readable} from 'node:stream';import {appendFileSync} from 'node:fs';export const OUTPUT_FORMAT={};export class MsEdgeTTS {async setMetadata(voice){this.voice=voice;}toStream(text,options){if(text==='offline test')throw new Error('offline test');appendFileSync(${JSON.stringify(records)},JSON.stringify({voice:this.voice,text,options})+'\\n');return {audioStream:Readable.from([Buffer.alloc(1200)])};}close(){}}`);
  const file=path.join(live,'server.mjs');writeFileSync(file,readFileSync(file,'utf8').replace("from 'msedge-tts'","from './fake-edge.mjs'"));
  const child=spawn(process.execPath,['--import',pathToFileURL(clockModule).href,'server.mjs'],{cwd:live,env:{...process.env,PORT:'31880',GANESHA_DATA_DIR:path.join(root,'data'),GANESHA_OFFLINE_AUDIO:'0'},stdio:'pipe'});
  const sockets=[];let ready=false,errors='';child.stdout.on('data',()=>ready=true);child.stderr.on('data',b=>errors+=b);
@@ -51,5 +51,16 @@ test('real server holds Galaxy for actual voice, uses Thai Niwat/text once, pres
  ctl('clear');await until(()=>liveWindow.messages.some(m=>m.t==='state'&&m.stats.coins===3299&&m.active===null));
  status(replay.id,'ended');await at(80000);
  const snapshot=liveWindow.messages.filter(m=>m.t==='state').at(-1);assert.equal(snapshot.active,null);assert.equal(snapshot.seating.rituals,0);
+ // A network failure must not suppress the bundled Galaxy sentence during
+ // the 30-second retry cooldown. This server test uses fixture MP3 bytes;
+ // browser verification separately decodes/plays the actual bundled audio.
+ const audioDir=path.join(root,'assets','ganesha','audio');mkdirSync(audioDir,{recursive:true});
+ writeFileSync(path.join(audioDir,'ganesha-blessing-th.mp3'),Buffer.alloc(1200));
+ ctl('say',{text:'offline test'});await until(()=>control.messages.some(m=>m.t==='log'&&m.line.includes('offline test')));
+ const count=speech().length;ctl('gift',{name:'ศิริพร',kind:'galaxy',diamonds:1000,count:1});
+ await sleep(100);await at(88000);await at(92500);
+ const offline=await until(()=>speech()[count]);assert.equal(offline.tag,'blessing');
+ assert.equal(readFileSync(records,'utf8').trim().split('\n').map(JSON.parse).filter(r=>r.voice==='th-TH-NiwatNeural').length,1);
+ ctl('clear');await sleep(100);
  assert.equal(errors,'');
 });

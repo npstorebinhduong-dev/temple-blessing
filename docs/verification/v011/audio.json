@@ -1,0 +1,637 @@
+{
+  "kind": "Actual browser MP3 playback; Edge online Niwat plus bundled Niwat blessing. Simulated gift, not TikTok LIVE.",
+  "dynamic": {
+    "src": "http://127.0.0.1:31950/live/tts/voice-1793645705513.mp3",
+    "created": 2715.6999999997206,
+    "started": 2725.7999999998137,
+    "duration": 3.072,
+    "ended": 5791.100000000093,
+    "playbackSeconds": 3.0653000000002795
+  },
+  "speech": {
+    "id": "blessing-turn-1-1793645717517",
+    "text": "ขอให้เจ้ามีจิตใจที่สงบ มีปัญญาก้าวผ่านอุปสรรค และพบกับการเริ่มต้นที่ดี",
+    "state": "ended",
+    "startedAt": 1793645722063,
+    "endedAt": 1793645728544,
+    "bannerUntil": 1793645731044
+  },
+  "audioCapture": {
+    "epoch": 1793645708.632
+  },
+  "state": {
+    "final": {
+      "version": "0.11",
+      "focusId": "",
+      "owner": null,
+      "system": "CameraController → #world",
+      "world": {
+        "scale": 0.84,
+        "x": 86.4,
+        "y": 270
+      },
+      "relative": {
+        "scale": 1,
+        "x": 0,
+        "y": 0
+      },
+      "turn": null,
+      "kind": null,
+      "before": {
+        "id": "sim_ศิริพร",
+        "x": 342,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      },
+      "actor": {
+        "id": "sim_ศิริพร",
+        "x": 342,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      },
+      "actors": [
+        {
+          "id": "sim_ศิริพร",
+          "x": 342,
+          "y": 1710,
+          "height": 257.60767298624165,
+          "width": 193.20575473968125,
+          "perspectiveHeight": 257.60767298624165,
+          "entry": 1,
+          "localScale": 1,
+          "mode": "sit"
+        }
+      ],
+      "smallGift": null,
+      "state": "wide"
+    },
+    "played": [
+      {
+        "src": "http://127.0.0.1:31950/live/tts/voice-1793645705513.mp3",
+        "created": 2715.6999999997206,
+        "started": 2725.7999999998137,
+        "duration": 3.072,
+        "ended": 5791.100000000093,
+        "playbackSeconds": 3.0653000000002795
+      },
+      {
+        "src": "http://127.0.0.1:31950/live/tts/blessing-b14092da1b5dc0085b80.mp3",
+        "created": 19227,
+        "started": 19259.799999999814,
+        "duration": null,
+        "ended": 25740.799999999814,
+        "playbackSeconds": 6.481
+      }
+    ],
+    "duckEvents": [
+      {
+        "at": 375.89999999990687,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 375.89999999990687,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 375.89999999990687,
+        "index": 2,
+        "value": 0,
+        "constant": 0.1
+      },
+      {
+        "at": 375.89999999990687,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 375.89999999990687,
+        "index": 4,
+        "value": 0,
+        "constant": 0.6
+      },
+      {
+        "at": 591.2999999998137,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 591.2999999998137,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 591.2999999998137,
+        "index": 2,
+        "value": 0,
+        "constant": 0.1
+      },
+      {
+        "at": 591.3999999999069,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 591.3999999999069,
+        "index": 4,
+        "value": 0,
+        "constant": 0.6
+      },
+      {
+        "at": 594.8999999999069,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 594.8999999999069,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 594.8999999999069,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 594.8999999999069,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 594.8999999999069,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 712.8999999999069,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 712.8999999999069,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 712.8999999999069,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 712.8999999999069,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 712.8999999999069,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 714.2999999998137,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 714.2999999998137,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 714.2999999998137,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 714.2999999998137,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 714.2999999998137,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 730.5,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 730.5,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 730.5,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 730.5,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 730.5,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 732.1000000000931,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 732.1000000000931,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 732.1000000000931,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 732.1000000000931,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 732.1000000000931,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 734.6999999997206,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 734.6999999997206,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 734.6999999997206,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 734.6999999997206,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 734.6999999997206,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 734.7999999998137,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 734.7999999998137,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 734.7999999998137,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 734.7999999998137,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 734.8999999999069,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 2715.899999999907,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 2715.899999999907,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 2715.899999999907,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 2715.899999999907,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 2715.899999999907,
+        "index": 4,
+        "value": 0.12,
+        "constant": 0.2
+      },
+      {
+        "at": 5791.199999999721,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 5791.199999999721,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 5791.199999999721,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 5791.199999999721,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 5791.199999999721,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 14714.799999999814,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 14714.799999999814,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 14714.799999999814,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 14714.799999999814,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 14714.799999999814,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 14719.100000000093,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 14719.100000000093,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 14719.100000000093,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 14719.100000000093,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 14719.100000000093,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 19226.799999999814,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 19226.899999999907,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 19226.899999999907,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 19226.899999999907,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 19226.899999999907,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      },
+      {
+        "at": 19227.100000000093,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 19227.100000000093,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 19227.100000000093,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 19227.100000000093,
+        "index": 3,
+        "value": 0.065,
+        "constant": 0.2
+      },
+      {
+        "at": 19227.100000000093,
+        "index": 4,
+        "value": 0.12,
+        "constant": 0.2
+      },
+      {
+        "at": 25740.899999999907,
+        "index": 0,
+        "value": 0.35,
+        "constant": 0.3
+      },
+      {
+        "at": 25740.899999999907,
+        "index": 1,
+        "value": 0.75,
+        "constant": 0.15
+      },
+      {
+        "at": 25740.899999999907,
+        "index": 2,
+        "value": 1,
+        "constant": 0.1
+      },
+      {
+        "at": 25740.899999999907,
+        "index": 3,
+        "value": 0,
+        "constant": 0.2
+      },
+      {
+        "at": 25740.899999999907,
+        "index": 4,
+        "value": 0.6,
+        "constant": 0.6
+      }
+    ],
+    "music": "playing",
+    "bannerHidden": true
+  },
+  "failedAudioCamera": {
+    "version": "0.11",
+    "focusId": "",
+    "owner": null,
+    "system": "CameraController → #world",
+    "world": {
+      "scale": 0.84,
+      "x": 86.4,
+      "y": 270
+    },
+    "relative": {
+      "scale": 1,
+      "x": 0,
+      "y": 0
+    },
+    "turn": null,
+    "kind": null,
+    "before": {
+      "id": "sim_ศิริพร",
+      "x": 342,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actor": {
+      "id": "sim_ศิริพร",
+      "x": 342,
+      "y": 1710,
+      "height": 257.60767298624165,
+      "width": 193.20575473968125,
+      "perspectiveHeight": 257.60767298624165,
+      "entry": 1,
+      "localScale": 1,
+      "mode": "sit"
+    },
+    "actors": [
+      {
+        "id": "sim_ศิริพร",
+        "x": 342,
+        "y": 1710,
+        "height": 257.60767298624165,
+        "width": 193.20575473968125,
+        "perspectiveHeight": 257.60767298624165,
+        "entry": 1,
+        "localScale": 1,
+        "mode": "sit"
+      }
+    ],
+    "smallGift": null,
+    "state": "wide"
+  },
+  "pageErrors": []
+}

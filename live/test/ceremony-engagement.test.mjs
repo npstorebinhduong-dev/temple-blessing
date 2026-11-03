@@ -10,7 +10,7 @@ test('both ceremonies reach the altar, kneel, lift the correct offering and retu
     const pose = ms => processionPose(kind, ms, from, seat);
     assert.equal(pose(0).phase, 'rise');
     assert.equal(pose(2000).phase, 'to-aisle');
-    assert.equal(pose(4000).x, ALTAR.x);
+    assert.equal(pose(4000).x, 540, "approach uses the open aisle before aligning to the altar");
     assert.ok(pose(4000).y > ALTAR.y && pose(4000).y < from.y);
     assert.equal(pose(6800).phase, 'kneel'); assert.equal(pose(6800).y, ALTAR.y);
     assert.equal(pose(9000).phase, 'offer'); assert.equal(pose(9000).carrierFrame, 3);

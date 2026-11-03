@@ -47,7 +47,7 @@ test('upgrading the old Clover binding preserves the other five gift mappings', 
   assert.equal(upgraded['100'], 'marigold'); assert.equal(upgraded['500'], 'royal');
   assert.equal(giftRitual('Shamrock', 10, '9875', upgraded)?.kind, 'aarti');
   assert.equal(giftRitual('Other ten coin gift', 10, '99', upgraded), null);
-  assert.deepEqual(Object.values(RITUALS).map(r => r.duration), [4500,5500,6000,8000,23000,28000,16000,20000]);
+  assert.deepEqual(['lotus','incense','garland','aarti','marigold','royal','mushika','galaxy'].map(k=>RITUALS[k].duration), [4500,5500,6000,8000,23000,28000,16000,20000]);
 });
 test('a 500-rose streak produces one lotus event and counts 500, including string final flags', () => {
   const result = [], room = new Room();

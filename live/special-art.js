@@ -55,6 +55,10 @@ export class SpecialArt {
         // within one pixel of the ear, independent of breathing and camera zoom.
         const bottom = hero.skin === 'male' ? [480,480,480,480][pose.frame] : [485,485,485,485][pose.frame];
         pen.drawImage(sprite,-w/2,-h*bottom/512+breath,w,h);
+      } else {
+        // Keep the donor visible if the optional whisper sheet fails to load.
+        const fallback=sprites.get(7,h,hero.skin);
+        if(fallback)pen.drawImage(fallback,pose.x-w/2,pose.y-h,w,h);
       }
     } else {
       const sprite = sprites.get(pose.frame,h,hero.skin); if (sprite) pen.drawImage(sprite,pose.x-w/2,pose.y-h+(pose.bob||0),w,h);

@@ -46,7 +46,7 @@
 .entrance-active .invitation{bottom:6px;left:46px;right:46px;padding:0;min-height:28px;gap:0}
 .entrance-active .invitation strong{font-size:24px;line-height:1.2}
 .entrance-active.ceremony .gift-caption{bottom:210px}
-#entranceScene{position:absolute;left:0;bottom:0;width:1080px;height:224px;z-index:1;pointer-events:none}
+#entranceScene{position:absolute;left:-102.857143px;top:1697.619048px;width:1285.714286px;height:266.666667px;z-index:1;pointer-events:none}
 
 /* v0.9: only the glass background is translucent; typography stays opaque. */
 .ranking.glass{background:rgba(24,13,19,.20);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:1px solid #dfbd796b;border-radius:12px;box-shadow:none;left:18px;width:285px;padding:12px 13px;text-shadow:0 2px 3px #120908,0 0 4px #120908}
@@ -83,3 +83,17 @@
 .ritual-wait{top:505px;left:120px;right:120px;font-size:24px;line-height:1.4;padding:5px 14px;z-index:4}.crowd-count{bottom:229px;font-size:24px}.entrance-active .ambient-badge{bottom:269px;font-size:13px}.blessing-banner{left:90px;right:90px;padding:13px 25px 16px}.blessing-banner h2{font-size:33px}.blessing-banner .recipient{font-size:27px;margin-bottom:4px}.blessing-banner #blessingText{font-size:32px;line-height:1.55}
 @media(prefers-reduced-motion:reduce){.info-panel{transition:none}}
 .panel-raised .goal,.panel-raised .identity p{visibility:hidden}.panel-raised .gift-caption{display:none}
+/* A cool night surround preserves the original statue/arm registration and
+   the floor texture. Both layers belong to #world and follow its sole camera. */
+#stage{background:linear-gradient(90deg,#060e19,#102139 45%,#081324)}
+.shrine::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#071d39bb 0%,#09264488 19%,transparent 42%,transparent 57%,#06213844 76%,#061a3188);mix-blend-mode:multiply;pointer-events:none}
+.vignette{background:linear-gradient(#061221ee,transparent 26%,transparent 81%,#07111ed9);box-shadow:inset 0 0 85px 20px #06132388}
+.info-panel{height:298px;padding:10px 12px;background:rgba(5,15,28,.20)}
+.panel-grid{grid-template-columns:minmax(0,2.25fr) minmax(0,1fr);gap:12px}
+.gift-grid{height:192px;grid-template-rows:94px 94px;gap:4px 8px}.guide-gift{grid-template-columns:64px minmax(0,1fr) auto;column-gap:5px;padding:2px}.guide-icon{width:64px;height:64px;font-size:20px}.guide-icon img{width:64px;height:64px}.guide-icon.atlas-icon{background-repeat:no-repeat;background-size:1536px 1856px}.guide-icon.icon-unavailable{color:#beae8b;border:1px dashed #cdbd8955;border-radius:8px;font-size:18px}.guide-copy{min-width:0}.guide-name{display:block;font-size:20px;font-weight:400;line-height:1.45;color:#e4d6b5}.guide-effect{display:block;font-size:30px;line-height:1.4}.guide-price{font-size:33px}.character-guide{font-size:27px}.unconfigured .guide-effect{font-size:28px}
+.info-panel .ranking .name{font-size:30px}.info-panel .ranking .coins{font-size:28px}
+.info-panel.ceremony-focus{width:240px;height:94px;padding:10px;left:18px!important;top:210px!important;transition:height .4s,width .4s}.info-panel.ceremony-focus .panel-focus{font-size:28px;line-height:1.4;inset:9px;overflow-wrap:anywhere}
+.gift-caption{display:none!important}.invitation{bottom:calc(83px + var(--safe-bottom,0px))}.crowd-count{bottom:calc(229px + var(--safe-bottom,0px))}
+.prayer-banner{position:absolute;left:180px;right:180px;top:1460px;background:#08182be8;border:1px solid #dac18488;border-radius:16px;padding:14px 20px;text-align:center;z-index:4;font-size:32px;line-height:1.65;overflow-wrap:anywhere}.prayer-banner h2{font-size:30px;margin:0;color:#e8cd8f}.prayer-banner p{margin:4px 0}.prayer-banner small{font-size:26px}.prayer-banner.prompt{top:auto;bottom:calc(260px + var(--safe-bottom,0px));font-size:27px}
+.shrine::after{display:none}.world::after{content:'';position:absolute;left:-160px;top:0;width:1400px;height:2080px;z-index:2;pointer-events:none;background:linear-gradient(180deg,#061a3199 0%,#09264444 19%,transparent 42%,transparent 57%,#06213822 76%,#061a3133)}
+.safe-top .identity{visibility:hidden}.safe-top .goal{top:calc(50px + min(var(--safe-top),120px))}

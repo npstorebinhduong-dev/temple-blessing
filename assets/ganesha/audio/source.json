@@ -1,0 +1,13 @@
+{
+  "file": "ganesha-blessing-th.mp3",
+  "provider": "Microsoft Edge online speech synthesis",
+  "voice": "th-TH-NiwatNeural",
+  "language": "th-TH",
+  "rate": "-12%",
+  "pitch": "-6Hz",
+  "text": "ขอให้เจ้ามีจิตใจที่สงบ มีปัญญาก้าวผ่านอุปสรรค และพบกับการเริ่มต้นที่ดี",
+  "durationSeconds": 6.504,
+  "sha256": "40babe32833f2e6570a7e424c2e348de4191343fad31e3712fed20317681be2d",
+  "licenseNote": "Synthesized speech for this scene. Not represented as CC0; Microsoft service terms apply. No sampled recording of a real individual.",
+  "createdAt": "2026-11-03 Asia/Saigon"
+}

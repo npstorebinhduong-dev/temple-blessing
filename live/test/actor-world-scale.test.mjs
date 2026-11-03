@@ -35,15 +35,15 @@ test('whisper moves the donor feet to the ear without enlarging the donor or cha
   assert.ok(Math.abs(WHISPER_PLACE.y-.788*h-MUSHIKA.earY)<1e-9);
   assert.equal(MUSHIKA.width,260);assert.equal(MUSHIKA.earY,979);
 });
-test('one-coin gift only draws brief donor sparks clear of the mouse; it cannot select a special ritual',()=>{
+test('one-coin gift draws a bounded table lotus clear of the mouse; it cannot select a special ritual',()=>{
   const arcs=[],pen={save(){},restore(){},beginPath(){},fill(){},arc(...a){arcs.push(a)}};
   for(const seat of seatLayout()) {
     for(const ms of [0,350,700,1399]) {
       const box=drawSmallGift(pen,seat,ms);
-      assert.ok(box.y>MUSHIKA.y+MUSHIKA.height);
+      assert.ok(box.x>MUSHIKA.x+MUSHIKA.width);
       assert.ok(arcs.every(([x,y,r])=>r<=2.5));
     }
-    assert.equal(drawSmallGift(pen,seat,1400),null);
+    assert.equal(drawSmallGift(pen,seat,4500),null);
   }
   assert.equal(giftRitual('Rose',1,'5655').kind,'lotus');
   assert.equal(giftRitual('Corgi',1,'6267'),null);

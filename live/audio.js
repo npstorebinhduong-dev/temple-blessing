@@ -52,10 +52,10 @@ export class SceneAudio {
   }
   replayMusic() { this.music?.replay(); }
   bell(kind = 'lotus') {
-    if (this.ctx?.state !== 'running' || this.settings.effectsEnabled === false) return;
+    if (this.ctx?.state !== 'running' || this.settings.effectsEnabled === false || this.effects.size>=12) return;
     const now = this.ctx.currentTime;
-    const notes = kind === 'galaxy' ? [65.4, 130.81, 196, 261.63] : kind === 'stream' ? [392, 523.25, 783.99] : kind === 'royal' ? [130.81, 196, 261.63, 392, 523.25] : ['aarti', 'marigold', 'mushika'].includes(kind) ? [196, 392, 588, 784] : [523.25, 783.99, 1046.5];
-    for (const [i, f] of notes.entries()) {
+    const notes = kind==='lamp'?[880,1320]:['incense','fragrance'].includes(kind)?[220,330]:kind==='floral'?[440,660,880]:kind==='light'?[196,392,588]:kind === 'galaxy' ? [65.4, 130.81, 196, 261.63] : kind === 'stream' ? [392, 523.25, 783.99] : kind === 'royal' ? [130.81, 196, 261.63, 392, 523.25] : ['aarti', 'marigold', 'mushika'].includes(kind) ? [196, 392, 588, 784] : [523.25, 783.99, 1046.5];
+    for (const [i, f] of notes.slice(0,12-this.effects.size).entries()) {
       const osc = this.ctx.createOscillator(), gain = this.ctx.createGain(); osc.frequency.value = f;
       gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(.18 / (i + 1), now + .015);
       gain.gain.exponentialRampToValueAtTime(.0001, now + 3 + i * .2);
@@ -65,10 +65,10 @@ export class SceneAudio {
     }
   }
   ritualCue(phase) {
-    if (this.ctx?.state !== 'running' || this.settings.effectsEnabled === false) return;
+    if (this.ctx?.state !== 'running' || this.settings.effectsEnabled === false || this.effects.size>=12) return;
     if (phase === 'receive') { this.bell('marigold'); return; }
     const notes = phase === 'gather' ? [392, 587.33, 783.99] : phase === 'reply' ? [523.25, 659.25, 783.99] : [261.63, 392, 523.25];
-    for (const [i,f] of notes.entries()) {
+    for (const [i,f] of notes.slice(0,12-this.effects.size).entries()) {
       const at=this.ctx.currentTime+i*.09, duration=phase==='light-stream'?1.55:1.1;
       const osc=this.ctx.createOscillator(),g=this.ctx.createGain();osc.type=phase==='light-stream'?'triangle':'sine';
       osc.frequency.setValueAtTime(f,at);osc.frequency.exponentialRampToValueAtTime(f*(phase==='light-stream'?2.25:1.05),at+duration);

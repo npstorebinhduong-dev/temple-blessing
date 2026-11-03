@@ -1,0 +1,28 @@
+{
+  "source": "https://github.com/kkkaoru/tiktok-gift-list-per-regison/tree/53a95d05e952a421d072f6da2148e044f9b30e87",
+  "archivePath": "results/2026-10-22/live/anonymous.png",
+  "sha256": "600d65109f1783d44cacb596bd845c601573a05a81aff68a5c9a0212e481bd70",
+  "dimensions": [
+    1536,
+    1856
+  ],
+  "cellSize": 64,
+  "columns": 24,
+  "alterations": "None. Original PNG bytes; CSS selects cells. Gift IDs do not come from pixel position.",
+  "region": "JP; not proof of availability in a Thai account",
+  "cells": {
+    "rose": 12,
+    "love_perfume_candidate": 58,
+    "perfume": 86,
+    "doughnut": 93,
+    "bouquet": 129,
+    "corgi": 221,
+    "galaxy": 458
+  },
+  "pendingIds": [
+    "lamp",
+    "fragrance",
+    "floral"
+  ],
+  "notes": "The user-mentioned ganesha_gift_reference package was unavailable in this workspace. Love Perfume candidate 919386 has not been activated."
+}

@@ -1,6 +1,7 @@
 import { Seating } from './seating.js';
 import { RitualQueue } from './ritual-queue.js';
 import { EntranceLine, entrancePosition } from './entrance-line.js';
+import { PrayerQueue } from './prayer-queue.js';
 export const DEFAULTS = Object.freeze({
   title: 'พระพิฆเนศ', subtitle: 'โอม ศรี คเณศายะ นะมะฮา',
   voice: 'th-TH-PremwadeeNeural', voiceEnabled: true, pitch: -5, rate: -8,
@@ -8,15 +9,17 @@ export const DEFAULTS = Object.freeze({
   effectsEnabled: true, effectsVolume: 75, voiceVolume: 100,
   mushikaGiftId: '6267', mushikaGiftName: '', mushikaGiftIcon: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/148eef0884fdb12058d1c6897d1e02b9~tplv-obj.webp',
   infoPanelX: 54, infoPanelY: 210,
+  safeTop:0,safeBottom:0,giftCatalog:{},
   galaxyGiftId: '11046', galaxyGiftName: '',
   galaxyGiftIcon: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/79a02148079526539f7599150da9fd28.png~tplv-obj.webp',
   cinematicZoom: true, petalMode: 'full',
   goal: 4995, giftMap: '', characterMode: 'mixed',
   idlePrompts: true, idleEverySec: 10, ambientCrowd: true, statueMotion: true, statueMotionLevel: 'clear',
 });
-export const DEMO_NAMES = ['ศิริพร', 'น้องพลอย', 'มาลี', 'ธนกฤต', 'อรทัย', 'Mi Sirijan',
-  'พิมพ์ชนก', 'ณัฐชา', 'สมพร', 'ดวงใจ', 'Kwan', 'น้ำฝน', 'มณีรัตน์', 'น้องแก้ม',
-  'Siri', 'กัญญา', 'ศุภชัย', 'May', 'รัตนา', 'นภัส', 'อรอุมา', 'น้องฟ้า', 'Ploy', 'นิดา'];
+// Synthetic Thai demonstration names; never import names from a reference LIVE.
+export const DEMO_NAMES = ['ศิริพร', 'น้องพลอย', 'มาลี', 'ธนกฤต', 'อรทัย', 'วารุณี',
+  'พิมพ์ชนก', 'ณัฐชา', 'สมพร', 'ดวงใจ', 'ขวัญ', 'น้ำฝน', 'มณีรัตน์', 'น้องแก้ม',
+  'สิริ', 'กัญญา', 'ศุภชัย', 'เมย์', 'รัตนา', 'นภัส', 'อรอุมา', 'น้องฟ้า', 'พลอย', 'นิดา'];
 export const positive = (value, max = Number.MAX_SAFE_INTEGER) => Number.isFinite(Number(value))
   ? Math.max(1, Math.min(max, Math.floor(Number(value)))) : 1;
 const nonnegative = value => Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
@@ -36,6 +39,7 @@ export function skinFromComment(text) {
 
 export class Room {
   constructor(saved = {}, { ambient = true, now = Date.now() } = {}) {
+    this.prayers=new PrayerQueue(saved.prayers);this.eventSeen=new Map(saved.eventSeen||[]);this.comboSeen=new Map(saved.comboSeen||[]);
     this.seating = new Seating({ ambient, now }); this.rituals = new RitualQueue(); this.entrance = new EntranceLine(saved.entrance); this.donors = new Map(); this.choices = new Map(saved.choices || []);
     this.seating.restore(saved.seating, now); this.rituals.restore(saved.rituals);
     this.stats = { coins: nonnegative(saved.stats?.coins), gifts: nonnegative(saved.stats?.gifts), likes: nonnegative(saved.stats?.likes) };
@@ -47,7 +51,7 @@ export class Room {
   }
   get viewers() { return this.seating.viewers; }
   find(id) { return this.seating.find(String(id)); }
-  clearScene(ambient = true) { this.seating = new Seating({ ambient }); this.rituals.clear(); this.entrance.clear(); }
+  clearScene(ambient = true) { this.seating = new Seating({ ambient }); this.rituals.clear(); this.entrance.clear(); this.prayers.clear(); }
   enter(id, name, { avatar = '', demo = false, skin, now = Date.now() } = {}) {
     const existing = this.find(id);
     if (!id || existing && existing.seatState !== 'waiting') return null;
@@ -100,5 +104,6 @@ export class Room {
     return events;
   }
   serialize() { return { stats: this.stats, donors: [...this.donors.values()], startedAt: this.startedAt,
+    prayers:this.prayers.serialize(),eventSeen:[...this.eventSeen],comboSeen:[...this.comboSeen],
     entrance: this.entrance.serialize(), seating: this.seating.serialize(), rituals: this.rituals.serialize(), choices: [...this.choices] }; }
 }

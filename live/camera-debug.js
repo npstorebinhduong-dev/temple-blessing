@@ -23,13 +23,13 @@ export class CameraDebug {
   end(controller, active, smallGift) {
     if (!this.enabled) return;
     const actor = this.actors.find(a => a.id === this.lastId) || null;
-    const data = { version: '0.10.2', focusId: controller.target, owner: controller.owner,
+    const data = { version: '0.11', focusId: controller.target, owner: controller.owner,
       system: 'CameraController → #world', world: { ...controller.current }, relative: { ...controller.relative },
       turn: active?.turn || null, kind: active?.ritual.kind || null, before: this.before, actor,
       actors: this.actors, smallGift, state: controller.reason };
     window.__cameraDebug = data;
     const n = v => Number.isFinite(v) ? v.toFixed(4) : '—', c = data.world;
-    this.panel.textContent = `DEV 0.10.2 · WORLD CAMERA\nfocus: ${data.focusId || '—'}\nowner: ${data.owner || '—'}\nsystem: CameraController → #world\nworld: s=${n(c.scale)} x=${n(c.x)} y=${n(c.y)}\nactor: ${this.lastId || '—'} / ${actor?.mode || '—'}\nlocal scale before/now: ${n(this.before?.localScale)} / ${n(actor?.localScale)}\nworld height: ${n(actor?.height)}\nperspective height: ${n(actor?.perspectiveHeight)}`;
+    this.panel.textContent = `DEV 0.11 · WORLD CAMERA\nfocus: ${data.focusId || '—'}\nowner: ${data.owner || '—'}\nsystem: CameraController → #world\nworld: s=${n(c.scale)} x=${n(c.x)} y=${n(c.y)}\nactor: ${this.lastId || '—'} / ${actor?.mode || '—'}\nlocal scale before/now: ${n(this.before?.localScale)} / ${n(actor?.localScale)}\nworld height: ${n(actor?.height)}\nperspective height: ${n(actor?.perspectiveHeight)}`;
     this.previous = new Map(this.actors.map(a => [a.id, a]));
   }
 }

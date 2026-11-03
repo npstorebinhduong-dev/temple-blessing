@@ -15,7 +15,7 @@ export function specialPose(kind, elapsedMs, from, seat, { untilMs = 20000, redu
   const t = Math.max(0, elapsedMs) / 1000, p = { ...from, frame: 7, phase: 'rise', side: false, flip: false, lean: 0, focus: 0 };
   const end = untilMs / 1000, dest = kind === 'mushika' ? WHISPER_PLACE : GALAXY_PLACE;
   const arrival = kind === 'mushika' ? 3.7 : 4.2, backAt = kind === 'mushika' ? 12.1 : end - 3;
-  const walk = () => { p.frame = Math.floor(t * 7) % 4; p.bob = reduced ? 0 : Math.sin(t * 7 * Math.PI / 2) * 1.2; };
+  const walk = () => { const stride=(Math.abs(p.x-from.x)+Math.abs(p.y-from.y))/34;p.frame=Math.floor(stride)%4;p.bob=reduced?0:Math.sin(stride*Math.PI/2)*1.2; };
   if (t < .7) p.frame = 7 - Math.min(3, Math.floor(t / .175));
   else if (t < 1.4) { p.phase = 'to-aisle'; p.x = mix(from.x, 540, (t - .7) / .7); walk(); }
   else if (t < arrival - .6) {

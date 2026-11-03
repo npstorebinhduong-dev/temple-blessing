@@ -6,16 +6,20 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
+import HttpsProxyAgent from 'https-proxy-agent';
+import { getProxyForUrl } from 'proxy-from-env';
 import { connectTikFinity, createEventHandler } from './tikfinity.mjs';
 import { RITUALS, giftRitual, parseGiftMap, upgradeShamrockMap } from './gift-rituals.mjs';
 import { DEFAULTS, DEMO_NAMES, Room, cleanName, positive, defaultSkin, skinFromComment } from './ganesha.mjs';
 import { EngagementClock, SpeechQueue, blessingForGift } from './engagement.mjs';
 import { BlessingSession, GANESHA_BLESSING, BLESSING_VOICE } from './blessing-session.js';
+import { GIFTS, giftByKind, demoId } from './gift-catalog.js';
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(DIR, '..');
 const DATA = process.env.GANESHA_DATA_DIR || path.join(DIR, 'data');
 const TTS_DIR = path.join(DIR, 'tts');
+const BLESSING_MP3 = path.join(ROOT, 'assets', 'ganesha', 'audio', 'ganesha-blessing-th.mp3');
 fs.mkdirSync(DATA, { recursive: true }); fs.mkdirSync(TTS_DIR, { recursive: true });
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '127.0.0.1';
@@ -37,6 +41,8 @@ const SETTING_RULES = {
   mushikaGiftName: v => String(v || '').normalize('NFC').slice(0, 100), galaxyGiftName: v => String(v || '').normalize('NFC').slice(0, 100),
   mushikaGiftIcon: giftIconSetting, galaxyGiftIcon: giftIconSetting,
   infoPanelX: v => clamp(v, 18, 90), infoPanelY: v => clamp(v, 140, 235),
+  safeTop:v=>clamp(v,0,260),safeBottom:v=>clamp(v,0,360),
+  giftCatalog:v=>Object.fromEntries(GIFTS.filter(g=>v?.[g.kind]).map(g=>{const m=v[g.kind];return[g.kind,{id:giftIdSetting(m.id),thai:String(m.thai||'').normalize('NFC').slice(0,100),icon:giftIconSetting(m.icon)}]})),
   petalMode: v => v === 'light' ? 'light' : 'full',
   idlePrompts: Boolean, ambientCrowd: Boolean,
   characterMode: v => ['mixed', 'male', 'female'].includes(v) ? v : 'mixed',
@@ -50,11 +56,14 @@ function giftIdSetting(v) {
 }
 function giftIconSetting(v) {
   const s = String(v || '').trim(); if (!s) return '';
+  if(/^\/assets\/ganesha\/gifts\/[a-zA-Z0-9_.-]+\.(png|webp|jpg)$/.test(s))return s;
   try { const u = new URL(s); if (u.protocol === 'https:' && !u.username && !u.password && s.length < 2048) return s; } catch {}
   throw new Error('Icon quà cần URL HTTPS từ dữ liệu TikTok. Có thể để trống.');
 }
 function giftOverrides() {
   const map = Object.create(null);
+  if(mode==='demo')for(const g of GIFTS)map[demoId(g.kind)]=g.kind;
+  for(const g of GIFTS){const id=settings.giftCatalog?.[g.kind]?.id;if(id)map[id]=g.kind;}
   if (settings.mushikaGiftId) map[settings.mushikaGiftId] = 'mushika';
   if (settings.galaxyGiftId) map[settings.galaxyGiftId] = 'galaxy';
   return Object.assign(map, parseGiftMap(settings.giftMap));
@@ -92,6 +101,7 @@ const meta = () => ({ stats: room.stats, top: room.top(), mode, goal: settings.g
 const seatingMeta = () => ({ ...room.seating.summary(), rituals: room.rituals.pending.length,
   standing: room.entrance.people.size, entryWaiting: room.entrance.waiting.size });
 const snapshot = () => ({ t: 'state', settings, viewers: [...room.viewers.values()], actors: [...room.seating.actors.values()],
+  prayerPrompts:[...room.prayers.users.keys()].map(id=>room.prayers.current(id)),
   seating: seatingMeta(), entrance: room.entrance.snapshot(), active: room.rituals.active, serverTime: Date.now(), cap: 60,
   startedAt: room.startedAt, tiktok: tiktokState, engagement: engagement.snapshot(), ...meta() });
 function addLog(message) {
@@ -135,7 +145,7 @@ function seat(id, name, avatar = '', skin) {
   seatingChanged();
   return result.viewer;
 }
-function onChat(id, name, text, avatar, skin) {
+function onChat(id, name, text, avatar, skin, timing) {
   if (!id) return;
   const chosen = skinFromComment(text) || skin, existing = room.find(id);
   if (chosen) {
@@ -148,13 +158,23 @@ function onChat(id, name, text, avatar, skin) {
   } else if (settings.joinOnChat) seat(id, name, avatar, chosen);
   if (room.entrance.update(id, { name: cleanName(name), skin: chosen || undefined })) entranceChanged();
   broadcast({ t: 'chat', id: String(id), name: cleanName(name), text: String(text || '').slice(0, 160) });
+  const prayer=room.prayers.comment(id,text,timing);
+  if(prayer){room.rituals.enqueue(prayer,Date.now());broadcast({t:'prayer-prompt',grant:room.prayers.current(id)});seatingChanged();if(mode==='live')saveSoon();}
 }
-function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoKind, skin, giftIcon = '') {
+function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', unused, skin, giftIcon = '') {
   if (!id) return;
   id = String(id); const v = seat(id, name, avatar, skin);
   const values = room.gift(id, name, count, unitCoins);
-  const ritual = mode === 'demo' && Object.hasOwn(RITUALS, demoKind || '') && RITUALS[demoKind].unitCoins === values.unitCoins
-    ? RITUALS[demoKind] : giftRitual(giftName, values.unitCoins, giftId, giftOverrides());
+  const ritual = giftRitual(giftName, values.unitCoins, giftId, giftOverrides());
+  if(mode==='live'&&ritual) {
+    const old=settings.giftCatalog[ritual.kind]||{},metadata={...old,id:String(giftId)};
+    if(/\p{Script=Thai}/u.test(giftName))metadata.thai=String(giftName).normalize('NFC').slice(0,100);
+    if(giftIcon)try{metadata.icon=giftIconSetting(giftIcon);}catch{}
+    if(JSON.stringify(metadata)!==JSON.stringify(old)){
+      settings.giftCatalog={...settings.giftCatalog,[ritual.kind]:metadata};
+      broadcast({t:'gift-guide',settings:{giftCatalog:settings.giftCatalog}});
+    }
+  }
   // Learn display metadata only from a matching real event with a Thai name.
   // This never guesses an unknown 299-coin gift from its price.
   if (mode === 'live' && ['galaxy', 'mushika'].includes(ritual?.kind) && /\p{Script=Thai}/u.test(giftName) && !settings[`${ritual.kind}GiftName`]) {
@@ -167,7 +187,9 @@ function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoK
   const blessing = ritual?.kind === 'galaxy' ? GANESHA_BLESSING : blessingForGift(v?.name || name, ritual?.kind, room.stats.gifts);
   const message = { t: 'gift', id, name: cleanName(name), skin: v?.skin, giftName: String(giftName || 'ของขวัญ').slice(0, 80), giftId: String(giftId), ...values, ritual, blessing, ...engagement.snapshot() };
   broadcast(message); statsChanged();
-  if (ritual) {
+  if (ritual?.kind==='prayer') {
+    const grant=room.prayers.grant(message);broadcast({t:'prayer-prompt',grant});
+  } else if (ritual) {
     room.rituals.enqueue(message, Date.now());
     broadcast({ t: 'ritual-wait', name: message.name, queued: room.rituals.pending.length });
   }
@@ -179,7 +201,17 @@ function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', demoK
 function onLike(id, n) { n = positive(n, 100000); room.stats.likes += n; broadcast({ t: 'like', id, n }); statsChanged(); }
 function onFollow(id, name) { broadcast({ t: 'follow', id, name: cleanName(name) }); }
 const eventHandler = () => createEventHandler({ chat: onChat, gift: onGift, like: onLike, follow: onFollow,
-  member: onMember });
+  member: onMember, seen:room.eventSeen,combos:room.comboSeen });
+let demoSequence=0;
+function dispatchDemo(event,m={}) {
+  const name=cleanName(m.name||'ศิริพร'),id=m.uniqueId||'sim_'+name;
+  if(['male','female'].includes(m.skin))room.choices.set(id,m.skin);
+  const g=giftByKind(m.kind);
+  const data={uniqueId:id,nickname:name,msgId:`demo-${Date.now()}-${++demoSequence}`,comment:m.text||'สาธุ',
+    giftName:m.gift||g?.name||'Demo',giftId:m.giftId||g?.id||(g?demoId(g.kind):''),
+    giftType:1,repeatEnd:true,repeatCount:m.count||1,diamondCount:m.diamonds||g?.coins||1};
+  eventHandler()(JSON.stringify({event,data}));
+}
 
 // Voice failures never block gifts. Idle speech yields immediately to a donor.
 let ttsBusy = false, ttsEpoch = 0, currentTTS = null, retrySpeechAt = 0, speechSequence = 0;
@@ -188,7 +220,8 @@ const ttsQueue = new SpeechQueue();
 const offlineAudio = process.env.GANESHA_OFFLINE_AUDIO === '1';
 const esc = s => String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
 function say(text, tag = 'manual', id = `speech-${++speechSequence}`) {
-  if (!settings.voiceEnabled || offlineAudio || Date.now() < retrySpeechAt) return false;
+  const localBlessing = tag === 'blessing' && fs.existsSync(BLESSING_MP3);
+  if (!settings.voiceEnabled || offlineAudio || (!localBlessing && Date.now() < retrySpeechAt)) return false;
   if (tag !== 'blessing' && room.rituals.active?.ritual.kind === 'galaxy') return false;
   if (tag !== 'idle' && currentTTS?.tag === 'idle') currentTTS.cancel();
   if (tag === 'idle' && (speechBusy() || !speechListeners().length)) return false;
@@ -202,7 +235,11 @@ async function pumpTTS() {
   if (ttsBusy || !ttsQueue.length) return;
   ttsBusy = true;
   const job = ttsQueue.shift(), { text, epoch, tag, id } = job;
-  const tts = new MsEdgeTTS(); let timer, cancelReject;
+  // Edge uses a WebSocket; ws does not automatically honor HTTPS_PROXY.
+  // Respect the host's proxy/NO_PROXY policy, while normal Windows installs
+  // without a configured proxy continue to connect directly.
+  const speechProxy = getProxyForUrl('https://speech.platform.bing.com');
+  const tts = new MsEdgeTTS({ agent: speechProxy ? new HttpsProxyAgent(speechProxy) : undefined }); let timer, cancelReject;
   const cancelled = new Promise((_, reject) => { cancelReject = reject; });
   currentTTS = { tag, cancel: () => { job.cancelled = true; cancelReject(new Error('cancelled')); try { tts.close(); } catch {} } };
   try {
@@ -211,8 +248,7 @@ async function pumpTTS() {
     const cachePrefix = tag === 'blessing' ? 'blessing' : 'idle';
     const cacheFile = path.join(TTS_DIR, `${cachePrefix}-${cacheKey}.mp3`);
     const operation = (async () => {
-      const prerecorded = path.join(ROOT, 'assets', 'ganesha', 'audio', 'ganesha-blessing-th.mp3');
-      if (tag === 'blessing' && fs.existsSync(prerecorded)) return fs.readFileSync(prerecorded);
+      if (tag === 'blessing' && fs.existsSync(BLESSING_MP3)) return fs.readFileSync(BLESSING_MP3);
       if (['idle', 'blessing'].includes(tag) && fs.existsSync(cacheFile)) return fs.readFileSync(cacheFile);
       await tts.setMetadata(voiceSettings.voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
       const { audioStream } = tts.toStream(esc(text), { pitch: `${voiceSettings.pitch >= 0 ? '+' : ''}${voiceSettings.pitch}Hz`, rate: `${voiceSettings.rate >= 0 ? '+' : ''}${voiceSettings.rate}%` });
@@ -268,6 +304,7 @@ function advanceBlessing(now) {
   }
 }
 setInterval(() => {
+  for(const prayer of room.prayers.expire()) {room.rituals.enqueue(prayer,Date.now());broadcast({t:'prayer-prompt',grant:room.prayers.current(prayer.id)});if(mode==='live')saveSoon();}
   advanceBlessing(Date.now());
   for (const event of room.advance(Date.now())) {
     if (event.t === 'ritual') {
@@ -351,7 +388,7 @@ function setBots(on, pace) {
     else if (r < .7) onLike(v.id, 3);
     else {
       const [name, kind] = [['Rose', 'lotus'], ['Peach', 'incense'], ['OK', 'garland'], ['Clover', 'aarti'], ['Bouquet', 'marigold'], ['Love Balloon', 'royal']][Math.floor(Math.random() * 6)];
-      onGift(v.id, v.name, name, 1, RITUALS[kind].unitCoins, '', '', kind);
+      dispatchDemo('gift',{uniqueId:v.id,name:v.name,gift:name,kind});
     }
   }, { slow: 4500, mid: 2000, fast: 650 }[pace] || 2000);
   broadcast({ t: 'bots', on: true }, 'control');
@@ -363,18 +400,18 @@ function onControl(m) {
     case 'disconnect': disconnectSource(); break;
     case 'demo': startDemo(); break;
     case 'live': disconnectSource(); activate('live'); break;
-    case 'chat': onChat('sim_' + cleanName(m.name), m.name, m.text || 'สาธุ', '', m.skin); break;
-    case 'gift': onGift('sim_' + cleanName(m.name), m.name, m.gift || 'Demo', m.count, m.diamonds, '', m.giftId, m.kind, m.skin); break;
+    case 'chat': dispatchDemo('chat',m); break;
+    case 'gift': dispatchDemo('gift',m); break;
     case 'member':
       if (!settings.joinOnEnter) throw new Error('Bật Người vừa vào phòng đứng xếp hàng ở mép dưới rồi lưu cấu hình.');
-      onMember('sim_' + cleanName(m.name), m.name, '', m.skin); break;
+      dispatchDemo('member',m); break;
     case 'entry-fill':
       if (!settings.joinOnEnter) throw new Error('Bật Người vừa vào phòng đứng xếp hàng ở mép dưới rồi lưu cấu hình.');
-      for (let i = 0; i < positive(m.n, 500); i++) onMember(`entry_demo_${i}`, `${DEMO_NAMES[i % DEMO_NAMES.length]} ${Math.floor(i / DEMO_NAMES.length) + 1}`);
+      for (let i = 0; i < positive(m.n, 500); i++) dispatchDemo('member',{uniqueId:`entry_demo_${i}`,name:`${DEMO_NAMES[i % DEMO_NAMES.length]} ${Math.floor(i / DEMO_NAMES.length) + 1}`});
       break;
     case 'burst':
-      for (const [i, kind] of ['mushika', 'galaxy', 'lotus', 'galaxy', 'mushika'].entries()) {
-        onGift(`sim_${cleanName(m.name)}`, m.name, `DEMO ${kind}`, i === 2 ? 3 : 1, RITUALS[kind].unitCoins, '', '', kind, m.skin);
+      for (const [i, kind] of ['lotus','mushika','light','lotus','galaxy','fragrance','royal'].entries()) {
+        dispatchDemo('gift',{name:i%2?DEMO_NAMES[i]:m.name,kind,count:i===3?3:1,skin:m.skin});
       }
       break;
     case 'demo-reset': startDemo(); break;

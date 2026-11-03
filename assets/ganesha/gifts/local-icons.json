@@ -1,0 +1,80 @@
+{
+  "alterations": "None; original TikTok CDN bytes",
+  "rights": "TikTok artwork; not project MIT or CC0",
+  "icons": [
+    {
+      "file": "rose_0001.webp",
+      "id": 5655,
+      "name": "Rose",
+      "coins": 1,
+      "source": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/eba3a9bb85c33e017f3648eaf88d7189~tplv-obj.webp",
+      "sha256": "6a93376be38ca1f34569ea6c6910a3dda10b26de6ff610927b43091b6b244cce",
+      "catalog": "WaGi-Coding d402f8673e53e3b73204dd3bfe1bf82b625749a5"
+    },
+    {
+      "file": "perfume_0020.webp",
+      "id": 5658,
+      "name": "Perfume",
+      "coins": 20,
+      "source": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/20b8f61246c7b6032777bb81bf4ee055~tplv-obj.webp",
+      "sha256": "01b8e27db815580f607acd77663e161349fb48562d1dfa5c37a4a6b51dda1483",
+      "catalog": "WaGi-Coding d402f8673e53e3b73204dd3bfe1bf82b625749a5"
+    },
+    {
+      "file": "doughnut_0030.webp",
+      "id": 5879,
+      "name": "Doughnut",
+      "coins": 30,
+      "source": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/4e7ad6bdf0a1d860c538f38026d4e812~tplv-obj.webp",
+      "sha256": "9fad2d8b794433be0d3cfb3b4bb0aa2b97ea86ff429ed4aa171007b9bfbcdf82",
+      "catalog": "WaGi-Coding d402f8673e53e3b73204dd3bfe1bf82b625749a5"
+    },
+    {
+      "file": "corgi_0299.webp",
+      "id": 6267,
+      "name": "Corgi",
+      "coins": 299,
+      "source": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/148eef0884fdb12058d1c6897d1e02b9~tplv-obj.webp",
+      "sha256": "07de22613a5f565d91195d22732d82bb054c771495762e64f0429a6f8eea771e",
+      "catalog": "WaGi-Coding d402f8673e53e3b73204dd3bfe1bf82b625749a5"
+    },
+    {
+      "file": "galaxy_1000.webp",
+      "id": 11046,
+      "name": "Galaxy",
+      "coins": 1000,
+      "source": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/79a02148079526539f7599150da9fd28.png~tplv-obj.webp",
+      "sha256": "7990802c6f7170507cdda33c5c4a54af5662dd00ec8e17c46c84eb0c8f002486",
+      "catalog": "WaGi-Coding d402f8673e53e3b73204dd3bfe1bf82b625749a5"
+    },
+    {
+      "file": "peach_0005.webp",
+      "id": 14786,
+      "name": "Peach",
+      "coins": 5,
+      "source": "https://p16-webcast.tiktokcdn.com/img/alisg/webcast-sg/resource/ff861a220649506452e3dc35c58266ea.png~tplv-obj.webp",
+      "sha256": "ed7e930a27bc59b697441013b130baddf90e65fea61c81629be73e8b613b6ae7",
+      "catalog": "WaGi-Coding d402f8673e53e3b73204dd3bfe1bf82b625749a5"
+    },
+    {
+      "file": "bouquet_0100.webp",
+      "id": "10994",
+      "name": "ブーケ",
+      "coins": 100,
+      "source": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/1bdf0b38142a94af0f71ea53da82a3b1.png~tplv-obj.webp",
+      "sha256": "8e770782df27fc1cfc51d5c161978113779023cfa76ba4d811da328e98f32cf8",
+      "catalog": "kkkaoru JP anonymous 53a95d05e952a421d072f6da2148e044f9b30e87",
+      "liveEnabled": true
+    },
+    {
+      "file": "love_perfume_candidate_0005.webp",
+      "id": "919386",
+      "name": "愛の香り",
+      "coins": 5,
+      "source": "https://p16-webcast.tiktokcdn.com/img/alisg/webcast-sg/resource/374430f1a9035c2f78ab0f918bf5df40.png~tplv-obj.webp",
+      "sha256": "f330a0fb7cf270b09a351f9420ba2662e37d7dbd1ab6655d800cde7900041e8a",
+      "catalog": "kkkaoru JP anonymous 53a95d05e952a421d072f6da2148e044f9b30e87",
+      "liveEnabled": false
+    }
+  ]
+}

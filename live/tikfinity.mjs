@@ -1,8 +1,7 @@
 import WebSocket from 'ws';
 
 // TikFinity Desktop WebSocket API: { event, data }.
-export function createEventHandler({ chat, gift, member, like, follow }) {
-  const seen = new Map();
+export function createEventHandler({ chat, gift, member, like, follow, seen = new Map(), combos = new Map() }) {
   return raw => {
     let message;
     try { message = JSON.parse(String(raw)); } catch { return; }
@@ -18,13 +17,30 @@ export function createEventHandler({ chat, gift, member, like, follow }) {
     if (event === 'gift' && Number(d.giftType) === 1 && ![true, 1, '1', 'true'].includes(d.repeatEnd)) return;
     const now = Date.now();
     for (const [key, time] of seen) if (now - time > 300000) seen.delete(key);
-    const key = d.msgId ? `${event}:${id}:${d.msgId}` : null;
+    const msgId=d.msgId??d.messageId;
+    const group=d.groupId??d.repeatId??d.giftComboId;
+    // Some bridges retain the transport message ID while advancing a final
+    // combo total. The group ledger below still counts only the new delta.
+    const revision=event==='gift'&&Number(d.giftType)===1&&group?`:${d.repeatCount}`:'';
+    const key = msgId ? `${event}:${id}:${msgId}${revision}` : null;
     if (key && seen.has(key)) return;
     if (key) { seen.set(key, now); if (seen.size > 10000) seen.delete(seen.keys().next().value); }
     const positive = (v, max) => Number.isFinite(Number(v)) ? Math.max(1, Math.min(max, Math.floor(Number(v)))) : 1;
-    if (event === 'chat') chat?.(String(id), name, String(d.comment || ''), avatar);
+    if (event === 'chat') {
+      const stamp=Number(d.createTime??d.timestamp??d.common?.createTime);
+      const sentAt=stamp>0?(stamp<1e12?stamp*1000:stamp):now;
+      chat?.(String(id), name, String(d.comment || ''), avatar, undefined, {sentAt,now});
+    }
     if (event === 'gift') {
-      const args = [String(id), name, String(d.giftName || 'ของขวัญ'), positive(d.repeatCount, 9999), positive(d.diamondCount, 50000), avatar, String(d.giftId ?? d.gift?.id ?? '')];
+      const giftId=String(d.giftId ?? d.gift?.id ?? '');
+      let count=positive(d.repeatCount,9999);
+      if(Number(d.giftType)===1&&group) {
+        for(const [k,v] of combos)if(now-v.at>600000)combos.delete(k);
+        const k=`${id}:${giftId}:${group}`,old=combos.get(k)?.count||0,final=count;
+        count=Math.max(0,final-old);if(!count)return;
+        combos.set(k,{count:final,at:now});if(combos.size>10000)combos.delete(combos.keys().next().value);
+      }
+      const args = [String(id), name, String(d.giftName || 'ของขวัญ'), count, positive(d.diamondCount, 50000), avatar, giftId];
       const icon = d.giftPictureUrl || d.gift?.image?.url_list?.[0] || d.extendedGiftInfo?.image?.url_list?.[0];
       if (icon) args.push(undefined, undefined, icon);
       gift?.(...args);

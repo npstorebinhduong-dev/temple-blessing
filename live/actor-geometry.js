@@ -7,7 +7,14 @@ export function actorHeight(y, density = ACTOR_DENSITY) {
 }
 export function actorGeometry(person, pose = person, seconds = Infinity) {
   const perspectiveHeight = actorHeight(pose.y, person.seat?.density ?? ACTOR_DENSITY);
-  const entry = person.entryStart == null ? 1 : Math.max(0, Math.min(1, (seconds - person.entryStart) / 2));
-  const height = 128 + (perspectiveHeight - 128) * entry;
-  return { height, width: height * .75, perspectiveHeight, entry };
+  return { height: perspectiveHeight, width: perspectiveHeight * .75, perspectiveHeight, entry: 1 };
+}
+export function entryWorldPoint(screenPoint, camera) {
+  // Queue anchors are authored in the resting viewport and converted once to
+  // world coordinates. The queue and full actor then share the world camera.
+  // Align the emerging head with its previous row, letting the crowd mask the body.
+  const headY = screenPoint.layer === 3 ? 1796 : 1698 + (screenPoint.layer || 0) * 34;
+  let y = (headY - camera.y) / camera.scale + 280;
+  for (let i=0;i<5;i++) y = (headY - camera.y) / camera.scale + actorHeight(y) * .975;
+  return { x: (screenPoint.x - camera.x) / camera.scale, y };
 }

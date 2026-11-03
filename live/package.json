@@ -1,6 +1,6 @@
 {
   "name": "ganesha-live-th",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "private": true,
   "type": "module",
   "description": "Ganesha interactive LIVE scene for Thai audiences",
@@ -11,7 +11,9 @@
   "dependencies": {
     "msedge-tts": "2.1.1",
     "tiktok-live-connector": "2.5.0",
-    "ws": "8.18.0"
+    "ws": "8.18.0",
+    "https-proxy-agent": "5.0.1",
+    "proxy-from-env": "2.1.0"
   },
   "engines": {
     "node": ">=24"

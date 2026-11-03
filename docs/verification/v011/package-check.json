@@ -1,0 +1,8 @@
+{
+  "install": "npm ci --no-audit --no-fund: 73 packages installed successfully in extracted package",
+  "tests": "npm test: 65 passed, 0 failed",
+  "codeAssetHashCount": 96,
+  "allCodeAndAssetHashesMatchTestedExtractedPackage": true,
+  "windowsLauncher": "Node >=24 checked; dependency marker v011; Windows/OBS execution still needs user hardware",
+  "date": "2026-11-03 Asia/Saigon"
+}

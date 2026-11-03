@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>พระพิฆเนศ · Ganesha LIVE</title>
+<title>พระพิฆเนศ · พิธีบูชา</title>
 <link rel="stylesheet" href="/live/ganesha.css">
 </head>
 <body class="broadcast">
@@ -10,13 +10,13 @@
   <div id="world" class="world">
     <div class="shrine"></div>
     <canvas id="scene" width="1080" height="1920" aria-label="ผู้ร่วมบูชา"></canvas>
+    <canvas id="entranceScene" width="1080" height="224" aria-label="ผู้มาใหม่" hidden></canvas>
   </div>
   <canvas id="nameScene" width="1080" height="1920" aria-hidden="true"></canvas>
   <div class="vignette"></div>
-  <canvas id="entranceScene" width="1080" height="224" aria-label="ผู้มาใหม่" hidden></canvas>
   <canvas id="celebration" width="1080" height="1920" aria-hidden="true"></canvas>
   <header class="identity">
-    <div class="eyebrow"><span></span> GANESHA <span></span></div>
+    <div class="eyebrow"><span></span> พระพิฆเนศ <span></span></div>
     <h1 id="title">พระพิฆเนศ</h1>
     <p id="subtitle">โอม ศรี คเณศายะ นะมะฮา</p>
   </header>
@@ -29,6 +29,8 @@
     <p class="panel-focus">✧ พรจากพระพิฆเนศ ✧</p>
   </aside>
   <div id="ritualWait" class="ritual-wait" hidden aria-live="polite"></div>
+  <section id="prayerBanner" class="prayer-banner" hidden aria-live="polite"><h2>คำอธิษฐาน</h2><small id="prayerName"></small><p id="prayerText"></p></section>
+  <div id="prayerPrompt" class="prayer-banner prompt" hidden></div>
   <section id="blessingBanner" class="blessing-banner" hidden aria-live="polite">
     <h2>✧ พรจากพระพิฆเนศ ✧</h2><p id="blessingName" class="recipient"></p><p id="blessingText"></p><span class="banner-lotus" aria-hidden="true"><svg viewBox="0 0 60 32"><path d="M30 29C15 17 22 8 30 2C38 8 45 17 30 29ZM30 29C13 29 5 21 3 11C17 11 27 17 30 29ZM30 29C47 29 55 21 57 11C43 11 33 17 30 29Z"/></svg></span>
   </section>
@@ -36,8 +38,8 @@
   <div id="gift" class="gift-caption" hidden aria-live="polite"><span id="giftIcon"></span><div><small id="giftLabel"></small><strong id="giftName"></strong></div><b id="giftCount"></b></div>
   <div class="floor-rule"></div>
   <footer id="invitation" class="invitation"><span class="lotus-mark">✺</span><div><strong id="inviteText">ร่วมถวายด้วยใจศรัทธา</strong><small id="inviteSub">พิมพ์ 1 = หญิง · 2 = ชาย</small></div><span class="lotus-mark">✺</span></footer>
-  <div class="session-strip"><span id="attendance">0 คนร่วมบูชา</span><span>พระพิฆเนศ · GANESHA</span><span id="hearts">♡ 0</span></div>
-  <span id="demoBadge" class="demo-badge">DEMO · ภาพตัวอย่าง</span>
+  <div class="session-strip"><span id="attendance">0 คนร่วมบูชา</span><span>พระพิฆเนศ</span><span id="hearts">♡ 0</span></div>
+  <span id="demoBadge" class="demo-badge">ภาพตัวอย่าง</span>
   <span id="ambientBadge" class="ambient-badge" hidden>บรรยากาศจำลอง</span>
   <div id="connection" class="connection" hidden>กำลังเชื่อมต่อ…</div>
   <div id="assetError" class="asset-error" hidden></div>

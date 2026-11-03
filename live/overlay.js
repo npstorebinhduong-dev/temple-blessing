@@ -1,4 +1,4 @@
-import { seatLayout, exitPose } from './seating.js';
+import { seatLayout, exitPose, arrivalPose } from './seating.js';
 import { actorPhase, devotionPose } from './devotion.js';
 import { ShrineArms } from './shrine-arms.js';
 import { CharacterSprites } from './character-sprites.js';
@@ -9,12 +9,14 @@ import { RoyalPetals, PetalPainter } from './royal-petals.js';
 import { entrancePosition } from './entrance-line.js';
 import { ShoulderCrowd } from './shoulder-crowd.js';
 import { InfoPanel } from './info-panel.js';
-import { screenRect } from './scene-layout.js';
+import { screenRect, SCENE_VIEW } from './scene-layout.js';
 import { Nameplates } from './nameplates.js';
 import { SpecialArt } from './special-art.js';
 import { specialPose, smooth, MUSHIKA } from './special-rituals.js';
-import { actorGeometry } from './actor-geometry.js';
+import { actorGeometry, entryWorldPoint } from './actor-geometry.js';
 import { drawSmallGift } from './small-gift-effect.js';
+import { drawStations, OFFERING } from './ceremony-stations.js';
+import { stationPose, drawGarland, drawTray } from './station-ritual.js';
 import { CameraDebug } from './camera-debug.js';
 const $ = id => document.getElementById(id);
 const setText = (id, text) => { const el = $(id); if (el.textContent !== text) el.textContent = text; };
@@ -61,8 +63,9 @@ let statueTime = 0;
 document.fonts.addEventListener('loadingdone', () => { nameplates.cache.clear(); crowd.tiles.clear(); });
 const seats = seatLayout(), cap = 60;
 let mode = null, settings = {}, last = performance.now(), lastRitual = null, remoteRitual = null;
+let nextFrameAt = last;
 let hero = null, lastGiftAt = Date.now(), inviteUntil = 0, nextGolden = 0, waiting = 0;
-let renderedFrames = 0;
+let renderedFrames = 0, prayerPrompt = null;
 let frameMs = [], lastSpecialPhase = '', waitingNoticeUntil = 0;
 const numbers = new Intl.NumberFormat('en-US');
 const characterSprites = new CharacterSprites(images);
@@ -87,11 +90,13 @@ function addViewer(p, instant = false) {
   }
   const phase = actorPhase(p.id), now = performance.now() / 1000;
   const entryFrom = p.entryFrom || (entrance.has(p.id) ? entrancePosition(entrance.get(p.id).lineSlot) : null);
+  const entryPoint = entryFrom ? entryWorldPoint(entryFrom, SCENE_VIEW) : null;
   if (!instant && (p.entryFrom || entrance.has(p.id))) crowd.promote({ ...entrance.get(p.id), ...p }, performance.now());
   entrance.delete(p.id); crowd.update([...entrance.values()]); entranceStatus();
-  const v = { ...p, seat: seats[p.slot - 1], x: entryFrom?.x ?? 540, y: entryFrom?.y ?? 1990, state: instant || reduced ? 'sit' : 'walk',
+  const v = { ...p, seat: seats[p.slot - 1], x: entryPoint?.x ?? 540, y: entryPoint?.y ?? 2090, state: instant || reduced ? 'sit' : 'walk',
     entryStart: entryFrom && !instant && !reduced ? now : null,
     elapsed: 0, step: 0, glow: 0, phase: phase * 6.28, bowAt: now - phase * 29 };
+  v.arrivalOrigin = { x:v.x,y:v.y }; v.arrivalAt = now;
   visitors.set(p.id, v);
   if (v.state === 'sit' && v.seat) { v.x = v.seat.x; v.y = v.seat.y; }
   if (p.seatState === 'leaving') depart(p);
@@ -187,7 +192,7 @@ function state(m) {
   canvas.dataset.ceremonyPhase = ''; canvas.dataset.ceremonySkin = '';
   $('gift').hidden = true; stage.classList.remove('ceremony'); audio.clear();
   lastGiftAt = m.engagement?.lastGiftAt || Date.now(); inviteUntil = 0;
-  mode = m.mode; settings = m.settings;
+  mode = m.mode; settings = m.settings; prayerPrompt=m.prayerPrompts?.at(-1)||null;
   giftGuide();
   for (const person of m.actors) addViewer(person, true);
   receiveEntrance(m.entrance);
@@ -239,7 +244,7 @@ function connect() {
     if (m.t === 'ritual-wait') {
       $('ritualWait').textContent = `${m.name} · อยู่ในคิวบูชา (${m.queued})`; $('ritualWait').hidden = false; waitingNoticeUntil = performance.now() + 4500;
     }
-    if (m.t === 'chat') { const v = visitors.get(m.id); if (v) { v.bubble = { text: m.text, until: performance.now() + 4000 }; v.glow = .35; } }
+    if(m.t==='prayer-prompt')prayerPrompt=m.grant;
     if (m.t === 'gift') {
       lastGiftAt = m.lastGiftAt || Date.now(); inviteUntil = 0; audio.giftPriority();
       const v = visitors.get(m.id); if (v) { v.coins = m.total; v.glow = 1; }
@@ -279,48 +284,21 @@ function lotus(x, y, scale, time) {
   ctx.fillStyle = '#ffdf86'; ctx.beginPath(); ctx.ellipse(0, 5, 23, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 }
 function ritualArt(active, now, t) {
-  if (!active || active.ritual.procession) return;
-  if (active.ritual.kind === 'lotus') return drawSmallGift(ctx, visitors.get(active.id), now - active.beganAt);
-  const progress = (now - active.beganAt) / (active.until - active.beganAt);
-  const fade = Math.min(1, progress * 7, (1 - progress) * 7); ctx.save(); ctx.globalAlpha = Math.max(0, fade);
-  const x = 540, y = 1015, kind = active.ritual.kind;
-  const halo = ctx.createRadialGradient(x, 720, 20, x, 720, 450); halo.addColorStop(0, '#ffd15e00'); halo.addColorStop(.65, '#ffd15e1a'); halo.addColorStop(1, '#ffd15e00');
-  ctx.fillStyle = halo; ctx.fillRect(80, 260, 920, 920);
-  if (kind === 'incense') {
-    ctx.lineCap = 'round';
-    for (let i = -1; i <= 1; i++) {
-      const px = x + i * 28, py = y - 140 + Math.abs(i) * 18;
-      ctx.strokeStyle = '#b66b36'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(px, y); ctx.lineTo(px, py); ctx.stroke();
-      ctx.fillStyle = '#ffc88b'; ctx.beginPath(); ctx.arc(px, py, 5, 0, 6.28); ctx.fill();
-      ctx.strokeStyle = '#f2e7d875'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px, py);
-      ctx.bezierCurveTo(px + 30 * Math.sin(t), py - 45, px - 25, py - 90, px + Math.sin(t * .7) * 36, py - 150); ctx.stroke();
-    }
-    ctx.fillStyle = '#ce9f43'; ctx.beginPath(); ctx.ellipse(x, y, 65, 19, 0, 0, Math.PI * 2); ctx.fill();
-  }
-  if (kind === 'garland') {
-    for (let i = 0; i < 40; i++) {
-      const a = i / 40 * Math.PI * 2; ctx.fillStyle = i % 6 < 2 ? '#eca39c' : '#fff0c9';
-      ctx.beginPath(); ctx.arc(x + Math.cos(a) * 77, y - 90 + Math.sin(a) * 106, 10, 0, Math.PI * 2); ctx.fill();
-    }
-    lotus(x, y + 15, .65, t);
-  }
-  if (kind === 'aarti') {
-    const px = x + Math.sin(t * 1.2) * 60, py = y - 40 + Math.cos(t * 1.2) * 15;
-    ctx.fillStyle = '#dba33e'; ctx.beginPath(); ctx.ellipse(px, py, 70, 18, 0, 0, Math.PI * 2); ctx.fill();
-    const g = ctx.createRadialGradient(px, py - 45, 1, px, py - 45, 100); g.addColorStop(0, '#fff8cfbb'); g.addColorStop(.3, '#ffc65f88'); g.addColorStop(1, '#ff943000'); ctx.fillStyle = g; ctx.fillRect(px - 100, py - 145, 200, 200);
-    for (let i = -1; i <= 1; i++) { ctx.fillStyle = i === 0 ? '#fff0af' : '#ffc875'; ctx.beginPath(); ctx.ellipse(px + i * 25, py - 25 - Math.sin(t * 8 + i) * 5, 9, 28, .15 * Math.sin(t * 7), 0, Math.PI * 2); ctx.fill(); }
-  }
-  ctx.restore();
+  if(!active||active.ritual.procession)return null;
+  const kind=active.ritual.kind,elapsed=now-active.beganAt;
+  if(kind==='lotus')return drawSmallGift(ctx,visitors.get(active.id),elapsed,lotus);
+  ctx.save();ctx.globalAlpha=Math.max(0,Math.min(1,elapsed/650,(active.until-now)/650));
+  if(kind==='garland')drawGarland(ctx,OFFERING.x,OFFERING.y-29,27);
+  if(kind==='aarti')drawTray(ctx,OFFERING.x,OFFERING.y-5,t);
+  ctx.restore();return null;
 }
 function drawViewer(v, dt, t, active) {
   if (!v.seat || hero?.id === v.id) return;
   const seat = v.seat; let frame = 7;
   if (v.state === 'walk') {
-    const target = Math.abs(v.y - seat.y) > 3 ? { x: 540, y: seat.y } : seat;
-    const dx = target.x - v.x, dy = target.y - v.y, d = Math.hypot(dx, dy), speed = 210 * dt;
-    if (d > 1) { v.x += dx / d * Math.min(speed, d); v.y += dy / d * Math.min(speed, d); }
-    v.step += dt * 7; frame = Math.floor(v.step) % 4;
-    if (Math.hypot(v.x - seat.x, v.y - seat.y) < 4) { v.state = 'kneel'; v.elapsed = 0; }
+    const pose = arrivalPose(v.arrivalOrigin,seat,(t-v.arrivalAt)*1000);
+    v.x=pose.x;v.y=pose.y;v.step=pose.distance/34;frame=pose.frame;
+    if(pose.phase==='sit'){v.state='sit';v.bowAt=t;}
   } else if (v.state === 'kneel') {
     v.elapsed += dt; frame = 4 + Math.min(3, Math.floor(v.elapsed / .22));
     if (v.elapsed >= .9) { v.state = 'sit'; v.bowAt = t; }
@@ -337,7 +315,7 @@ function drawViewer(v, dt, t, active) {
   ctx.fillStyle = '#25100745'; ctx.beginPath(); ctx.ellipse(v.x, v.y - 7, w * .28, 11 * seat.density, 0, 0, Math.PI * 2); ctx.fill();
   if (highlight) { ctx.strokeStyle = '#ffe8a5bb'; ctx.lineWidth = 2; ctx.shadowColor = '#ffc95d'; ctx.shadowBlur = 20; ctx.beginPath(); ctx.ellipse(v.x, v.y - 6, w * .32, 12, 0, 0, Math.PI * 2); ctx.stroke(); }
   ctx.shadowBlur = 0;
-  if (v.state === 'sit' && characterSprites.ready('bows')) {
+  if (v.state === 'sit' && active?.id !== v.id && characterSprites.ready('bows')) {
     const pose = devotionPose(t - v.bowAt, 0, reduced);
     const heights = v.skin === 'male' ? [455,356,244,436] : [448,345,208,415];
     const bodyHeight = heights[pose.from] * (1 - pose.mix) + heights[pose.to] * pose.mix;
@@ -358,12 +336,7 @@ function drawViewer(v, dt, t, active) {
   if (v.ambient) return;
   const tagY = v.y - h * (frame > 3 ? .89 : .99) - 4;
   nameTag(v, v.x, tagY, Math.max(94, seat.gap + 8), active?.id === v.id);
-  if (v.bubble && performance.now() < v.bubble.until) {
-    // Only show one line; bounded width avoids covering the central statue.
-    ctx.save(); ctx.font = '19px Thai, Latin, sans-serif'; const text = shorten(v.bubble.text, 170), width = ctx.measureText(text).width + 24;
-    ctx.fillStyle = '#2b1913ed'; rounded(v.x - width / 2, tagY - 78, width, 33, 12); ctx.fill();
-    ctx.fillStyle = '#ffe6b6'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, v.x, tagY - 62); ctx.restore();
-  }
+
 }
 function finishHero() {
   if (!hero) return;
@@ -395,7 +368,7 @@ function blessingBanner(active, now) {
 }
 
 function drawCeremony(active, now, t, pose, geometry) {
-  if (!hero || !active?.ritual.procession || ['mushika', 'galaxy'].includes(active.ritual.kind)) return;
+  if (!hero || !active?.ritual.procession || active.ritual.station || ['mushika', 'galaxy'].includes(active.ritual.kind)) return;
   canvas.dataset.ceremonyPhase = pose.phase; canvas.dataset.ceremonySkin = hero.skin;
   const { height: h, width: w } = geometry;
   const royal = active.ritual.kind === 'royal';
@@ -408,7 +381,7 @@ function drawCeremony(active, now, t, pose, geometry) {
     const glow = ctx.createRadialGradient(540, 850, 40, 540, 850, 430); glow.addColorStop(0, '#ffc55b00'); glow.addColorStop(.75, royal ? '#ffce6540' : '#ffc24925'); glow.addColorStop(1, '#ffdd8100');
     ctx.fillStyle = glow; ctx.fillRect(90, 400, 900, 900);
     ctx.strokeStyle = royal ? '#ffe6a080' : '#ffd17165'; ctx.lineWidth = royal ? 3 : 2;
-    ctx.beginPath(); ctx.ellipse(540, 1160, 125 + Math.sin(t * 2) * 5, 25, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(pose.x, pose.y, 86 + Math.sin(t * 2) * 3, 18, 0, 0, Math.PI * 2); ctx.stroke();
     if (royal) {
       for (const x of [365, 715]) {
         ctx.fillStyle = '#d8a448'; ctx.beginPath(); ctx.ellipse(x, 1090, 32, 9, 0, 0, Math.PI * 2); ctx.fill();
@@ -426,11 +399,12 @@ function drawCeremony(active, now, t, pose, geometry) {
   const prop = images[active.ritual.kind];
   if (pose.prop && prop?.naturalWidth) {
     const ph = royal ? 110 : 128, pw = ph * prop.naturalWidth / prop.naturalHeight;
-    const px = pose.x + h * .24, py = pose.y - h * (pose.phase === 'offer' ? .47 + .23 * pose.lift : .60);
+    const heldX=pose.x+h*.24,heldY=pose.y-h*(pose.phase==='offer'?.47+.23*pose.lift:.60);
+    const px=heldX+(OFFERING.x-heldX)*pose.place,py=heldY+(OFFERING.y-ph/2-heldY)*pose.place;
     ctx.drawImage(prop, px - pw / 2, py - ph / 2, pw, ph);
   } else if (['stand', 'return', 'to-seat', 'settle', 'done'].includes(pose.phase) && prop?.naturalWidth) {
-    const ph = royal ? 105 : 125, pw = ph * prop.naturalWidth / prop.naturalHeight;
-    ctx.drawImage(prop, 540 - pw / 2, 1000 - ph, pw, ph);
+    const ph = royal ? 110 : 128, pw = ph * prop.naturalWidth / prop.naturalHeight;
+    ctx.drawImage(prop, OFFERING.x - pw / 2, OFFERING.y - ph, pw, ph);
   }
   nameTag(hero, pose.x, pose.y - h - 6, 230, true);
   if (!reduced && now > nextGolden && pose.focus > .5) {
@@ -440,6 +414,32 @@ function drawCeremony(active, now, t, pose, geometry) {
   }
   ctx.restore();
   cameraDebug.actor(hero, pose, geometry, pose.phase, h);
+}
+function drawStationCeremony(active,pose,geometry,t) {
+  const {height:h,width:w}=geometry,kind=active.ritual.kind;
+  canvas.dataset.ceremonyPhase=pose.phase;canvas.dataset.ceremonySkin=hero.skin;
+  ctx.save();ctx.fillStyle='#06101d88';ctx.beginPath();ctx.ellipse(pose.x,pose.y-3,w*.28,10,0,0,7);ctx.fill();
+  ctx.translate(pose.x,pose.y);ctx.rotate(pose.bow);
+  const sprite=characterSprites.get(pose.carrier?pose.carrierFrame:pose.frame,h,hero.skin,pose.carrier)||characterSprites.get(pose.frame,h,hero.skin);
+  if(sprite)ctx.drawImage(sprite,-w/2,-h,w,h);
+  // The tray shares the body/hand transform; no independent spinning wrist.
+  if(kind==='light') {
+    ctx.save();ctx.globalAlpha=pose.phase==='settle'||pose.phase==='done'?0:1;
+    drawTray(ctx,h*.24,-h*.62,t);ctx.restore();
+  }
+  if(kind==='floral'&&pose.place<1){const px=h*.24+(OFFERING.x-pose.x-h*.24)*pose.place,py=-h*.60+(OFFERING.y-29-pose.y+h*.60)*pose.place;drawGarland(ctx,px,py,27);}
+  ctx.restore();
+  if(kind==='floral'&&pose.place>=1)drawGarland(ctx,OFFERING.x,OFFERING.y-29,27);
+  if(pose.phase==='offer'&&pose.phase!==lastSpecialPhase){audio.bell(kind);particles(OFFERING.x,OFFERING.y-30,kind==='floral'?9:3);}
+  lastSpecialPhase=pose.phase;
+  nameTag(hero,pose.x,pose.y-h-8,520,true);cameraDebug.actor(hero,pose,geometry,pose.phase,h);
+}
+function prayerBanner(active,now) {
+  const ready=active?.ritual.kind==='prayer'&&active.prayer,el=$('prayerBanner');el.hidden=!ready;
+  if(ready){setText('prayerName',active.name);setText('prayerText',active.prayer.text);el.style.opacity=String(Math.min(1,(now-active.beganAt)/450,(active.until-now)/600));el.style.top=Math.max(1270,1460-(settings.safeBottom||0))+'px';}
+  const waiting=prayerPrompt&&Date.now()<prayerPrompt.deadline&&!active;
+  $('prayerPrompt').hidden=!waiting;
+  if(waiting)$('prayerPrompt').textContent=`${prayerPrompt.name} · พิมพ์คำอธิษฐานของคุณ ภายใน ${Math.max(0,Math.ceil((prayerPrompt.deadline-Date.now())/1000))} วินาที`;
 }
 function applyCamera(camera) {
   // Exactly ONE viewport transform on the world root. Neither the actor layer
@@ -455,7 +455,13 @@ function applyCamera(camera) {
 }
 function renderFrame(now) {
   // 30 fps suits the broadcast; the small operator preview needs only 15 fps.
-  if (now - last < 1000 / (preview ? 15 : 30) - .7) return;
+  const frameInterval = 1000 / (preview ? 15 : 30);
+  if (now < nextFrameAt - .7) return;
+  // Keep the cadence across slightly late RAF callbacks. Scheduling from the
+  // last *actual* frame threw away the remainder and needlessly skipped the
+  // next frame, dropping a capable renderer from 30 toward 20 FPS.
+  nextFrameAt += frameInterval;
+  if (nextFrameAt < now) nextFrameAt = now + frameInterval;
   frameMs.push(now - last); if (frameMs.length > 240) frameMs.shift();
   const dt = Math.min(.1, (now - last) / 1000); last = now; const t = now / 1000;
   nameplates.clear();
@@ -464,20 +470,23 @@ function renderFrame(now) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const requested = remoteRitual && now < remoteRitual.until ? remoteRitual : null;
   const target = requested && visitors.get(requested.id);
-  const active = cameraController.accept(requested, target) ? requested : null;
+  const targetImageReady = target && characterSprites.ready(target.skin === 'male' ? 'male' : 'female');
+  const targetReady = targetImageReady && (target.state === 'sit' || hero?.id === target.id);
+  const active = cameraController.accept(requested, targetReady ? target : null) ? requested : null;
+  if (requested && target && !targetReady) cameraController.reason = targetImageReady ? 'actor-arriving' : 'actor-asset-unavailable';
   cameraDebug.begin(active);
   if (active !== lastRitual) {
     if (['royal', 'galaxy'].includes(lastRitual?.ritual.kind)) royalPetals.stop();
     audio.endSpecial(); lastSpecialPhase = '';
     finishHero();
-    lastRitual = active; $('gift').hidden = !active;
+    lastRitual = active; $('gift').hidden = true;
     stage.classList.toggle('ceremony', !!active?.ritual.procession);
     if (active) {
       // A queued notice belongs to the previous waiting state. New arrivals
       // can still post another notice while this ceremony is playing.
       waitingNoticeUntil = 0; $('ritualWait').hidden = true;
-      $('giftIcon').textContent = active.ritual.icon; $('giftLabel').textContent = active.ritual.label;
-      $('giftName').textContent = active.name; $('giftCount').textContent = '×' + active.count;
+      $('giftIcon').textContent = ''; $('giftLabel').textContent = active.ritual.label;
+      $('giftName').textContent = active.name; $('giftCount').textContent = '';
       $('gift').dataset.kind = active.ritual.kind; audio.bell(active.ritual.kind);
       if (active.ritual.kind === 'galaxy') audio.beginSpecial();
       const v = visitors.get(active.id);
@@ -491,7 +500,7 @@ function renderFrame(now) {
   const special = ['mushika', 'galaxy'].includes(active?.ritual.kind);
   const pose = hero && active ? special
     ? specialPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, { untilMs: active.until - active.beganAt, reduced })
-    : processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
+    : active.ritual.station ? stationPose(active.ritual.kind,now-active.beganAt,hero.from,visitors.get(hero.id)?.seat||hero.seat) : processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
   const donor = active && visitors.get(active.id);
   const heroGeometry = hero && pose ? actorGeometry(hero, pose, t) : null;
   const focus = pose || (donor && { x: donor.x, y: donor.y, bodyHeight: donor.renderHeight || 200 });
@@ -509,6 +518,7 @@ function renderFrame(now) {
   const dim = galaxy ? smooth(elapsed/1800) * (1-smooth((now-active.until+3200)/3200)) * (specialArt.standingReady() ? .80 : .28) : 0;
   canvas.dataset.dimmer = dim.toFixed(3);
   specialArt.mouse(ctx, reduced ? 0 : t, active?.ritual.kind === 'mushika' ? elapsed : null);
+  drawStations(ctx,t,{lamp:active?.ritual.kind==='lamp'&&pose?.phase==='offer'?1:0,incense:active?.ritual.kind==='incense'||active?.ritual.kind==='fragrance'&&pose?.phase==='offer'?1:0});
   for (let i = 0; i < 24; i++) {
     const x = (i * 137 + Math.sin(t * .15 + i) * 30) % 1080;
     const y = (i * 83 - t * (reduced ? 2 : 7) + 20000) % 1660;
@@ -520,12 +530,13 @@ function renderFrame(now) {
   }
   $('invitation').classList.toggle('call-to-action', inviteUntil > now && !hero);
   const smallGift = ritualArt(active, now, t) || null;
-  canvas.dataset.smallGiftEffect = smallGift ? 'donor-sparks' : '';
+  canvas.dataset.smallGiftEffect = smallGift ? 'small-fixed-lotus' : '';
   for (const v of [...visitors.values()].sort((a, b) => a.y - b.y)) {
     ctx.save(); ctx.globalAlpha = hero ? .82 : 1; drawViewer(v, dt, t, active); ctx.restore();
   }
   canvas.dataset.bowing = [...visitors.values()].filter(v => v.bowing).length;
   drawCeremony(active, now, t, pose, heroGeometry);
+  if(active?.ritual.station)drawStationCeremony(active,pose,heroGeometry,t);
   royalPetals.configure({ reduced, light: settings.petalMode === 'light' });
   const shower = royalPetals.update(now, dt);
   if (dim) {
@@ -574,10 +585,12 @@ function renderFrame(now) {
       exclusions.push({ x:r.x*camera.scale+camera.x,y:r.y*camera.scale+camera.y,w:r.w*camera.scale,h:r.h*camera.scale });
     }
   }
-  canvas.dataset.namesRendered = nameplates.draw(nameCtx, camera, exclusions, now, galaxy);
+  canvas.dataset.namesRendered = nameplates.draw(nameCtx, camera, exclusions, now, !!active);
   drawEntrance(now);
+  crowd.drawLabels(nameCtx, now, camera, SCENE_VIEW);
   blessingBanner(active, now);
-  infoPanel.tick(now, galaxy && elapsed>1400 && now<active.until-2500);
+  infoPanel.tick(now,!!active,active?.ritual.label);
+  prayerBanner(active,now);
   stage.classList.toggle('any-ritual', !!active);
   if (now >= waitingNoticeUntil) $('ritualWait').hidden = true;
   if (renderedFrames % 30 === 0) {

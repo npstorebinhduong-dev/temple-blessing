@@ -1,0 +1,36 @@
+{
+  "low-fps": {
+    "renderedFrames": 61,
+    "focusFrames": 19,
+    "actorModesDuringFocus": [
+      "sit"
+    ],
+    "actorScalesDuringFocus": [
+      1
+    ],
+    "restoredWorld": {
+      "scale": 0.84,
+      "x": 86.4,
+      "y": 270
+    },
+    "ownerAfter": null,
+    "input": "Real demo event normalization; RAF delayed 230 ms in low-fps case"
+  },
+  "rose": {
+    "renderedFrames": 322,
+    "focusFrames": 102,
+    "actorModesDuringFocus": [
+      "sit"
+    ],
+    "actorScalesDuringFocus": [
+      1
+    ],
+    "restoredWorld": {
+      "scale": 0.84,
+      "x": 86.4,
+      "y": 270
+    },
+    "ownerAfter": null,
+    "input": "Real demo event normalization; RAF delayed 230 ms in low-fps case"
+  }
+}

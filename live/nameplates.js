@@ -6,7 +6,7 @@ export class Nameplates {
   badge(pen, text, width, focus) {
     const key = JSON.stringify([text, Math.round(width), focus]);
     if (this.cache.has(key)) return this.cache.get(key);
-    const size = focus ? 26 : 22; pen.font = `700 ${size}px Thai, Latin, sans-serif`;
+    const size = focus ? 34 : 24; pen.font = `700 ${size}px Thai, Latin, sans-serif`;
     const chars = [...segmenter.segment(text)].map(x => x.segment), lines = [];
     if (focus) {
       let line = '';
@@ -23,12 +23,13 @@ export class Nameplates {
       }
       lines.push(short);
     }
-    const w = Math.ceil(Math.min(width, Math.max(...lines.map(s => pen.measureText(s).width)) + 24)), h = 42 + (lines.length - 1) * 37;
+    const lineHeight=focus?51:39;
+    const w = Math.ceil(Math.min(width, Math.max(...lines.map(s => pen.measureText(s).width)) + 24)), h = lineHeight + (lines.length - 1) * lineHeight;
     const badge = document.createElement('canvas'); badge.width = w + 4; badge.height = h + 4;
     const b = badge.getContext('2d'); b.fillStyle = focus ? '#271218e6' : '#170c12cc'; b.strokeStyle = focus ? '#ffe3a3' : '#daba7b9c'; b.lineWidth = 1;
     b.beginPath(); b.roundRect(1.5, 1.5, w + 1, h + 1, 13); b.fill(); b.stroke();
     b.font = pen.font; b.fillStyle = '#fff4da'; b.textAlign = 'center'; b.textBaseline = 'middle';
-    lines.forEach((line, i) => b.fillText(line, badge.width / 2, 22 + i * 37));
+    lines.forEach((line, i) => b.fillText(line, badge.width / 2, lineHeight/2 + i * lineHeight));
     if (this.cache.size >= 256) this.cache.delete(this.cache.keys().next().value);
     this.cache.set(key, badge); return badge;
   }
@@ -39,7 +40,7 @@ export class Nameplates {
       // Ten tightly packed seats cannot fit ten readable full names. Keep the
       // front row visible and alternate neighbouring distant names in place.
       const seat = item.person.seat, page = Math.floor(now / 6000) % 2;
-      if (!item.focus && (ceremony || (seat && seat.row < 5 && seat.col % 2 !== page))) continue;
+      if (!item.focus && (ceremony || (seat && seat.row < 5 && (seat.row<3 || seat.col % 2 !== page)))) continue;
       const x = item.x * camera.scale + camera.x, y = item.y * camera.scale + camera.y;
       if (!item.focus && (x < -40 || x > 1120 || y < 990 || y > 1705)) continue;
       // Fixed pixel size keeps text sharp and avoids regenerating dozens of

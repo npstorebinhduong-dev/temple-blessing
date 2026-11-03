@@ -1,136 +1,75 @@
-GANESHA LIVE — BẢN 0.10.2
+GANESHA BLESSING — BẢN 0.11
 
-CHẠY VÀ THỬ
-1. Đóng cửa sổ CHAY-LIVE của bản cũ. Giải nén toàn bộ ZIP vào thư mục
-   riêng; không chạy bên trong ZIP. Cài Node.js 24 LTS hoặc mới hơn
-   từ https://nodejs.org/ nếu chưa có.
-2. Muốn giữ điểm/cấu hình cũ: sao chép thư mục live/data sang bản mới
-   trước khi chạy. Có thể giữ cả live/tts để dùng lại giọng đã lưu đệm.
-   Không sao chép node_modules. Bản cũ chưa lưu ghế/hàng chờ thì chỉ
-   phục hồi số liệu mà bản cũ có lưu.
-3. Nhấp đúp CHAY-LIVE.bat; lần đầu cần Internet để cài thư viện.
-   Giữ cửa sổ này mở trong buổi LIVE.
-4. Mở http://localhost:3000/live/control.html . Mặc định là DEMO riêng,
-   10 nhân vật nền, chưa có người tặng/điểm. Mở màn hình LIVE riêng,
-   bấm nút Thái “♫ เปิดเสียง” nếu hiện. Preview luôn tắt tiếng.
-5. Trong phần Thử tương tác:
-   - 100 / 300 / 500 người chờ: thử hàng chờ đông ở mép dưới.
-   - Chọn nữ/nam, bấm Corgi: thử nghi thức ghé tai Mushika.
-   - Bấm Thiên hà: thử Ganesha hiển linh, giọng và banner tiếng Thái.
-   - 5 lượt liên tiếp: cùng người, giữ từng lượt và thứ tự nhận.
-   - Reset demo: dọn cả tiếng, camera, hiệu ứng và số liệu demo.
-   - 50: đủ 60 chỗ cùng 10 nhân vật nền; 80: thử nhường ghế.
-6. OBS Browser Source: http://localhost:3000/live/overlay.html
-   Width 1080, Height 1920; bật thu âm thanh nguồn trình duyệt.
-   LIVE Studio: dùng nguồn trình duyệt nếu có, hoặc Window Capture
-   cửa sổ LIVE kèm âm thanh trình duyệt. Tránh thu tiếng hai nguồn.
-7. Mở TikFinity Desktop trên cùng máy, nối kênh đang LIVE, bật WebSocket
-   server. Chọn TikFinity Desktop, nhập địa chỉ (thường
-   ws://127.0.0.1:21213/) rồi Kết nối LIVE. Quà demo không cộng vào LIVE.
-8. Test một bình luận và một quà thật, xem nhật ký tên/ID/giá từng món.
-   “Đã kết nối” chỉ xác nhận socket, chưa chứng minh có sự kiện TikTok.
+1. CÀI VÀ MỞ
+- Cài Node.js 24 trở lên từ nodejs.org.
+- Đóng cửa sổ server bản cũ, giải nén TOÀN BỘ ZIP 0.11 vào thư mục mới.
+- Nếu cần giữ cấu hình/điểm: chép live/data từ bản cũ sau khi đã tắt server.
+  Có thể giữ cả live/tts để dùng lại giọng đã lưu đệm.
+- Chạy CHAY-LIVE.bat. Lần đầu cần Internet để cài thư viện. Giữ cửa sổ
+  server mở trong suốt phiên; lỗi cổng 3000 nghĩa là server cũ còn chạy.
+- Điều khiển: http://localhost:3000/live/control.html
+- LIVE: http://localhost:3000/live/overlay.html
+- OBS Browser Source: rộng 1080, cao 1920. Refresh cache sau cập nhật.
 
-QUÀ 299 VÀ 1.000 XU
-- Corgi: 299 xu, ID 6267 → Mushika; thay Bạn đồng hành.
-- Galaxy: 1.000 xu, ID 11046 → Ganesha đứng hiển linh.
-- ID/giá/icon đối chiếu từ hai danh mục công khai. Danh mục tài khoản
-  Thái thật vẫn cần test. Nguồn: docs/QUA-MOI.md .
-- Khi chép dữ liệu bản cũ, app đổi ánh xạ Mushika cũ sang Corgi một lần.
-  Những lần chỉnh thủ công sau nâng cấp được giữ; sáu quà cũ/Galaxy giữ nguyên.
-- Icon mới tải từ URL TikTok đã cấu hình. Nếu mạng không tải được, hiện
-  dấu trang trí thay thế; sáu icon cũ giữ nguyên. Tên quà Thái có thể tự
-  nhận từ sự kiện khớp ID; mô tả trên bảng là tên tác dụng bằng tiếng Thái.
-- Hai quà này cố định ở hàng đầu của bảng. Sáu quà còn lại luân phiên
-  theo nhóm 8 giây; top công đức ba người ở cùng khung mờ 20%.
-- Cảnh & âm thanh → Khung thông tin: chỉnh ngang/dọc rồi Lưu. Khung luôn
-  ở trên tượng. Đưa khung quá cao sẽ ẩn mục tiêu/phụ đề/nhãn quà phía trên
-  để tránh chồng chữ; người đang làm lễ vẫn có tên trên cảnh/banner.
+2. THỬ TRƯỚC KHI NỐI LIVE
+- Chọn DEMO. Demo và LIVE dùng dữ liệu riêng.
+- Bấm lần lượt Rose, Đèn, Hương tình yêu, Tràng hoa, Perfume, Doughnut.
+  Sau Doughnut, nhập bình luận bằng cùng tên demo đã tặng quà. Đợi quá
+  30 giây không gửi thì phải có câu tiếng Thái mặc định.
+- Thử Corgi 299 và Galaxy 1000; xem đủ người, Mushika, đường chuyển lời,
+  Ganesha đứng, tay ban phước và bệ sen.
+- Thử 100/300/500 người chờ; chuỗi quà xen kẽ; reset giữa nghi thức.
+- Mở overlay riêng để xem và nghe. Khung preview ở điều khiển tắt tiếng.
+- Kiểm tra trên điện thoại: bảng quà/top ở góc tổng, tên người đang focus,
+  banner và vùng tránh UI TikTok. Chữ LIVE bằng tiếng Thái.
 
-NGHI THỨC VÀ THỨ TỰ
-Mushika: 16 giây. Đứng lên, đi tới tai chuột, khum tay/ghé tai 3,6 giây,
-tụ ngọc sáng, chuột ngẩng đầu, dải vàng tới Ganesha, hào quang nhận lời,
-luồng sáng trở lại/hoa sen, chắp tay rồi về ghế. Có nam/nữ.
-Galaxy: khoảng 20 giây, tăng theo độ dài tiếng. Ganesha ĐỨNG riêng có
-bàn tay chuyển động, mandala, hoa sen, luồng sáng và cánh hoa nhiều lớp.
-Một combo chốt = một lượt có nhãn ×N, tính đủ xu. Các sự kiện kết thúc
-khác nhau giữ lượt riêng, cùng người cũng vậy. Camera chạy đúng thứ tự
-nhận; không gộp lượt, không bỏ theo thời hạn hay ưu tiên quà lớn vượt hàng.
-Người chưa có chỗ chờ ghế trước khi được làm lễ. Khi LIVE tạm chuyển sang
-DEMO hoặc server khởi động lại, giữ các lượt; lượt đang dở chạy lại từ đầu.
-Dọn nhân vật/reset mới xóa lượt đang chờ. Không cộng lại điểm đã ghi.
+3. CAMERA VÀ QUÀ
+- Zoom là chuyển toàn bộ thế giới: sân, kiến trúc, tượng, nhân vật và hàng
+  chờ. Nhân vật giữ kích thước phối cảnh, không thêm hệ số lớn lên vì quà.
+- Sáu quà cũ giữ đường camera cũ. Corgi/Galaxy giữ góc rộng để không mất
+  đường truyền hoặc vương miện/bàn tay. UI/tên không phóng lớn theo cảnh.
+- Rose 1 xu tạo sen nhỏ ở điểm dâng cố định bên phải, không che Mushika.
+- ID đã có: Rose 5655, Peach 14786, Shamrock 9875, Bouquet 10994,
+  Perfume 5658, Doughnut 5879, Corgi 6267 và Galaxy 11046.
+- ID/catalog không đảm bảo món đó đang bán trên tài khoản Thái. Kiểm tra
+  tên, giftId và giá MỘT món trong nhật ký khi nối nguồn thật.
+- Đèn 1, Hương tình yêu 5, Tràng hoa 15 chưa có ID Thái được xác thực:
+  CHỈ DEMO. Chưa gán ID thì không xuất hiện trong bảng hướng dẫn LIVE.
+- Ánh xạ nâng cao: ID=lamp / fragrance / floral / light / prayer hoặc
+  lotus / incense / garland / aarti / marigold / royal / mushika / galaxy.
+  Không tự dùng ID demo hoặc gán mọi quà cùng giá vào một hiệu ứng.
+- Icon catalog có sẵn chạy cục bộ. Icon còn thiếu cần dữ liệu bridge hoặc
+  ảnh tham chiếu; không thay bằng emoji. Xem danh sách thiếu trong báo cáo.
 
-ÂM THANH
-Giọng Thái chung: Premwadee (nữ) hoặc Niwat (nam), cần Internet, không cần
-cài gói tiếng Thái Windows hay mở Edge. Galaxy dùng riêng Niwat nam,
-tốc độ -12%, cao độ -6 Hz, bass nhẹ/vang ngắn; banner cùng đúng một câu.
-Banner xuất hiện khi thực sự bắt đầu tiếng, giữ thêm 2,5 giây sau câu rồi
-mờ dần. Lỗi/tắt tiếng: hiện câu đủ lâu bằng chữ. Không chồng lời nhắc khác.
-Có bật/tắt và âm lượng riêng cho nhạc, hiệu ứng, giọng; âm lượng tổng
-áp dụng toàn bộ. Bấm Lưu cấu hình sau chỉnh. Nhạc tự hạ khi giọng đang đọc.
-Nhạc Eastern Serenity 4:40 đi kèm, mặc định lặp; nguồn Kevin MacLeod,
-FreePD / CC0. Không phải bản thu nghi lễ Phật giáo Thái truyền thống.
-Nghe thử nhạc tại đây phát ở bảng điều khiển; dừng thử trước khi LIVE.
-Phát lại nhạc trên LIVE đưa bài nhạc về đầu.
-Sau 10 giây không có quà: nhắc tim/chia sẻ. Sau câu nhắc đọc xong, chờ
-thêm 10 giây trước câu tiếp theo. Quà mới ngắt lời nhắc, tính lại bộ đếm.
-Giọng thật Niwat chưa nghe thử được trong cloud do dịch vụ bị chặn;
-anh cần kiểm tra trên máy LIVE. Mã phát/bộ đệm/banner đã được kiểm thử
-bằng MP3 mẫu. Gói không chứa bản thu giọng Thái mới. Có thể cung cấp bản
-thu đúng câu ở assets/ganesha/audio/ganesha-blessing-th.mp3 để thay TTS;
-xem nguyên văn câu trong README.md .
+4. ÂM THANH
+- Bật nhạc/giọng/hiệu ứng và âm lượng, bấm Lưu cấu hình.
+- Trong overlay/OBS bấm “♫ เปิดเสียง” nếu trình duyệt yêu cầu.
+- Không nghe chuông: thử “Thử loa / chuông” ở điều khiển, kiểm tra mute
+  của tab, Volume Mixer Windows và thiết bị đầu ra.
+- Edge TTS có giọng Thái, cần Internet; không cần cài gói tiếng Thái.
+  Giọng ban phước Galaxy là Niwat nam; lời cảm ơn thường chọn trong form.
+- Câu ban phước Galaxy có sẵn MP3 Niwat trong gói để phát khi không có
+  Internet. Lời đọc có tên người tặng và lời kêu gọi vẫn cần mạng.
+- Nhạc thiền Á Đông dài 4 phút 40 giây, có tùy chọn lặp liên tục và phát lại.
+- Khi giọng đọc, nhạc giảm; banner Galaxy giữ 2,5 giây sau tiếng đọc rồi tan.
+- Nếu mạng TTS lỗi, nhật ký báo lỗi; nghi thức vẫn kết thúc và cảnh sáng lại.
+- Chỉ giữ MỘT cửa sổ có tiếng để tránh đọc chồng.
 
-HÀNG CHỜ, GHẾ VÀ CHỌN NHÂN VẬT
-Sự kiện member có ID tạo nhân vật nam/nữ từ đầu đến vai ở mép dưới,
-không tải ảnh đại diện TikTok. Giữ toàn bộ dữ liệu, vẽ tối đa 88 người
-(49 ở mức Nhẹ), bốn lớp so le, thở lệch nhịp, giữ lựa chọn ngoại hình.
-Tên lớp gần ưu tiên lớn; tên xa luân phiên các cặp 6 giây để tránh đè.
-Hồ sơ hàng xa luân phiên mỗi 12 giây, 10 người gần giữ vị trí. Người tới
-lượt có tên đầy đủ và ánh sáng đánh dấu. Tổng chờ không phải số online.
-DEMO có nhãn riêng. Có thể tắt bằng tùy chọn người vào phòng.
-60 ghế: 10 nhân vật nền ban đầu, người tặng bắt đầu từ 11–60. Đầy ghế thì
-người có lần tặng gần nhất cũ nhất rời đi, kể cả nhân vật nền; không xếp
-lại toàn bộ người còn lại. Chỉ người đang làm lễ/người kế tiếp giữ chỗ.
-Tặng thêm cập nhật mốc; bình luận không cập nhật. Hàng ghế giữ dữ liệu đầy đủ.
-Gõ đúng 1 để chọn nữ, 2 để chọn nam, kể cả trước khi tặng hoặc đang làm lễ.
-Chọn nhân vật không tự cấp ghế. Vẫn nhận หญิง/ชาย, female/male, nữ/nam.
-Nhân vật quỳ/cúi lạy lệch nhịp; tay sen/búa có mức Nhẹ/Rõ/Mạnh. Giảm chuyển
-động của hệ thống tắt zoom/chuyển động tay, giữ wai. Người nền không có tên,
-không cộng số liệu, không tự trở lại sau khi đã nhường chỗ.
+5. NỐI LIVE VÀ DỮ LIỆU
+- Mở TikFinity, nối kênh của bạn, bật WebSocket server.
+- Chọn nguồn TikFinity, nhập đúng URL WebSocket rồi Kết nối.
+- Kiểm tra bằng một quà thực từ tài khoản khác; đối chiếu nhật ký ID/giá.
+- Comment 1 chọn nữ; 2 chọn nam. Người vào phòng đứng hàng dưới; người
+  tặng quà vào ghế. Khi đầy, người tặng lâu nhất nhường chỗ theo hàng đợi.
+- LIVE đã lưu khôi phục người, điểm, ghế, hàng chờ và nghi thức. Lượt đang
+  dở chạy lại từ đầu nhưng không cộng lại xu. Kết nối/âm thanh mở lại riêng.
+- Dọn nhân vật giữ điểm; Bắt đầu phiên mới xóa dữ liệu chế độ hiện tại và
+  yêu cầu ngắt nguồn sự kiện trước. Không dùng script kiểm thử vào server
+  đang LIVE vì script có thao tác reset.
 
-SÁU QUÀ CŨ GIỮ NGUYÊN
-Rose 1 → lotus; Peach 5 → incense; OK 5 → garland;
-Shamrock ID 9875, 10 xu → aarti; Bouquet 100 → marigold;
-Love Balloon 500 → royal. Zoom: 4,5 / 5,5 / 6 / 8 / 23 / 28 giây.
-Ánh xạ nâng cao: mỗi dòng ID=loại. Thêm mushika (299), galaxy (1.000).
-ID nâng cao ưu tiên hơn các ô mới. ID cũng phải khớp giá một món.
-
-LƯU VÀ XỬ LÝ LỖI
-- live/data/session.json chứa số liệu, cấu hình, ghế và hàng LIVE.
-  Khi mở lại chọn Xem phiên LIVE đã lưu hoặc Kết nối LIVE. Nối nguồn
-  và mở tiếng lại. Giữ file này riêng, không chia sẻ cùng ZIP.
-- Dọn nhân vật giữ điểm; Bắt đầu phiên mới xóa điểm của chế độ đang chọn
-  sau xác nhận và yêu cầu đã ngắt nguồn. Nâng cấp thì Ctrl+F5 cả hai tab;
-  trong OBS làm mới bộ nhớ đệm nguồn trình duyệt.
-- Không có tiếng: bấm Thử loa / chuông ở bảng điều khiển; kiểm tra tắt tiếng
-  tab, Bộ trộn âm lượng Windows, đầu ra loa và nguồn/monitoring OBS.
-  Giọng im nhưng chuông có tiếng: kiểm tra bật giọng, âm lượng giọng,
-  Internet và nhật ký. TTS timeout 15 giây rồi nghỉ 30 giây trước thử lại.
-- Cổng 3000 bận: đóng CHAY-LIVE cũ. TikFinity không nối: kiểm tra cùng máy,
-  đúng cổng, WebSocket server đã bật; bấm Ngắt để dừng thử nối lại.
-- Chậm: chọn chất lượng hiệu ứng Nhẹ, đóng overlay dư. Lớp hình giảm độ
-  phân giải nhưng chữ, bảng tên và nhân vật lớp gần giữ đúng đầu ra.
-  Kiểm tra trên máy đang encode OBS; không suy ra FPS máy anh từ cloud.
-
-Gói có đầy đủ artwork/nhạc/font; không chứa Node.js, node_modules,
-dữ liệu LIVE hay tài khoản. Giữ LICENSE và giấy phép font/nhạc.
-Báo cáo kiểm thử: docs/BAN-GIAO-V0.10.md .
-
-SỬA CAMERA 0.10.2
-Camera v0.8 điều khiển container gốc: cả cảnh cùng một viewport,
-UI giữ nguyên. Corgi/Galaxy giữ góc rộng. Không thay scale riêng nhân vật.
-Sau cập nhật Ctrl+F5 cả hai tab và làm mới bộ nhớ đệm nguồn OBS.
-Video/kiểm thử: docs/SUA-CAMERA-V0.10.2.md .
-
-Bản 0.10.2: người lên lễ giữ kích thước phối cảnh như người đang ngồi;
-Rose 1 xu chỉ có hạt sáng nhỏ, không có hoa sen lớn che Mushika.
-Debug để kiểm tra: /live/overlay.html?debugCamera=1 (tắt khi phát thật).
+BÁO CÁO / VIDEO / GIỚI HẠN: docs/BAN-GIAO-V0.11.md
+PHIẾU THỬ MÁY PHÁT: TEST-LIVE.md
+DEBUG: thêm ?debugCamera=1 vào URL overlay; bỏ tham số khi phát thật.
+Cloud đã thử bằng sự kiện mô phỏng và phát/thu MP3 Niwat thật trong trình
+duyệt. Chưa có phiên TikTok LIVE thật hay thử loa/OBS trên máy Windows.
+Đo FPS khi OBS encode trên máy phát; đối chiếu số đo trong báo cáo.

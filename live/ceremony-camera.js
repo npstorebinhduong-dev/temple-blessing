@@ -1,7 +1,7 @@
 import { RITUAL_TIMING } from './ritual-timing.js';
 const clamp = (n, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, n));
 const smooth = n => { n = clamp(n); return n * n * (3 - 2 * n); };
-const BASIC_ZOOM = { lotus: 1.55, incense: 1.6, garland: 1.6, aarti: 1.7 };
+const BASIC_ZOOM = { lotus: 1.55, incense: 1.6, garland: 1.6, aarti: 1.7, prayer:1.55, lamp:1.45,fragrance:1.45,floral:1.45,light:1.45 };
 
 // Scene coordinates stay unchanged: the camera moves the shrine and actors together.
 // HUD and celebration petals remain in screen coordinates.
@@ -11,7 +11,10 @@ export function ceremonyCamera(kind, elapsedMs, pose, { enabled = true, reduced 
   const t = Math.max(0, elapsedMs) / 1000;
   if (basic) {
     const duration = (durationMs || RITUAL_TIMING[kind].duration) / 1000;
-    const weight = smooth(t / .85) * (1 - smooth((t - duration + .9) / .9));
+    const station=['lamp','fragrance','floral','light'].includes(kind);
+    // Reuse the legacy smooth shot, centred on the body after arrival. The
+    // fixed offering station is in the same world, never a screen-space prop.
+    const weight = station?smooth((t-4.2)/1.6)*(1-smooth((t-duration+5.6)/1.5)):smooth(t / .85) * (1 - smooth((t - duration + .9) / .9));
     const scale = 1 + (basic - 1) * weight;
     return { scale,
       x: clamp((540 - pose.x * scale) * weight, 1080 * (1 - scale), 0),

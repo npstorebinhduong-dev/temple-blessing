@@ -119,15 +119,39 @@ export class Seating {
 export function seatLayout() {
   const seats = [];
   for (let row = 0; row < 6; row++) {
-    const t = row / 5, half = 305 + 135 * t;
+    const t = row / 5, outer = 150 - 65 * t, inner = 360 - 18 * t;
     for (let col = 0; col < 10; col++) {
-      let u = (col - 4.5) / 4.5; u = Math.sign(u) * (.12 + .88 * Math.abs(u));
-      seats.push({ x: 540 + u * half, y: 1230 + t * 480, depth: t, gap: half * 1.8 / 9, density: ACTOR_DENSITY, row, col });
+      // Two banks leave a continuous central aisle, including the front row.
+      const left = outer + (inner - outer) * (col < 5 ? col : 9-col) / 4;
+      seats.push({ x: col < 5 ? left : 1080-left, y: 1300 + t * 410, depth: t, gap: (inner-outer)/4, density: ACTOR_DENSITY, row, col });
     }
   }
   const ambient = seats.filter(s => s.row === 5 && [1,3,6,8].includes(s.col) || s.row === 3 && [1,4,5,8].includes(s.col) || s.row === 1 && [2,7].includes(s.col));
   const rest = seats.filter(s => !ambient.includes(s)).sort((a, b) => b.row - a.row || Math.abs(a.x - 540) - Math.abs(b.x - 540));
   return [...ambient.sort((a,b) => b.row-a.row || a.col-b.col), ...rest];
+}
+
+// Arrival follows the same wall-clock admission window as the server queue.
+// Integrating a capped per-frame delta made slow renderers open a paid shot
+// before the donor reached their seat. The path is now independent of FPS.
+export function arrivalPose(from, seat, elapsedMs) {
+  const walkMs = ENTRY_MS - 1100;
+  const t = Math.max(0, Math.min(1, elapsedMs / walkMs));
+  const progress = t * t * (3 - 2 * t);
+  const points = [from, { x: 540, y: from.y }, { x: 540, y: seat.y }, seat];
+  const lengths = points.slice(1).map((p,i) => Math.hypot(p.x-points[i].x,p.y-points[i].y));
+  const distance = lengths.reduce((sum,n) => sum+n,0) * progress;
+  let remaining = distance, point = { ...seat };
+  for (let i=0;i<lengths.length;i++) {
+    if (remaining <= lengths[i] && lengths[i] > 0) {
+      const f=remaining/lengths[i],a=points[i],b=points[i+1];
+      point={x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f};break;
+    }
+    remaining -= lengths[i];
+  }
+  if (elapsedMs < walkMs) return { ...point, phase:'walk', frame:Math.floor(distance/34)%4, distance };
+  const kneeling = Math.max(0,elapsedMs-walkMs);
+  return { x:seat.x,y:seat.y,phase:kneeling<900?'kneel':'sit',frame:4+Math.min(3,Math.floor(kneeling/225)),distance };
 }
 
 export function exitPose(seat, elapsedMs) {

@@ -1,4 +1,6 @@
 import { SceneAudio } from './audio.js';
+import { GIFTS, configuredGift } from './gift-catalog.js';
+import { giftIcon } from './info-panel.js';
 const $ = id => document.getElementById(id);
 // A deliberate click tests this tab's output, even when no broadcast window is open.
 let musicPreviewing = false;
@@ -8,6 +10,11 @@ const soundCheck = new SceneAudio({ onMusicStatus: status => {
   if (['ended', 'error'].includes(status.state)) stopMusicPreview();
 } });
 const SETTINGS = ['title', 'subtitle', 'goal', 'joinOnEnter', 'joinOnChat', 'statueMotion', 'statueMotionLevel', 'music', 'volume', 'voiceEnabled', 'voice', 'rate', 'pitch', 'giftMap', 'characterMode', 'idlePrompts', 'idleEverySec', 'ambientCrowd', 'musicVolume', 'musicLoop', 'cinematicZoom', 'petalMode', 'effectsEnabled', 'effectsVolume', 'voiceVolume', 'mushikaGiftId', 'mushikaGiftName', 'mushikaGiftIcon', 'galaxyGiftId', 'galaxyGiftName', 'galaxyGiftIcon', 'infoPanelX', 'infoPanelY'];
+SETTINGS.push('safeTop','safeBottom');
+for(const g of GIFTS){
+  const b=document.createElement('button');b.dataset.gift=g.kind;b.dataset.name=g.name;b.dataset.unit=g.coins;if(g.id)b.dataset.id=g.id;
+  b.append(giftIcon(g));for(const [tag,text] of [['b',g.name],['small',`${g.coins} xu · ${g.id?'ID '+g.id:g.legacy?'mapping tên cũ':'DEMO · chờ ID'}`],['em',g.effect]]){const el=document.createElement(tag);el.textContent=text;b.append(el);}$('demoGifts').append(b);
+}
 let socket, mode = 'demo', bots = false, toastTimer;
 const people = new Map(), numbers = new Intl.NumberFormat('en-US');
 const obsURL = location.origin + '/live/overlay.html'; $('obsURL').textContent = obsURL;
@@ -17,7 +24,9 @@ function send(cmd, extra = {}) {
   socket.send(JSON.stringify({ t: 'ctl', cmd, ...extra }));
 }
 function logLine(line) { const el = $('log'); el.textContent = (el.textContent + line + '\n').split('\n').slice(-160).join('\n'); el.scrollTop = el.scrollHeight; }
-function fillSettings(settings) { for (const k of SETTINGS) { if (settings[k] === undefined) continue; const el = $(k); if (el.type === 'checkbox') el.checked = !!settings[k]; else el.value = settings[k]; } }
+function fillSettings(settings) { for (const k of SETTINGS) { if (settings[k] === undefined) continue; const el = $(k); if (el.type === 'checkbox') el.checked = !!settings[k]; else el.value = settings[k]; }
+  if(settings.giftMap!==undefined)$('mappingStatus').textContent='Chưa sẵn sàng nhận quà thật: '+GIFTS.filter(g=>!configuredGift(g,settings).liveReady).map(g=>g.name+' '+g.coins+' xu').join(', ')+'. Icon chưa có sẽ để ô chữ; không thay bằng emoji. Rose/Perfume/Doughnut/Corgi/Galaxy đối chiếu catalog; cần xác nhận danh mục trên tài khoản Thái.';
+}
 function readSettings() { return Object.fromEntries(SETTINGS.map(k => { const el = $(k); return [k, el.type === 'checkbox' ? el.checked : ['number', 'range'].includes(el.type) ? Number(el.value) : el.value]; })); }
 function stats(m) { if (!m.stats) return; $('coins').textContent = numbers.format(m.stats.coins); $('giftTotal').textContent = numbers.format(m.stats.gifts); $('likes').textContent = numbers.format(m.stats.likes); }
 function seating(m) {

@@ -1,22 +1,16 @@
-# Phiếu test Ganesha LIVE 0.10.2 trên máy phát
+# Phiếu thử Ganesha Blessing 0.11 trên máy phát
 
-Chạy bằng `CHAY-LIVE.bat`, mở cửa sổ LIVE 1080 × 1920, bật tiếng. Các nút thử chỉ dùng DEMO. Đóng overlay có tiếng dư để tránh thu trùng.
+Ghi cấu hình máy, trình duyệt/OBS, chế độ hiệu ứng và phiên bản bridge. Các kiểm tra cloud và video nằm trong [báo cáo](docs/BAN-GIAO-V0.11.md); đây là bước kiểm tra trên hệ thống phát thật.
 
-1. **Bố cục điện thoại:** quà/công đức trong chung khung mờ 20%, không che tượng/khu quỳ. Đổi vị trí ngang/dọc và Lưu; bảng vẫn trên vương miện. Corgi/Galaxy luôn rõ ở hàng đầu, sáu quà cũ luân phiên 8 giây; top ba, hướng dẫn bình luận 1/2. Kiểm tra dấu tiếng Thái và tên dài.
-2. **Đám đông:** bấm 100, 300, 500 người chờ. Đầu/cổ/vai nhân vật cùng phong cách khu quỳ, nam/nữ đúng lựa chọn, đứng so le và thở lệch nhịp; không còn ảnh TikTok/thẻ avatar. Dữ liệu đủ, tối đa 88 hình (49 Nhẹ), mười người gần ổn định. Tên xa luân phiên trong dải riêng. Tới lượt có tên đầy đủ và đánh dấu; đám đông chỉ ở dải dưới.
-3. **Ghế đầy:** 50 người thử + 10 nền, rồi thêm 80. Người có lần tặng gần nhất cũ nhất rời trước; người mới vào chỗ trống. Tặng lại giữ ưu tiên; chat không đổi mốc. Người đang làm lễ được giữ. Không có cả cảnh biến mất khi nhận quà.
-4. **Nam/nữ:** gõ `1`/`2` khi đang chờ, đang quỳ và đang làm lễ. Đổi đúng người, không nhân đôi. Hai tư thế không biến mất lúc cúi lạy.
-5. **Mushika nữ rồi nam:** bấm Corgi 299, chờ đến lượt. Ghé/khum tay sát tai 3,6 giây → tụ sáng → chuột ngẩng → ngọc có vòng xoay → dải vàng uốn tới Ganesha → mandala/hào quang/chuông → hồi đáp tới người nhận/hoa sen → wai/về ghế, tổng 16 giây. Thấy cả chuột/đường sáng/tượng, không xuyên đầu, ánh sáng có hướng rõ. Tượng ngồi giữ nguyên.
-6. **Galaxy:** màn dịu tối 1–2 giây; asset Ganesha ĐỨNG riêng hiện từ chân lên đầu, đủ bàn chân/chân/bốn tay/vương miện/bệ sen. Người nhận ở phải, tượng đứng ở trái, tượng ngồi ở sau không đổi kích thước/vị trí. Halo/mandala/tia sáng phía sau hình sáng rõ; cánh hoa trước/sau tránh mặt. Bảng thông tin thu gọn và trở lại, không kẹt tối sau khi kết thúc.
-7. **Giọng/banner:** nghe giọng nam Thái Niwat, duyệt âm sắc và phát âm trên máy anh. Banner tiêu đề `พรจากพระพิฆเนศ`, tên riêng và đúng câu đang nói. Câu đủ dấu, đủ chữ; giữ 2,5 giây sau tiếng. Nhạc hạ khi nói, không chồng lời nhắc. Tắt giọng hoặc thử mất mạng: chữ vẫn ở đủ lâu và nghi thức kết thúc được. Cloud chưa xác nhận chất giọng thật.
-8. **Lượt quà:** bấm “5 lượt liên tiếp” rồi tiếp tục gửi quà. Đủ năm lượt đúng thứ tự, cùng người không bị gộp mất lượt. Combo ×3 tính đủ xu nhưng một nghi thức có ×3. Màn hình vẫn cập nhật người mới trong lúc hiệu ứng lớn.
-9. **Reset:** giữa lúc hiện linh/đang nói, Reset demo. Hết giọng/cánh hoa/camera/độ tối/banner; trở lại 10 nền và 0 điểm demo. Thử lại ngay; không có tiếng cũ phát muộn.
-10. **Sáu quà cũ:** Rose, Peach, OK, Shamrock, Bouquet, Love Balloon vẫn đúng; 100/500 đi dâng và về ghế, 500 có mưa hoa toàn màn hình. Lượt mới không ngắt camera đang chạy.
-11. **Lúc vắng quà:** câu đầu sau 10 giây; khoảng nghỉ 10 giây tính từ khi câu trước đọc xong. Gửi quà ngắt lời nhắc. Giọng ban phước không bị lời nhắc chen vào.
-12. **Nguồn thật:** Corgi ID 6267 / 299 xu và Galaxy ID 11046 / 1.000 xu đã gán sẵn. Đối chiếu nhật ký tài khoản Thái; không nhận quà lạ chỉ vì cùng giá. Kiểm tra hai icon tải được từ mạng máy phát, tên Thái lấy từ sự kiện/danh mục. Nguồn trong `docs/QUA-MOI.md`.
-13. **Giữ phiên:** ngắt nguồn, mở lại app, Xem phiên LIVE đã lưu: giữ điểm/ghế/nhân vật chờ/lượt chờ; lượt dở chạy từ đầu, không cộng lại xu. Hai chế độ tách biệt.
-14. **Hiệu năng:** bật OBS/LIVE Studio đang encode, chạy 500 người chờ + đủ ghế và lặp quà lớn. Nếu máy chậm chọn Nhẹ; tên/chữ vẫn rõ. Theo dõi tiếng trễ, CPU/GPU và dropped frames trong OBS. Không lấy số đo Chromium cloud làm cam kết FPS trên máy phát.
+1. **Mở bản mới:** đóng server cũ, giải nén đủ ZIP, chạy `CHAY-LIVE.bat`, refresh cache OBS. Xem 1080×1920 và điện thoại khoảng 360×640.
+2. **Camera:** gửi một quà thường. Cả sân/bậc thềm/tượng và đúng người cùng tiến gần rồi trở lại. Người không phình riêng; tên không mất, UI giữ kích thước. Chạy 20 lượt xen kẽ nhiều người, cùng người gửi liên tiếp, rồi reset giữa zoom. Về cùng góc tổng, không lệch tích lũy.
+3. **Sáu món:** Rose sen nhỏ bên phải, không che Mushika; Đèn tại giá cố định; Hương tình yêu ở lư hương cố định; Tràng hoa đặt lên bàn; Perfume khay đèn đi với tay; Doughnut nhận bình luận đúng uniqueId. Ba món chưa có ID chỉ thử DEMO.
+4. **Lời cầu nguyện:** một người khác bình luận không được lấy; chữ Thái dài không cắt dấu; HTML hiện như chữ. Sau 30 giây không gửi có câu mặc định. Tặng nhiều đơn vị tạo từng quyền nối tiếp.
+5. **299 / 1.000:** Corgi 6267 chuyển lời NGƯỜI → MUSHIKA → GANESHA → NGƯỜI. Galaxy 11046 có hình đứng riêng; tượng ngồi giữ nguyên; đủ vương miện/tay/bệ sen/người nhận. Quà nhỏ đến trong lễ lớn phải chờ. Reset giữa lễ thì sáng/camera/UI phục hồi.
+6. **Đám đông:** thử 100/300/500 người, đầy 60 ghế. Chỉ 88 vai/đầu được vẽ, đủ dữ liệu chờ, không ảnh đại diện/ô chân dung. Giữ tên/ngoại hình, mười người gần ổn định. Người tặng vào sân, người tặng lâu nhất rời đi khi đầy; không tràn vào lối giữa.
+7. **UI:** icon quà thật khi có, giá một món và tác dụng riêng bằng tiếng Thái. Bảng thu gọn trong nghi thức, không đè người/mặt tượng/Mushika; top không dài vô hạn. Điều chỉnh vùng tránh UI TikTok. Mục thiếu icon/ID chưa được coi là hoàn tất.
+8. **Âm thanh:** thử chuông ở điều khiển, mở tiếng một overlay. Niwat nam nói đúng câu banner Galaxy, banner giữ thêm 2,5 giây. Nhạc 280 giây lặp, hạ khi giọng phát. 10 giây vắng quà có nhắc tim/share; câu tiếp cách 10 giây từ lúc câu trước kết thúc.
+9. **Sự kiện thật:** xem nhật ký tên/giftId/giá. Rose 1 khác Rosa 10; các quà cùng giá khác ID không chạy nhầm. Combo tăng 1→2→3 rồi chốt chỉ tính 3; reconnect không phát lại cùng msgId/groupId. Bridge thiếu ID chống trùng vẫn là giới hạn cần ghi nhận.
+10. **Độ bền:** chạy liên tục với OBS encode; ghi FPS/dropped frames, số cache/hạt/âm thanh qua debug. Mất mạng audio, lỗi ảnh, mất target hoặc reset không được kẹt cảnh tối/camera. Đo lại trên máy phát trước khi kết luận live mượt.
 
-Ghi lại tên bản 0.10.2, thiết bị/trình duyệt, chế độ hiệu ứng, tên+ID+giá quà và thời điểm lỗi trong nhật ký để đối chiếu.
-
-Camera 0.10.2: kiểm tra cả cảnh zoom đồng bộ theo người tặng, bảng UI đứng yên. Gửi xen quà thường/Corgi/Galaxy; không tranh focus. Reset giữa zoom phải về toàn cảnh. Chi tiết và clip: `docs/SUA-CAMERA-V0.10.2.md`.
+Trong LIVE, không tự giả lập người tặng/thông báo quà. Mười nhân vật nền có nhãn mô phỏng và không cộng quà/điểm. Bỏ `?debugCamera=1` khi phát chính thức.

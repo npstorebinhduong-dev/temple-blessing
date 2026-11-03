@@ -9,8 +9,12 @@ export function entrancePosition(slot) {
   const index = Math.max(0, Math.min(ENTRANCE_SIZE - 1, Number(slot) - 1 || 0));
   if (index < FRONT_SIZE) return { x: 55 + index * 108 + (seed(index) - .5) * 9, y: 1847 + (seed(index + 6) - .5) * 10, radius: 32, height: 128, layer: 3 };
   const i = index - FRONT_SIZE, row = Math.floor(i / 26), col = i % 26;
+  // Fill immediately behind the front row first. Filling the farthest row
+  // first left a bare strip below cropped shoulders when only 11–36 waited.
+  // Slot positions remain fixed as the queue grows; farther rows fill later.
+  const layer = 2 - row;
   return { x: Math.max(27, Math.min(1053, 24 + col * 41 + (row % 2 ? 15 : 0) + (seed(i + 20) - .5) * 11)),
-    y: 1744 + row * 32 + (seed(i + 90) - .5) * 13, radius: 19 + row * 3, height: 100, layer: row };
+    y: 1744 + layer * 32 + (seed(i + 90) - .5) * 13, radius: 19 + layer * 3, height: 100, layer };
 }
 export class EntranceLine {
   constructor(saved = []) {
