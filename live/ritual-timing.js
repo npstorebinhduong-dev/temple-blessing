@@ -1,11 +1,8 @@
 // Shared by the gift queue, procession and camera so longer zooms cannot cut
 // off an offering or leave the camera following an already finished ritual.
 export const RITUAL_TIMING = Object.freeze({
-  lamp: {duration:15000}, fragrance:{duration:15000}, floral:{duration:16000}, light:{duration:17000}, prayer:{duration:8000},
-  lotus: { duration: 4500 },
-  incense: { duration: 5500 },
-  garland: { duration: 6000 },
-  aarti: { duration: 8000 },
+  lotus:{duration:10000}, lamp:{duration:10000}, fragrance:{duration:10000},
+  prayer:{duration:10000}, incense:{duration:10000},
   marigold: { duration: 23000, hold: 8 },
   royal: { duration: 28000, hold: 13 },
   mushika: { duration: 16000 },

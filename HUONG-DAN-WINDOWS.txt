@@ -1,8 +1,8 @@
-GANESHA BLESSING — BẢN 0.11
+GANESHA BLESSING — BẢN 0.12
 
 1. CÀI VÀ MỞ
 - Cài Node.js 24 trở lên từ nodejs.org.
-- Đóng cửa sổ server bản cũ, giải nén TOÀN BỘ ZIP 0.11 vào thư mục mới.
+- Đóng cửa sổ server bản cũ, giải nén TOÀN BỘ ZIP 0.12 vào thư mục mới.
 - Nếu cần giữ cấu hình/điểm: chép live/data từ bản cũ sau khi đã tắt server.
   Có thể giữ cả live/tts để dùng lại giọng đã lưu đệm.
 - Chạy CHAY-LIVE.bat. Lần đầu cần Internet để cài thư viện. Giữ cửa sổ
@@ -13,10 +13,10 @@ GANESHA BLESSING — BẢN 0.11
 
 2. THỬ TRƯỚC KHI NỐI LIVE
 - Chọn DEMO. Demo và LIVE dùng dữ liệu riêng.
-- Bấm lần lượt Rose, Đèn, Hương tình yêu, Tràng hoa, Perfume, Doughnut.
+- Bấm lần lượt Rose, Đèn, Love Perfume, Doughnut và Peach.
   Sau Doughnut, nhập bình luận bằng cùng tên demo đã tặng quà. Đợi quá
   30 giây không gửi thì phải có câu tiếng Thái mặc định.
-- Thử Corgi 299 và Galaxy 1000; xem đủ người, Mushika, đường chuyển lời,
+- Thử Bouquet 100, Love Balloon 500, Corgi 299 và Galaxy 1000; xem đủ người, Mushika, đường chuyển lời,
   Ganesha đứng, tay ban phước và bệ sen.
 - Thử 100/300/500 người chờ; chuỗi quà xen kẽ; reset giữa nghi thức.
 - Mở overlay riêng để xem và nghe. Khung preview ở điều khiển tắt tiếng.
@@ -26,17 +26,18 @@ GANESHA BLESSING — BẢN 0.11
 3. CAMERA VÀ QUÀ
 - Zoom là chuyển toàn bộ thế giới: sân, kiến trúc, tượng, nhân vật và hàng
   chờ. Nhân vật giữ kích thước phối cảnh, không thêm hệ số lớn lên vì quà.
-- Sáu quà cũ giữ đường camera cũ. Corgi/Galaxy giữ góc rộng để không mất
-  đường truyền hoặc vương miện/bàn tay. UI/tên không phóng lớn theo cảnh.
+- Quà nhỏ zoom ngay vào góc lối đi, chuyển 350 ms, mỗi lượt đi–dâng–về
+  trong 10 giây. Quà liên tiếp giữ cùng góc. Bốn quà lớn giữ camera cũ;
+  quà nhỏ đến trong lễ lớn đợi hết lễ. UI/tên không phóng lớn theo cảnh.
 - Rose 1 xu tạo sen nhỏ ở điểm dâng cố định bên phải, không che Mushika.
-- ID đã có: Rose 5655, Peach 14786, Shamrock 9875, Bouquet 10994,
-  Perfume 5658, Doughnut 5879, Corgi 6267 và Galaxy 11046.
+- ID đã có: Rose 5655, Peach 14786, Bouquet 10994,
+  Doughnut 5879, Corgi 6267 và Galaxy 11046. Love Balloon giữ mapping tên.
 - ID/catalog không đảm bảo món đó đang bán trên tài khoản Thái. Kiểm tra
   tên, giftId và giá MỘT món trong nhật ký khi nối nguồn thật.
-- Đèn 1, Hương tình yêu 5, Tràng hoa 15 chưa có ID Thái được xác thực:
-  CHỈ DEMO. Chưa gán ID thì không xuất hiện trong bảng hướng dẫn LIVE.
-- Ánh xạ nâng cao: ID=lamp / fragrance / floral / light / prayer hoặc
-  lotus / incense / garland / aarti / marigold / royal / mushika / galaxy.
+- Đèn 1 và Love Perfume 5 chưa có ID Thái được xác thực: CHỈ DEMO;
+  hướng dẫn ghi “รอยืนยัน”. Không dùng ID fixture trong báo cáo để nối LIVE.
+- Ánh xạ nâng cao: ID=lamp / fragrance / prayer / lotus / incense /
+  marigold / royal / mushika / galaxy. Loại cũ đã bỏ không chạy nữa.
   Không tự dùng ID demo hoặc gán mọi quà cùng giá vào một hiệu ứng.
 - Icon catalog có sẵn chạy cục bộ. Icon còn thiếu cần dữ liệu bridge hoặc
   ảnh tham chiếu; không thay bằng emoji. Xem danh sách thiếu trong báo cáo.
@@ -67,7 +68,7 @@ GANESHA BLESSING — BẢN 0.11
   yêu cầu ngắt nguồn sự kiện trước. Không dùng script kiểm thử vào server
   đang LIVE vì script có thao tác reset.
 
-BÁO CÁO / VIDEO / GIỚI HẠN: docs/BAN-GIAO-V0.11.md
+BÁO CÁO / VIDEO / GIỚI HẠN: docs/BAN-GIAO-V0.12.md
 PHIẾU THỬ MÁY PHÁT: TEST-LIVE.md
 DEBUG: thêm ?debugCamera=1 vào URL overlay; bỏ tham số khi phát thật.
 Cloud đã thử bằng sự kiện mô phỏng và phát/thu MP3 Niwat thật trong trình

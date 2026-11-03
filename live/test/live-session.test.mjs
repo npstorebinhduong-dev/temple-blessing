@@ -34,12 +34,12 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   assert.equal(initial.actors.length, 10); assert.equal(initial.seating.ambient, 10);
   assert.equal(initial.settings.joinOnChat, false); assert.equal(initial.settings.joinOnEnter, true);
   assert.equal(initial.entrance.people.length, 0);
-  assert.equal(initial.settings.giftMap, '9875=aarti');
+  assert.equal(initial.settings.giftMap, '');
   assert.equal(initial.settings.mushikaGiftId, '6267');
   assert.equal(initial.settings.mushikaGiftName, '');
   assert.match(initial.settings.mushikaGiftIcon, /148eef0884fdb12058d1c6897d1e02b9/);
   assert.equal(initial.settings.galaxyGiftId, '11046');
-  control.send('settings', { settings: { giftMap: '9001=garland', goal: 900, voiceEnabled: false, mushikaGiftId: '7777', infoPanelX: -900, infoPanelY: 900 } });
+  control.send('settings', { settings: { giftMap: '9001=fragrance', goal: 900, voiceEnabled: false, mushikaGiftId: '7777', infoPanelX: -900, infoPanelY: 900 } });
   await until(() => overlay.messages.some(m => m.t === 'settings' && !m.settings.voiceEnabled));
   const configured = overlay.messages.filter(m => m.t === 'settings').at(-1).settings;
   assert.equal(configured.infoPanelX, 18); assert.equal(configured.infoPanelY, 235);
@@ -59,10 +59,10 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   await until(() => overlay.messages.some(m => m.t === 'chat' && m.text === '1'));
   await until(() => overlay.messages.some(m => m.t === 'entrance' && m.people[0]?.skin === 'female'));
   assert.equal(overlay.messages.some(m => m.t === 'join' && m.v.id === 'thai'), false);
-  const gift = { event: 'gift', data: { uniqueId: 'thai', nickname: 'น้องพลอย', giftName: 'โอเค', giftId: 9001, giftType: 1, repeatEnd: false, repeatCount: 3, diamondCount: 5, msgId: 'one' } };
+  const gift = { event: 'gift', data: { uniqueId: 'thai', nickname: 'น้องพลอย', giftName: 'กลิ่นแห่งรัก', giftId: 9001, giftType: 1, repeatEnd: false, repeatCount: 3, diamondCount: 5, msgId: 'one' } };
   source.send(JSON.stringify(gift)); gift.data.repeatEnd = true; source.send(JSON.stringify(gift)); source.send(JSON.stringify(gift));
   const result = await until(() => overlay.messages.find(m => m.t === 'gift'));
-  assert.equal(result.coins, 15); assert.equal(result.ritual.kind, 'garland'); assert.equal(result.giftId, '9001');
+  assert.equal(result.coins, 15); assert.equal(result.ritual.kind, 'fragrance'); assert.equal(result.giftId, '9001');
   assert.equal(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.slot, 11);
   assert.equal(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.skin, 'female');
   assert.deepEqual(overlay.messages.find(m => m.t === 'join' && m.v.id === 'thai').v.entryFrom, entrancePosition(1));
@@ -112,7 +112,7 @@ test('real bridge: streak accounting, isolation, capacity, persisted restore and
   for (const ws of sockets) ws.terminate(); await stop(); await start();
   const restored = await client('control'); restored.send('live');
   const stored = await until(() => restored.messages.find(m => m.t === 'state' && m.mode === 'live'));
-  assert.equal(stored.stats.coins, 125); assert.equal(stored.settings.goal, 900); assert.equal(stored.settings.giftMap, '9001=garland');
+  assert.equal(stored.stats.coins, 125); assert.equal(stored.settings.goal, 900); assert.equal(stored.settings.giftMap, '9001=fragrance');
   assert.equal(stored.settings.voiceEnabled, false); // v0.2 preserves an explicit mute after the one-time upgrade.
   assert.equal(stored.settings.mushikaGiftId, '7777'); // A future manual binding survives the one-time Corgi upgrade.
   assert.equal(stored.settings.infoPanelX, 18); assert.equal(stored.settings.infoPanelY, 235);

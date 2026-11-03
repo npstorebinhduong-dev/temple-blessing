@@ -97,3 +97,17 @@
 .prayer-banner{position:absolute;left:180px;right:180px;top:1460px;background:#08182be8;border:1px solid #dac18488;border-radius:16px;padding:14px 20px;text-align:center;z-index:4;font-size:32px;line-height:1.65;overflow-wrap:anywhere}.prayer-banner h2{font-size:30px;margin:0;color:#e8cd8f}.prayer-banner p{margin:4px 0}.prayer-banner small{font-size:26px}.prayer-banner.prompt{top:auto;bottom:calc(260px + var(--safe-bottom,0px));font-size:27px}
 .shrine::after{display:none}.world::after{content:'';position:absolute;left:-160px;top:0;width:1400px;height:2080px;z-index:2;pointer-events:none;background:linear-gradient(180deg,#061a3199 0%,#09264444 19%,transparent 42%,transparent 57%,#06213822 76%,#061a3133)}
 .safe-top .identity{visibility:hidden}.safe-top .goal{top:calc(50px + min(var(--safe-top),120px))}
+
+/* v0.12: two stable groups, all nine slots; pending mappings are labelled. */
+.gift-grid{grid-template-rows:1fr;height:198px;gap:10px}
+.gift-group{min-width:0}.gift-group h3{margin:0;font-size:23px;line-height:1.35;color:#ffdfa0}
+.gift-group .guide-gift{height:82px;grid-template-columns:56px minmax(0,1fr) auto}
+.gift-group .guide-icon,.gift-group .guide-icon img{width:56px;height:56px}
+.gift-group .guide-effect{font-size:28px;line-height:1.4}.gift-group .guide-name{font-size:19px}
+.gift-group .guide-price{font-size:31px}.gift-group .unconfigured .guide-name{color:#dcc38c}
+
+/* A compact text banner keeps its title/name on one line. */
+.prayer-banner:not(.prompt){padding:10px 18px;font-size:30px;line-height:1.5}
+.prayer-banner:not(.prompt) h2{display:inline-block;font-size:26px;margin-right:12px}
+.prayer-banner:not(.prompt) small{display:inline-block;max-width:55%;vertical-align:bottom;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prayer-banner:not(.prompt) p{margin:5px 0 0}

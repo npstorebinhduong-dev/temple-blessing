@@ -11,12 +11,8 @@ export const GIFTS=Object.freeze([
   {kind:'lotus',name:'Rose',thai:'กุหลาบ',coins:1,id:'5655',effect:'ดอกบัว',icon:icon('rose_0001'),cell:12,source:'catalog-two'},
   {kind:'lamp',name:'Lamp',thai:'โคมไฟ',coins:1,id:null,effect:'จุดประทีป',source:'reference-pending'},
   {kind:'fragrance',name:'Love Perfume',thai:'กลิ่นแห่งรัก',coins:5,id:null,effect:'กำยาน',icon:icon('love_perfume_candidate_0005'),cell:58,candidateId:'919386',source:'JP-candidate'},
-  {kind:'floral',name:'Garland',thai:'พวงมาลัย',coins:15,id:null,effect:'ถวายพวงมาลัย',source:'reference-pending'},
-  {kind:'light',name:'Perfume',thai:'น้ำหอม',coins:20,id:'5658',effect:'อารตีไฟ',icon:icon('perfume_0020'),cell:86,source:'catalog-two'},
   {kind:'prayer',name:'Doughnut',thai:'โดนัท',coins:30,id:'5879',effect:'กดแล้วส่งข้อความ',icon:icon('doughnut_0030'),cell:93,source:'catalog-two'},
   {kind:'incense',name:'Peach',thai:'ลูกพีช',coins:5,id:'14786',effect:'กำยาน',icon:icon('peach_0005'),source:'catalog'},
-  {kind:'garland',name:'OK',thai:'โอเค',coins:5,id:null,effect:'มาลัย',legacy:true,source:'existing-name'},
-  {kind:'aarti',name:'Shamrock',thai:'แชมร็อก',coins:10,id:'9875',effect:'อารตี',source:'user-LIVE'},
   {kind:'marigold',name:'Bouquet',thai:'ช่อดอกไม้',coins:100,id:'10994',effect:'ดาวเรือง',icon:icon('bouquet_0100'),cell:129,legacy:true,source:'catalog-JP'},
   {kind:'royal',name:'Love Balloon',thai:'บอลลูนรัก',coins:500,id:null,effect:'มหาบูชา',legacy:true,source:'existing-name'},
   {kind:'mushika',name:'Corgi',thai:'คอร์กี้',coins:299,id:'6267',effect:'ส่งคำขอ',icon:icon('corgi_0299'),cell:221,source:'catalog-two'},
@@ -38,3 +34,7 @@ export function configuredGift(g,settings={}) {
     icon:sameCatalog&&(!selectedIcon||selectedIcon===oldDefaultIcons[g.kind])?g.icon:selectedIcon||undefined,
     cell:sameCatalog?g.cell:undefined};
 }
+
+export const SMALL_KINDS=Object.freeze(['lotus','lamp','fragrance','prayer','incense']);
+export const LARGE_KINDS=Object.freeze(['marigold','royal','mushika','galaxy']);
+export const isSmall=kind=>SMALL_KINDS.includes(kind);

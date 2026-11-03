@@ -1,4 +1,5 @@
 import { RITUAL_TIMING } from './ritual-timing.js';
+import { RITUALS } from './gift-rituals.mjs';
 // A finalized combo is ONE ceremony, labelled ×N. Separate final events remain
 // separate turns, even for the same donor/kind. Intake deduplicates transport IDs.
 // Data is retained; only the single active turn allocates animation objects.
@@ -7,7 +8,7 @@ export class RitualQueue {
   prune() {} // Valid gifts never expire while waiting.
   enqueue(message, now = Date.now()) {
     if (!Object.hasOwn(RITUAL_TIMING, message.ritual?.kind || '')) return false;
-    this.pending.push({ ...message, turn: `turn-${++this.sequence}`, queuedAt: now }); return true;
+    this.pending.push({ ...message, ritual:{...RITUALS[message.ritual.kind]}, turn: `turn-${++this.sequence}`, queuedAt: now }); return true;
   }
   tick(now, eligible = () => true) {
     if (this.active && now >= this.active.until) this.active = null;

@@ -9,11 +9,11 @@ import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
 import HttpsProxyAgent from 'https-proxy-agent';
 import { getProxyForUrl } from 'proxy-from-env';
 import { connectTikFinity, createEventHandler } from './tikfinity.mjs';
-import { RITUALS, giftRitual, parseGiftMap, upgradeShamrockMap } from './gift-rituals.mjs';
+import { RITUALS, giftRitual, parseGiftMap, sanitizeGiftMap } from './gift-rituals.mjs';
 import { DEFAULTS, DEMO_NAMES, Room, cleanName, positive, defaultSkin, skinFromComment } from './ganesha.mjs';
 import { EngagementClock, SpeechQueue, blessingForGift } from './engagement.mjs';
 import { BlessingSession, GANESHA_BLESSING, BLESSING_VOICE } from './blessing-session.js';
-import { GIFTS, giftByKind, demoId } from './gift-catalog.js';
+import { isSmall, GIFTS, giftByKind, demoId } from './gift-catalog.js';
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(DIR, '..');
@@ -73,14 +73,12 @@ function applySettings(input = {}) {
   for (const [key, rule] of Object.entries(SETTING_RULES)) if (key in input) changes[key] = rule(input[key]);
   Object.assign(settings, changes);
 }
-try { applySettings(saved.settings); } catch { console.warn('Cấu hình lưu không hợp lệ; dùng cấu hình mặc định.'); }
+try { applySettings({...saved.settings,giftMap:sanitizeGiftMap(saved.settings?.giftMap)}); } catch { console.warn('Cấu hình lưu không hợp lệ; dùng cấu hình mặc định.'); }
 // v0.2 enables the requested spoken blessings once when upgrading a v0.1 session.
 if (saved.version === 1) settings.voiceEnabled = true;
 // v0.4 starts real admissions with gifts. Older crowd-size settings are retired.
 if ((saved.version || 0) < 3) { settings.joinOnEnter = false; settings.joinOnChat = false; }
-// v0.7 uses the confirmed Thai LIVE gift: Shamrock, ID 9875, 10 coins.
-// Other gifts/settings are preserved; future manual edits are not rewritten.
-if ((saved.version || 0) < 4) settings.giftMap = upgradeShamrockMap(settings.giftMap);
+
 // v0.8 routes room-entry events to the bottom welcome line, never to a seat.
 if ((saved.version || 0) < 5) settings.joinOnEnter = true;
 // v0.10 explicitly replaces the old 299 gift with the user-selected Corgi.
@@ -99,8 +97,10 @@ let botTimer = null, persistTimer = null;
 let lastSeatingSummary = '', lastEntranceRevision = -1;
 const meta = () => ({ stats: room.stats, top: room.top(), mode, goal: settings.goal });
 const seatingMeta = () => ({ ...room.seating.summary(), rituals: room.rituals.pending.length,
+  smallWaitingIds:room.rituals.pending.filter(x=>isSmall(x.ritual.kind)).map(x=>x.id),
   standing: room.entrance.people.size, entryWaiting: room.entrance.waiting.size });
 const snapshot = () => ({ t: 'state', settings, viewers: [...room.viewers.values()], actors: [...room.seating.actors.values()],
+  prayerDisplay:room.prayerDisplay.active,
   prayerPrompts:[...room.prayers.users.keys()].map(id=>room.prayers.current(id)),
   seating: seatingMeta(), entrance: room.entrance.snapshot(), active: room.rituals.active, serverTime: Date.now(), cap: 60,
   startedAt: room.startedAt, tiktok: tiktokState, engagement: engagement.snapshot(), ...meta() });
@@ -113,7 +113,7 @@ function persist() {
   clearTimeout(persistTimer); persistTimer = null;
   try {
     const file = path.join(DATA, 'session.json');
-    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 7, settings, live: rooms.live.serialize() }));
+    fs.writeFileSync(file + '.tmp', JSON.stringify({ version: 8, settings, live: rooms.live.serialize() }));
     fs.renameSync(file + '.tmp', file);
     return true;
   } catch (e) { addLog('Không lưu được phiên: ' + e.message); return false; }
@@ -159,7 +159,7 @@ function onChat(id, name, text, avatar, skin, timing) {
   if (room.entrance.update(id, { name: cleanName(name), skin: chosen || undefined })) entranceChanged();
   broadcast({ t: 'chat', id: String(id), name: cleanName(name), text: String(text || '').slice(0, 160) });
   const prayer=room.prayers.comment(id,text,timing);
-  if(prayer){room.rituals.enqueue(prayer,Date.now());broadcast({t:'prayer-prompt',grant:room.prayers.current(id)});seatingChanged();if(mode==='live')saveSoon();}
+  if(prayer){room.prayerDisplay.enqueue(prayer,Date.now());broadcast({t:'prayer-prompt',grant:room.prayers.current(id)});seatingChanged();if(mode==='live')saveSoon();}
 }
 function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', unused, skin, giftIcon = '') {
   if (!id) return;
@@ -189,7 +189,8 @@ function onGift(id, name, giftName, count, unitCoins, avatar, giftId = '', unuse
   broadcast(message); statsChanged();
   if (ritual?.kind==='prayer') {
     const grant=room.prayers.grant(message);broadcast({t:'prayer-prompt',grant});
-  } else if (ritual) {
+  }
+  if (ritual) {
     room.rituals.enqueue(message, Date.now());
     broadcast({ t: 'ritual-wait', name: message.name, queued: room.rituals.pending.length });
   }
@@ -304,7 +305,7 @@ function advanceBlessing(now) {
   }
 }
 setInterval(() => {
-  for(const prayer of room.prayers.expire()) {room.rituals.enqueue(prayer,Date.now());broadcast({t:'prayer-prompt',grant:room.prayers.current(prayer.id)});if(mode==='live')saveSoon();}
+  for(const prayer of room.prayers.expire()) {room.prayerDisplay.enqueue(prayer,Date.now());broadcast({t:'prayer-prompt',grant:room.prayers.current(prayer.id)});if(mode==='live')saveSoon();}
   advanceBlessing(Date.now());
   for (const event of room.advance(Date.now())) {
     if (event.t === 'ritual') {
@@ -387,7 +388,7 @@ function setBots(on, pace) {
     if (r < .45) onChat(v.id, v.name, ['สาธุ', 'ขอให้ครอบครัวมีความสุข', 'ขอบคุณค่ะ', 'โอม ศรี คเณศายะ นะมะฮา'][Math.floor(Math.random() * 4)]);
     else if (r < .7) onLike(v.id, 3);
     else {
-      const [name, kind] = [['Rose', 'lotus'], ['Peach', 'incense'], ['OK', 'garland'], ['Clover', 'aarti'], ['Bouquet', 'marigold'], ['Love Balloon', 'royal']][Math.floor(Math.random() * 6)];
+      const {name,kind}=GIFTS[Math.floor(Math.random()*GIFTS.length)];
       dispatchDemo('gift',{uniqueId:v.id,name:v.name,gift:name,kind});
     }
   }, { slow: 4500, mid: 2000, fast: 650 }[pace] || 2000);
@@ -410,7 +411,7 @@ function onControl(m) {
       for (let i = 0; i < positive(m.n, 500); i++) dispatchDemo('member',{uniqueId:`entry_demo_${i}`,name:`${DEMO_NAMES[i % DEMO_NAMES.length]} ${Math.floor(i / DEMO_NAMES.length) + 1}`});
       break;
     case 'burst':
-      for (const [i, kind] of ['lotus','mushika','light','lotus','galaxy','fragrance','royal'].entries()) {
+      for (const [i, kind] of ['lotus','mushika','lamp','lotus','galaxy','fragrance','royal'].entries()) {
         dispatchDemo('gift',{name:i%2?DEMO_NAMES[i]:m.name,kind,count:i===3?3:1,skin:m.skin});
       }
       break;

@@ -1,0 +1,424 @@
+TAP version 13
+# Subtest: ordinary and special ceremonies keep seated stature at each world position, including both handoffs
+ok 1 - ordinary and special ceremonies keep seated stature at each world position, including both handoffs
+  ---
+  duration_ms: 247.596828
+  type: 'test'
+  ...
+# Subtest: whisper moves the donor feet to the ear without enlarging the donor or changing Mushika
+ok 2 - whisper moves the donor feet to the ear without enlarging the donor or changing Mushika
+  ---
+  duration_ms: 0.186912
+  type: 'test'
+  ...
+# Subtest: one-coin gift draws a bounded table lotus clear of the mouse; it cannot select a special ritual
+ok 3 - one-coin gift draws a bounded table lotus clear of the mouse; it cannot select a special ritual
+  ---
+  duration_ms: 5.149943
+  type: 'test'
+  ...
+# Subtest: a focused donor name remains visible outside Mushika after removing the enlarged ceremony body
+ok 4 - a focused donor name remains visible outside Mushika after removing the enlarged ceremony body
+  ---
+  duration_ms: 0.580935
+  type: 'test'
+  ...
+# Subtest: browser playback interrupts an idle reminder for a gift and never overlaps speech
+ok 5 - browser playback interrupts an idle reminder for a gift and never overlaps speech
+  ---
+  duration_ms: 2.161799
+  type: 'test'
+  ...
+# Subtest: premium legacy curves match the actual v0.8 samples exactly; special shots retain the overview
+ok 6 - premium legacy curves match the actual v0.8 samples exactly; special shots retain the overview
+  ---
+  duration_ms: 2.243271
+  type: 'test'
+  ...
+# Subtest: receipt starts the next-frame aisle movement before any target exists, reaches it in 350ms, and holds 20 turns without retweening
+ok 7 - receipt starts the next-frame aisle movement before any target exists, reaches it in 350ms, and holds 20 turns without retweening
+  ---
+  duration_ms: 0.540424
+  type: 'test'
+  ...
+# Subtest: small gifts wait for a premium owner, transition directly afterward, and reset cancels every lease
+ok 8 - small gifts wait for a premium owner, transition directly afterward, and reset cancels every lease
+  ---
+  duration_ms: 0.162355
+  type: 'test'
+  ...
+# Subtest: lost target and render cancellation cannot reacquire a cancelled turn or accumulate viewport offsets
+ok 9 - lost target and render cancellation cannot reacquire a cancelled turn or accumulate viewport offsets
+  ---
+  duration_ms: 1.103804
+  type: 'test'
+  ...
+# Subtest: camera follows both premium processions, keeps the world covering the frame, and returns to wide
+ok 10 - camera follows both premium processions, keeps the world covering the frame, and returns to wide
+  ---
+  duration_ms: 4.756229
+  type: 'test'
+  ...
+# Subtest: royal flower shower covers all quadrants, bursts at offering, and stays bounded through long use
+ok 11 - royal flower shower covers all quadrants, bursts at offering, and stays bounded through long use
+  ---
+  duration_ms: 190.683367
+  type: 'test'
+  ...
+# Subtest: music uses one native looping source, ducks for speech, replays without refetching and supports one-shot
+ok 12 - music uses one native looping source, ducks for speech, replays without refetching and supports one-shot
+  ---
+  duration_ms: 3.069627
+  type: 'test'
+  ...
+# Subtest: disabling music while it loads cannot start unwanted audio; failed assets report an error
+ok 13 - disabling music while it loads cannot start unwanted audio; failed assets report an error
+  ---
+  duration_ms: 0.962381
+  type: 'test'
+  ...
+# Subtest: both ceremonies reach the altar, kneel, lift the correct offering and return within their duration
+ok 14 - both ceremonies reach the altar, kneel, lift the correct offering and return within their duration
+  ---
+  duration_ms: 1.407322
+  type: 'test'
+  ...
+# Subtest: idle reminders start after ten gift-free seconds, then wait ten seconds after actual playback ends
+ok 15 - idle reminders start after ten gift-free seconds, then wait ten seconds after actual playback ends
+  ---
+  duration_ms: 0.458831
+  type: 'test'
+  ...
+# Subtest: reminder completion follows every audible window, handles disconnects and rejects stale receipts
+ok 16 - reminder completion follows every audible window, handles disconnects and rejects stale receipts
+  ---
+  duration_ms: 0.175594
+  type: 'test'
+  ...
+# Subtest: muted or failed reminders recover without backlog, and busy gift speech delays the first reminder
+ok 17 - muted or failed reminders recover without backlog, and busy gift speech delays the first reminder
+  ---
+  duration_ms: 1.489695
+  type: 'test'
+  ...
+# Subtest: gift speech removes waiting idle speech; no idle backlog while any voice is busy
+ok 18 - gift speech removes waiting idle speech; no idle backlog while any voice is busy
+  ---
+  duration_ms: 1.582315
+  type: 'test'
+  ...
+# Subtest: avatar selection uses explicit comments and persists through subsequent activity
+ok 19 - avatar selection uses explicit comments and persists through subsequent activity
+  ---
+  duration_ms: 1.775406
+  type: 'test'
+  ...
+# Subtest: partial PNGs cannot poison the character cache; all poses appear after load
+ok 20 - partial PNGs cannot poison the character cache; all poses appear after load
+  ---
+  duration_ms: 1.212478
+  type: 'test'
+  ...
+# Subtest: failed images never replace a ready character pose with an empty crop
+ok 21 - failed images never replace a ready character pose with an empty crop
+  ---
+  duration_ms: 0.40479
+  type: 'test'
+  ...
+# Subtest: 500 arrivals retain every record but expose only 88 render slots; no donations or seats are invented
+ok 22 - 500 arrivals retain every record but expose only 88 render slots; no donations or seats are invented
+  ---
+  duration_ms: 8.52491
+  type: 'test'
+  ...
+# Subtest: far rows rotate without moving the front row or deleting a waiting person, even after a long live
+ok 23 - far rows rotate without moving the front row or deleting a waiting person, even after a long live
+  ---
+  duration_ms: 23.652853
+  type: 'test'
+  ...
+# Subtest: demo crowd is labelled separately and never added to the true waiting count
+ok 24 - demo crowd is labelled separately and never added to the true waiting count
+  ---
+  duration_ms: 4.504029
+  type: 'test'
+  ...
+# Subtest: a donor leaves the avatar crowd once and enters seat 11, keeping their chosen gender and origin
+ok 25 - a donor leaves the avatar crowd once and enters seat 11, keeping their chosen gender and origin
+  ---
+  duration_ms: 1.045205
+  type: 'test'
+  ...
+# Subtest: a donor stays in the crowd until a full room frees a seat; waiting preference survives
+ok 26 - a donor stays in the crowd until a full room frees a seat; waiting preference survives
+  ---
+  duration_ms: 2.586779
+  type: 'test'
+  ...
+# Subtest: waiting state persists per room and clear keeps donation totals; every avatar fits the bottom band
+ok 27 - waiting state persists per room and clear keeps donation totals; every avatar fits the bottom band
+  ---
+  duration_ms: 1.030063
+  type: 'test'
+  ...
+# Subtest: every browser module parses before the LIVE bundle is shipped
+ok 28 - every browser module parses before the LIVE bundle is shipped
+  ---
+  duration_ms: 873.034912
+  type: 'test'
+  ...
+# Subtest: retained name fallbacks require exact name and unit price
+ok 29 - retained name fallbacks require exact name and unit price
+  ---
+  duration_ms: 1.609787
+  type: 'test'
+  ...
+# Subtest: explicit IDs require correct unit price and prevent name fallback for the bound slot
+ok 30 - explicit IDs require correct unit price and prevent name fallback for the bound slot
+  ---
+  duration_ms: 0.94869
+  type: 'test'
+  ...
+# Subtest: retired identities, aliases, saved bindings and pending turns cannot trigger any ritual
+ok 31 - retired identities, aliases, saved bindings and pending turns cannot trigger any ritual
+  ---
+  duration_ms: 1.731595
+  type: 'test'
+  ...
+# Subtest: a 500-rose streak produces one lotus event and counts 500, including string final flags
+ok 32 - a 500-rose streak produces one lotus event and counts 500, including string final flags
+  ---
+  duration_ms: 1.498949
+  type: 'test'
+  ...
+# Subtest: crowd eviction never loses donations or the leaderboard; serialized totals restore
+ok 33 - crowd eviction never loses donations or the leaderboard; serialized totals restore
+  ---
+  duration_ms: 6.618906
+  type: 'test'
+  ...
+# Subtest: demo and live rooms have independent totals and participants
+ok 34 - demo and live rooms have independent totals and participants
+  ---
+  duration_ms: 0.200182
+  type: 'test'
+  ...
+# Subtest: every separate final gift stays in FIFO order, including repeats by one donor, with no expiry or price priority
+ok 35 - every separate final gift stays in FIFO order, including repeats by one donor, with no expiry or price priority
+  ---
+  duration_ms: 2.517425
+  type: 'test'
+  ...
+# Subtest: the first waiting donor cannot be overtaken and pending turns survive pause/restore
+ok 36 - the first waiting donor cannot be overtaken and pending turns survive pause/restore
+  ---
+  duration_ms: 0.275816
+  type: 'test'
+  ...
+# Subtest: new gifts require verified ID or explicit configuration and correct unit price, never a 299/1000 price guess
+ok 37 - new gifts require verified ID or explicit configuration and correct unit price, never a 299/1000 price guess
+  ---
+  duration_ms: 0.402827
+  type: 'test'
+  ...
+# Subtest: server schedules reminders from playback receipts, ignores preview receipts and resets on gifts
+ok 38 - server schedules reminders from playback receipts, ignores preview receipts and resets on gifts
+  ---
+  duration_ms: 4933.656933
+  type: 'test'
+  ...
+# Subtest: real bridge: streak accounting, isolation, capacity, persisted restore and local-only endpoints
+ok 39 - real bridge: streak accounting, isolation, capacity, persisted restore and local-only endpoints
+  ---
+  duration_ms: 1502.603348
+  type: 'test'
+  ...
+# Subtest: Mushika sends one directional light path then a reply within its 16 second ceremony
+ok 40 - Mushika sends one directional light path then a reply within its 16 second ceremony
+  ---
+  duration_ms: 10.240074
+  type: 'test'
+  ...
+# Subtest: adjustable panel and standing figure stay inside broadcast safe regions
+ok 41 - adjustable panel and standing figure stay inside broadcast safe regions
+  ---
+  duration_ms: 0.312491
+  type: 'test'
+  ...
+# Subtest: statue never caches arm crops from a PNG whose dimensions arrived before its pixels
+ok 42 - statue never caches arm crops from a PNG whose dimensions arrived before its pixels
+  ---
+  duration_ms: 1.471228
+  type: 'test'
+  ...
+# Subtest: turning background off and on during its exit restores the same ten slots
+ok 43 - turning background off and on during its exit restores the same ten slots
+  ---
+  duration_ms: 0.516508
+  type: 'test'
+  ...
+# Subtest: ten background actors keep fixed slots through fifty arrivals and repeated gifts
+ok 44 - ten background actors keep fixed slots through fifty arrivals and repeated gifts
+  ---
+  duration_ms: 3.625204
+  type: 'test'
+  ...
+# Subtest: a full scene vacates the oldest seat before admitting FIFO, including all ten background actors
+ok 45 - a full scene vacates the oldest seat before admitting FIFO, including all ten background actors
+  ---
+  duration_ms: 18.530059
+  type: 'test'
+  ...
+# Subtest: a full scene releases the least recent donor; repeat gifts renew priority but ordinary interactions do not
+ok 46 - a full scene releases the least recent donor; repeat gifts renew priority but ordinary interactions do not
+  ---
+  duration_ms: 2.665237
+  type: 'test'
+  ...
+# Subtest: returning donors finish their exit and rejoin once; bursts retain every waiting donor with bounded actors
+ok 47 - returning donors finish their exit and rejoin once; bursts retain every waiting donor with bounded actors
+  ---
+  duration_ms: 1.896909
+  type: 'test'
+  ...
+# Subtest: server owns ceremonies: a waiting premium is admitted first, then protected through its return
+ok 48 - server owns ceremonies: a waiting premium is admitted first, then protected through its return
+  ---
+  duration_ms: 6.536423
+  type: 'test'
+  ...
+# Subtest: seat and devotion motion stays finite, staggered and bounded; reduced motion holds a wai
+ok 49 - seat and devotion motion stays finite, staggered and bounded; reduced motion holds a wai
+  ---
+  duration_ms: 13.04413
+  type: 'test'
+  ...
+# Subtest: catalog, timings, demos and routing have exactly five small and four premium kinds
+ok 50 - catalog, timings, demos and routing have exactly five small and four premium kinds
+  ---
+  duration_ms: 1.55909
+  type: 'test'
+  ...
+# Subtest: each small gift starts while a new actor is still arriving, with no TTS/prayer readiness gate
+ok 51 - each small gift starts while a new actor is still arriving, with no TTS/prayer readiness gate
+  ---
+  duration_ms: 1.338908
+  type: 'test'
+  ...
+# Subtest: small actions remain FIFO behind a large ceremony; contribution is recorded at intake
+ok 52 - small actions remain FIFO behind a large ceremony; contribution is recorded at intake
+  ---
+  duration_ms: 0.489708
+  type: 'test'
+  ...
+# Subtest: Donut enters immediately; 30-second text rights and subsequent banners never add another walking/camera turn
+ok 53 - Donut enters immediately; 30-second text rights and subsequent banners never add another walking/camera turn
+  ---
+  duration_ms: 0.674496
+  type: 'test'
+  ...
+# Subtest: restored old small turns use current choreography and retired turns disappear without touching donations
+ok 54 - restored old small turns use current choreography and retired turns disappear without touching donations
+  ---
+  duration_ms: 0.24591
+  type: 'test'
+  ...
+# Subtest: real server holds Galaxy for actual voice, uses Thai Niwat/text once, preserves FIFO, caches speech and cancels cleanly
+ok 55 - real server holds Galaxy for actual voice, uses Thai Niwat/text once, preserves FIFO, caches speech and cancels cleanly
+  ---
+  duration_ms: 4679.089984
+  type: 'test'
+  ...
+# Subtest: voice/banner share exact Thai text, follow all audible listeners and hold 2.5s after actual completion
+ok 56 - voice/banner share exact Thai text, follow all audible listeners and hold 2.5s after actual completion
+  ---
+  duration_ms: 0.84957
+  type: 'test'
+  ...
+# Subtest: no sound, failed playback, silent listeners and timeouts get a readable text fallback without hanging
+ok 57 - no sound, failed playback, silent listeners and timeouts get a readable text fallback without hanging
+  ---
+  duration_ms: 0.267783
+  type: 'test'
+  ...
+# Subtest: all seats reach the actual whisper anchor, hold 3.6 seconds, and return without position discontinuities
+ok 58 - all seats reach the actual whisper anchor, hold 3.6 seconds, and return without position discontinuities
+  ---
+  duration_ms: 51.626924
+  type: 'test'
+  ...
+# Subtest: FIFO cannot deadlock a full room whose later donors also have pending turns
+ok 59 - FIFO cannot deadlock a full room whose later donors also have pending turns
+  ---
+  duration_ms: 3.138941
+  type: 'test'
+  ...
+# Subtest: restart removes previous voice timestamps and honours a disabled background crowd
+ok 60 - restart removes previous voice timestamps and honours a disabled background crowd
+  ---
+  duration_ms: 0.406913
+  type: 'test'
+  ...
+# Subtest: normalizes events, counts final streak once and rejects malformed data
+ok 61 - normalizes events, counts final streak once and rejects malformed data
+  ---
+  duration_ms: 1.634954
+  type: 'test'
+  ...
+# Subtest: reconnects after socket closure; manual disconnect stops retries
+ok 62 - reconnects after socket closure; manual disconnect stops retries
+  ---
+  duration_ms: 229.622468
+  type: 'test'
+  ...
+# Subtest: server serves UI and forwards TikFinity chat/likes to overlay
+ok 63 - server serves UI and forwards TikFinity chat/likes to overlay
+  ---
+  duration_ms: 407.058219
+  type: 'test'
+  ...
+# Subtest: arrivals finish before server focus even at 4 FPS, follow the aisle and never resize to catch up
+ok 64 - arrivals finish before server focus even at 4 FPS, follow the aisle and never resize to catch up
+  ---
+  duration_ms: 9.318954
+  type: 'test'
+  ...
+# Subtest: prayer grants accept fresh comments from the purchaser, one right at a time, preserving Thai and plain text
+ok 65 - prayer grants accept fresh comments from the purchaser, one right at a time, preserving Thai and plain text
+  ---
+  duration_ms: 1.123783
+  type: 'test'
+  ...
+# Subtest: large prayer streaks stay compact, restore pending rights and reset clears them
+ok 66 - large prayer streaks stay compact, restore pending rights and reset clears them
+  ---
+  duration_ms: 0.2127
+  type: 'test'
+  ...
+# Subtest: same-price identities remain separate and pending mappings require explicit demo IDs or operator binding
+ok 67 - same-price identities remain separate and pending mappings require explicit demo IDs or operator binding
+  ---
+  duration_ms: 0.887949
+  type: 'test'
+  ...
+# Subtest: combo final counts are idempotent across reconnects, including repeated ends with different transport IDs
+ok 68 - combo final counts are idempotent across reconnects, including repeated ends with different transport IDs
+  ---
+  duration_ms: 0.529948
+  type: 'test'
+  ...
+# Subtest: 60 seats preserve an open aisle; station rituals enter and leave continuously without gift scaling
+ok 69 - 60 seats preserve an open aisle; station rituals enter and leave continuously without gift scaling
+  ---
+  duration_ms: 101.696224
+  type: 'test'
+  ...
+1..69
+# tests 69
+# suites 0
+# pass 69
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7076.82679

@@ -25,7 +25,7 @@ function send(cmd, extra = {}) {
 }
 function logLine(line) { const el = $('log'); el.textContent = (el.textContent + line + '\n').split('\n').slice(-160).join('\n'); el.scrollTop = el.scrollHeight; }
 function fillSettings(settings) { for (const k of SETTINGS) { if (settings[k] === undefined) continue; const el = $(k); if (el.type === 'checkbox') el.checked = !!settings[k]; else el.value = settings[k]; }
-  if(settings.giftMap!==undefined)$('mappingStatus').textContent='Chưa sẵn sàng nhận quà thật: '+GIFTS.filter(g=>!configuredGift(g,settings).liveReady).map(g=>g.name+' '+g.coins+' xu').join(', ')+'. Icon chưa có sẽ để ô chữ; không thay bằng emoji. Rose/Perfume/Doughnut/Corgi/Galaxy đối chiếu catalog; cần xác nhận danh mục trên tài khoản Thái.';
+  if(settings.giftMap!==undefined)$('mappingStatus').textContent='Chưa sẵn sàng nhận quà thật: '+GIFTS.filter(g=>!configuredGift(g,settings).liveReady).map(g=>g.name+' '+g.coins+' xu').join(', ')+'. Icon chưa có sẽ để ô chữ; không thay bằng emoji. Rose/Peach/Doughnut/Corgi/Galaxy đối chiếu catalog; cần xác nhận danh mục trên tài khoản Thái.';
 }
 function readSettings() { return Object.fromEntries(SETTINGS.map(k => { const el = $(k); return [k, el.type === 'checkbox' ? el.checked : ['number', 'range'].includes(el.type) ? Number(el.value) : el.value]; })); }
 function stats(m) { if (!m.stats) return; $('coins').textContent = numbers.format(m.stats.coins); $('giftTotal').textContent = numbers.format(m.stats.gifts); $('likes').textContent = numbers.format(m.stats.likes); }

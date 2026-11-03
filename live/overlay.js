@@ -16,7 +16,8 @@ import { specialPose, smooth, MUSHIKA } from './special-rituals.js';
 import { actorGeometry, entryWorldPoint } from './actor-geometry.js';
 import { drawSmallGift } from './small-gift-effect.js';
 import { drawStations, OFFERING } from './ceremony-stations.js';
-import { stationPose, drawGarland, drawTray } from './station-ritual.js';
+import { smallPose } from './small-procession.js';
+import { isSmall } from './gift-catalog.js';
 import { CameraDebug } from './camera-debug.js';
 const $ = id => document.getElementById(id);
 const setText = (id, text) => { const el = $(id); if (el.textContent !== text) el.textContent = text; };
@@ -64,6 +65,7 @@ document.fonts.addEventListener('loadingdone', () => { nameplates.cache.clear();
 const seats = seatLayout(), cap = 60;
 let mode = null, settings = {}, last = performance.now(), lastRitual = null, remoteRitual = null;
 let nextFrameAt = last;
+let smallWaitingIds=new Set(), prayerDisplay=null;
 let hero = null, lastGiftAt = Date.now(), inviteUntil = 0, nextGolden = 0, waiting = 0;
 let renderedFrames = 0, prayerPrompt = null;
 let frameMs = [], lastSpecialPhase = '', waitingNoticeUntil = 0;
@@ -138,6 +140,7 @@ function attendance() {
   $('ambientBadge').hidden = ambient === 0;
 }
 function seatingStatus(m) {
+  smallWaitingIds=new Set(m.smallWaitingIds||[]);cameraController.queue(smallWaitingIds.size);
   waiting = m.waiting || 0; canvas.dataset.departing = m.departing || 0;
   canvas.dataset.queued = m.rituals || 0; attendance();
 }
@@ -187,12 +190,13 @@ function updateStats(m) {
 function state(m) {
   // Server snapshots are authoritative after reconnect, mode switches and operator edits.
   visitors.clear(); entrance.clear(); crowd.reset(); petals.length = 0; remoteRitual = null; lastRitual = null; hero = null;
-  royalPetals.reset(); applyCamera(cameraController.reset());
+  royalPetals.reset(); applyCamera(cameraController.reset());cameraDebug.reset(cameraController);
   nameplates.clear(); lastSpecialPhase = ''; $('blessingBanner').hidden = true; $('ritualWait').hidden = true;
   canvas.dataset.ceremonyPhase = ''; canvas.dataset.ceremonySkin = '';
   $('gift').hidden = true; stage.classList.remove('ceremony'); audio.clear();
   lastGiftAt = m.engagement?.lastGiftAt || Date.now(); inviteUntil = 0;
   mode = m.mode; settings = m.settings; prayerPrompt=m.prayerPrompts?.at(-1)||null;
+  prayerDisplay=m.prayerDisplay?{...m.prayerDisplay,beganAt:performance.now()-Math.max(0,m.serverTime-m.prayerDisplay.beganAt),until:performance.now()+m.prayerDisplay.until-m.serverTime}:null;
   giftGuide();
   for (const person of m.actors) addViewer(person, true);
   receiveEntrance(m.entrance);
@@ -222,7 +226,7 @@ function connect() {
   const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws?role=overlay${preview ? '&preview=1' : ''}`);
   overlaySocket = ws;
   ws.onopen = () => { $('connection').hidden = true; audio.reportSpeech(); };
-  ws.onclose = () => { overlaySocket = null; remoteRitual = null; applyCamera(cameraController.reset()); audio.clear(); $('connection').hidden = false; setTimeout(connect, 2000); };
+  ws.onclose = () => { overlaySocket = null; remoteRitual = null; applyCamera(cameraController.reset());cameraDebug.reset(cameraController); audio.clear(); $('connection').hidden = false; setTimeout(connect, 2000); };
   ws.onmessage = e => {
     let m; try { m = JSON.parse(e.data); } catch { return; }
     if (m.t === 'state') state(m);
@@ -244,8 +248,11 @@ function connect() {
     if (m.t === 'ritual-wait') {
       $('ritualWait').textContent = `${m.name} · อยู่ในคิวบูชา (${m.queued})`; $('ritualWait').hidden = false; waitingNoticeUntil = performance.now() + 4500;
     }
+    if(m.t==='prayer-banner')prayerDisplay=m.active?{...m.active,beganAt:performance.now()-Math.max(0,m.serverTime-m.active.beganAt),until:performance.now()+m.active.until-m.serverTime}:null;
     if(m.t==='prayer-prompt')prayerPrompt=m.grant;
     if (m.t === 'gift') {
+      canvas.dataset.giftReceivedAt=performance.now();canvas.dataset.giftReceivedFrame=renderedFrames;canvas.dataset.giftReceivedKind=m.ritual?.kind||'';
+      if(isSmall(m.ritual?.kind)){cameraController.notifySmall(m.id,performance.now());smallWaitingIds.add(m.id);}
       lastGiftAt = m.lastGiftAt || Date.now(); inviteUntil = 0; audio.giftPriority();
       const v = visitors.get(m.id); if (v) { v.coins = m.total; v.glow = 1; }
     }
@@ -254,8 +261,8 @@ function connect() {
       inviteUntil = performance.now() + 6000; $('inviteText').textContent = 'กดหัวใจ ♥ และแชร์ไลฟ์';
       $('inviteSub').textContent = m.text; canvas.dataset.prompts = Number(canvas.dataset.prompts || 0) + 1;
     }
-    if (m.t === 'like') { const v = visitors.get(m.id); particles(v?.x || 900, (v?.y || 1650) - 150, Math.min(4, m.n), true); }
-    if (m.t === 'follow') { const v = visitors.get(m.id); if (v) { v.glow = 1; particles(v.x, v.y - 150, 8); } }
+    if (m.t === 'like' && (!remoteRitual||isSmall(remoteRitual.ritual.kind))) { const v = visitors.get(m.id); particles(v?.x || 900, (v?.y || 1650) - 150, Math.min(4, m.n), true); }
+    if (m.t === 'follow' && (!remoteRitual||isSmall(remoteRitual.ritual.kind))) { const v = visitors.get(m.id); if (v) { v.glow = 1; particles(v.x, v.y - 150, 8); } }
     if (m.t === 'bell') audio.bell('aarti');
     if (m.t === 'tts') audio.speech(m.url, m.tag, m.id);
     if (m.t === 'speech-clear') audio.clearSpeech();
@@ -283,19 +290,17 @@ function lotus(x, y, scale, time) {
   }
   ctx.fillStyle = '#ffdf86'; ctx.beginPath(); ctx.ellipse(0, 5, 23, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 }
-function ritualArt(active, now, t) {
-  if(!active||active.ritual.procession)return null;
-  const kind=active.ritual.kind,elapsed=now-active.beganAt;
-  if(kind==='lotus')return drawSmallGift(ctx,visitors.get(active.id),elapsed,lotus);
-  ctx.save();ctx.globalAlpha=Math.max(0,Math.min(1,elapsed/650,(active.until-now)/650));
-  if(kind==='garland')drawGarland(ctx,OFFERING.x,OFFERING.y-29,27);
-  if(kind==='aarti')drawTray(ctx,OFFERING.x,OFFERING.y-5,t);
-  ctx.restore();return null;
+function ritualArt(active, now, t, pose) {
+  if(active?.ritual.kind!=='lotus'||!pose||pose.phase!=='offer')return null;
+  return drawSmallGift(ctx,pose,now-active.beganAt-4400,lotus);
 }
 function drawViewer(v, dt, t, active) {
   if (!v.seat || hero?.id === v.id) return;
   const seat = v.seat; let frame = 7;
-  if (v.state === 'walk') {
+  if (v.state === 'walk' && smallWaitingIds.has(v.id) && remoteRitual?.id!==v.id) {
+    // A waiting arrival stays at the entrance until its serialized action.
+    v.arrivalAt=t;v.arrivalOrigin={x:v.x,y:v.y};return;
+  } else if (v.state === 'walk') {
     const pose = arrivalPose(v.arrivalOrigin,seat,(t-v.arrivalAt)*1000);
     v.x=pose.x;v.y=pose.y;v.step=pose.distance/34;frame=pose.frame;
     if(pose.phase==='sit'){v.state='sit';v.bowAt=t;}
@@ -422,21 +427,16 @@ function drawStationCeremony(active,pose,geometry,t) {
   ctx.translate(pose.x,pose.y);ctx.rotate(pose.bow);
   const sprite=characterSprites.get(pose.carrier?pose.carrierFrame:pose.frame,h,hero.skin,pose.carrier)||characterSprites.get(pose.frame,h,hero.skin);
   if(sprite)ctx.drawImage(sprite,-w/2,-h,w,h);
-  // The tray shares the body/hand transform; no independent spinning wrist.
-  if(kind==='light') {
-    ctx.save();ctx.globalAlpha=pose.phase==='settle'||pose.phase==='done'?0:1;
-    drawTray(ctx,h*.24,-h*.62,t);ctx.restore();
-  }
-  if(kind==='floral'&&pose.place<1){const px=h*.24+(OFFERING.x-pose.x-h*.24)*pose.place,py=-h*.60+(OFFERING.y-29-pose.y+h*.60)*pose.place;drawGarland(ctx,px,py,27);}
   ctx.restore();
-  if(kind==='floral'&&pose.place>=1)drawGarland(ctx,OFFERING.x,OFFERING.y-29,27);
-  if(pose.phase==='offer'&&pose.phase!==lastSpecialPhase){audio.bell(kind);particles(OFFERING.x,OFFERING.y-30,kind==='floral'?9:3);}
+  // One quiet accent at the fixed fixture, with no petal burst or carried prop.
+  if(pose.phase==='offer'&&pose.phase!==lastSpecialPhase)audio.bell(kind);
   lastSpecialPhase=pose.phase;
   nameTag(hero,pose.x,pose.y-h-8,520,true);cameraDebug.actor(hero,pose,geometry,pose.phase,h);
 }
 function prayerBanner(active,now) {
-  const ready=active?.ritual.kind==='prayer'&&active.prayer,el=$('prayerBanner');el.hidden=!ready;
-  if(ready){setText('prayerName',active.name);setText('prayerText',active.prayer.text);el.style.opacity=String(Math.min(1,(now-active.beganAt)/450,(active.until-now)/600));el.style.top=Math.max(1270,1460-(settings.safeBottom||0))+'px';}
+  const display=prayerDisplay&&now<prayerDisplay.until?prayerDisplay:null;
+  const ready=display&&(!active||isSmall(active.ritual.kind)),el=$('prayerBanner');el.hidden=!ready;
+  if(ready){setText('prayerName',display.name);setText('prayerText',display.prayer.text);el.style.opacity=String(Math.min(1,(now-display.beganAt)/450,(display.until-now)/600));el.style.top=Math.max(1270,1460-(settings.safeBottom||0))+'px';}
   const waiting=prayerPrompt&&Date.now()<prayerPrompt.deadline&&!active;
   $('prayerPrompt').hidden=!waiting;
   if(waiting)$('prayerPrompt').textContent=`${prayerPrompt.name} · พิมพ์คำอธิษฐานของคุณ ภายใน ${Math.max(0,Math.ceil((prayerPrompt.deadline-Date.now())/1000))} วินาที`;
@@ -471,7 +471,7 @@ function renderFrame(now) {
   const requested = remoteRitual && now < remoteRitual.until ? remoteRitual : null;
   const target = requested && visitors.get(requested.id);
   const targetImageReady = target && characterSprites.ready(target.skin === 'male' ? 'male' : 'female');
-  const targetReady = targetImageReady && (target.state === 'sit' || hero?.id === target.id);
+  const targetReady = targetImageReady && (isSmall(requested.ritual.kind) || target.state === 'sit' || hero?.id === target.id);
   const active = cameraController.accept(requested, targetReady ? target : null) ? requested : null;
   if (requested && target && !targetReady) cameraController.reason = targetImageReady ? 'actor-arriving' : 'actor-asset-unavailable';
   cameraDebug.begin(active);
@@ -487,10 +487,10 @@ function renderFrame(now) {
       waitingNoticeUntil = 0; $('ritualWait').hidden = true;
       $('giftIcon').textContent = ''; $('giftLabel').textContent = active.ritual.label;
       $('giftName').textContent = active.name; $('giftCount').textContent = '';
-      $('gift').dataset.kind = active.ritual.kind; audio.bell(active.ritual.kind);
+      $('gift').dataset.kind = active.ritual.kind; if(!isSmall(active.ritual.kind))audio.bell(active.ritual.kind);
       if (active.ritual.kind === 'galaxy') audio.beginSpecial();
       const v = visitors.get(active.id);
-      if (active.ritual.kind !== 'lotus') particles(v.x, v.y - 160, active.ritual.kind === 'aarti' ? 36 : 16);
+      if (!isSmall(active.ritual.kind)) particles(v.x, v.y - 160, 16);
       if (active.ritual.procession) {
         hero = { id: active.id, name: active.name, skin: v.skin || active.skin || 'female', from: { x: v.x, y: v.y }, seat: { ...v.seat }, seated: v.state === 'sit' };
       }
@@ -500,11 +500,11 @@ function renderFrame(now) {
   const special = ['mushika', 'galaxy'].includes(active?.ritual.kind);
   const pose = hero && active ? special
     ? specialPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, { untilMs: active.until - active.beganAt, reduced })
-    : active.ritual.station ? stationPose(active.ritual.kind,now-active.beganAt,hero.from,visitors.get(hero.id)?.seat||hero.seat) : processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
+    : active.ritual.station ? smallPose(active.ritual.kind,now-active.beganAt,hero.from,visitors.get(hero.id)?.seat||hero.seat,hero.seated) : processionPose(active.ritual.kind, now - active.beganAt, hero.from, visitors.get(hero.id)?.seat || hero.seat, hero.seated) : null;
   const donor = active && visitors.get(active.id);
   const heroGeometry = hero && pose ? actorGeometry(hero, pose, t) : null;
   const focus = pose || (donor && { x: donor.x, y: donor.y, bodyHeight: donor.renderHeight || 200 });
-  const camera = active ? cameraController.sample(active, now, focus, { enabled: settings.cinematicZoom !== false, reduced }) : cameraController.current;
+  const camera = cameraController.sample(active, now, focus, { enabled: settings.cinematicZoom !== false, reduced, largeWaiting:requested&&!isSmall(requested.ritual.kind)&&!active });
   applyCamera(camera);
   canvas.dataset.ritualKind = active?.ritual.kind || '';
   shrine.classList.toggle('articulated', settings.statueMotion !== false && shrineArms.ready);
@@ -518,7 +518,7 @@ function renderFrame(now) {
   const dim = galaxy ? smooth(elapsed/1800) * (1-smooth((now-active.until+3200)/3200)) * (specialArt.standingReady() ? .80 : .28) : 0;
   canvas.dataset.dimmer = dim.toFixed(3);
   specialArt.mouse(ctx, reduced ? 0 : t, active?.ritual.kind === 'mushika' ? elapsed : null);
-  drawStations(ctx,t,{lamp:active?.ritual.kind==='lamp'&&pose?.phase==='offer'?1:0,incense:active?.ritual.kind==='incense'||active?.ritual.kind==='fragrance'&&pose?.phase==='offer'?1:0});
+  drawStations(ctx,t,{lamp:active?.ritual.kind==='lamp'&&pose?.phase==='offer'?1:0,incense:['incense','fragrance'].includes(active?.ritual.kind)&&pose?.phase==='offer'?1:0});
   for (let i = 0; i < 24; i++) {
     const x = (i * 137 + Math.sin(t * .15 + i) * 30) % 1080;
     const y = (i * 83 - t * (reduced ? 2 : 7) + 20000) % 1660;
@@ -529,7 +529,7 @@ function renderFrame(now) {
     setText('inviteSub', 'พิมพ์ 1 = หญิง · 2 = ชาย');
   }
   $('invitation').classList.toggle('call-to-action', inviteUntil > now && !hero);
-  const smallGift = ritualArt(active, now, t) || null;
+  const smallGift = ritualArt(active, now, t, pose) || null;
   canvas.dataset.smallGiftEffect = smallGift ? 'small-fixed-lotus' : '';
   for (const v of [...visitors.values()].sort((a, b) => a.y - b.y)) {
     ctx.save(); ctx.globalAlpha = hero ? .82 : 1; drawViewer(v, dt, t, active); ctx.restore();
@@ -589,7 +589,7 @@ function renderFrame(now) {
   drawEntrance(now);
   crowd.drawLabels(nameCtx, now, camera, SCENE_VIEW);
   blessingBanner(active, now);
-  infoPanel.tick(now,!!active,active?.ritual.label);
+  infoPanel.tick(now,!!active||!!cameraController.owner||!!cameraController.transition,active?.ritual.label);
   prayerBanner(active,now);
   stage.classList.toggle('any-ritual', !!active);
   if (now >= waitingNoticeUntil) $('ritualWait').hidden = true;

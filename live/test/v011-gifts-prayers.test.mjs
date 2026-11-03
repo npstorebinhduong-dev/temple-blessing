@@ -4,7 +4,7 @@ import {PrayerQueue,prayerText,DEFAULT_PRAYER} from '../prayer-queue.js';
 import {giftRitual,RITUALS} from '../gift-rituals.mjs';
 import {GIFTS,demoId,configuredGift} from '../gift-catalog.js';
 import {createEventHandler} from '../tikfinity.mjs';
-import {stationPose} from '../station-ritual.js';
+import {smallPose as stationPose} from '../small-procession.js';
 import {actorGeometry,entryWorldPoint} from '../actor-geometry.js';
 import {seatLayout,arrivalPose,ENTRY_MS} from '../seating.js';
 import {SCENE_VIEW} from '../scene-layout.js';
@@ -43,8 +43,8 @@ test('same-price identities remain separate and pending mappings require explici
  const demoMap=Object.fromEntries(GIFTS.map(g=>[demoId(g.kind),g.kind]));
  for(const g of GIFTS)assert.equal(giftRitual(g.name,g.coins,g.id||demoId(g.kind),demoMap)?.kind,g.kind);
  assert.equal(giftRitual('anything',1,'5655').kind,'lotus');assert.equal(giftRitual('Rosa',10,'5655'),null);
- assert.equal(giftRitual('Perfume',20,'5658').kind,'light');assert.equal(giftRitual('Doughnut',30,'5879').kind,'prayer');
- for(const kind of ['lamp','fragrance','floral']){
+ assert.equal(giftRitual('Perfume',20,'5658'),null);assert.equal(giftRitual('Doughnut',30,'5879').kind,'prayer');
+ for(const kind of ['lamp','fragrance']){
   const g=GIFTS.find(g=>g.kind===kind);assert.equal(configuredGift(g).liveReady,false);
   assert.equal(giftRitual(g.name,g.coins),null);assert.equal(giftRitual(g.name,g.coins,demoId(kind)),null);
   assert.equal(giftRitual(g.name,g.coins,demoId(kind),{[demoId(kind)]:kind}).kind,kind);
@@ -68,7 +68,7 @@ test('combo final counts are idempotent across reconnects, including repeated en
 });
 test('60 seats preserve an open aisle; station rituals enter and leave continuously without gift scaling',()=>{
  const seats=seatLayout();assert.equal(seats.length,60);assert.equal(new Set(seats.map(s=>s.x+':'+s.y)).size,60);assert.ok(seats.every(s=>s.x<=360||s.x>=720));
- for(const kind of ['lamp','fragrance','floral','light'])for(const seat of seats){
+ for(const kind of ['lotus','lamp','fragrance','prayer','incense'])for(const seat of seats){
   const duration=RITUALS[kind].duration;let previous=stationPose(kind,0,seat,seat);assert.equal(previous.x,seat.x);assert.equal(previous.y,seat.y);
   for(let ms=16;ms<duration;ms+=16){const p=stationPose(kind,ms,seat,seat);assert.ok(Math.hypot(p.x-previous.x,p.y-previous.y)<18,`${kind} at ${ms}`);assert.equal(actorGeometry({seat},p).height,actorGeometry({...p,seat}).height);previous=p;}
   const end=stationPose(kind,duration,seat,seat);assert.equal(end.x,seat.x);assert.equal(end.y,seat.y);

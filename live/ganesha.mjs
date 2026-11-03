@@ -1,6 +1,7 @@
 import { Seating } from './seating.js';
 import { RitualQueue } from './ritual-queue.js';
 import { EntranceLine, entrancePosition } from './entrance-line.js';
+import { isSmall } from './gift-catalog.js';
 import { PrayerQueue } from './prayer-queue.js';
 export const DEFAULTS = Object.freeze({
   title: 'พระพิฆเนศ', subtitle: 'โอม ศรี คเณศายะ นะมะฮา',
@@ -39,7 +40,7 @@ export function skinFromComment(text) {
 
 export class Room {
   constructor(saved = {}, { ambient = true, now = Date.now() } = {}) {
-    this.prayers=new PrayerQueue(saved.prayers);this.eventSeen=new Map(saved.eventSeen||[]);this.comboSeen=new Map(saved.comboSeen||[]);
+    this.prayers=new PrayerQueue(saved.prayers);this.prayerDisplay=new RitualQueue();this.prayerDisplay.restore(saved.prayerDisplay);this.eventSeen=new Map(saved.eventSeen||[]);this.comboSeen=new Map(saved.comboSeen||[]);
     this.seating = new Seating({ ambient, now }); this.rituals = new RitualQueue(); this.entrance = new EntranceLine(saved.entrance); this.donors = new Map(); this.choices = new Map(saved.choices || []);
     this.seating.restore(saved.seating, now); this.rituals.restore(saved.rituals);
     this.stats = { coins: nonnegative(saved.stats?.coins), gifts: nonnegative(saved.stats?.gifts), likes: nonnegative(saved.stats?.likes) };
@@ -51,7 +52,7 @@ export class Room {
   }
   get viewers() { return this.seating.viewers; }
   find(id) { return this.seating.find(String(id)); }
-  clearScene(ambient = true) { this.seating = new Seating({ ambient }); this.rituals.clear(); this.entrance.clear(); this.prayers.clear(); }
+  clearScene(ambient = true) { this.seating = new Seating({ ambient }); this.rituals.clear(); this.entrance.clear(); this.prayers.clear(); this.prayerDisplay.clear(); }
   enter(id, name, { avatar = '', demo = false, skin, now = Date.now() } = {}) {
     const existing = this.find(id);
     if (!id || existing && existing.seatState !== 'waiting') return null;
@@ -98,12 +99,17 @@ export class Room {
     const previous = this.rituals.active;
     const active = this.rituals.tick(now, item => {
       const v = this.seating.actors.get(item.id);
-      return v && v.seatState === 'seated';
+      return v && (v.seatState === 'seated' || isSmall(item.ritual.kind) && v.seatState === 'arriving');
     });
+    const previousBanner=this.prayerDisplay.active;
+    const large=active&&!isSmall(active.ritual.kind);
+    if(large)this.prayerDisplay.pause();
+    else this.prayerDisplay.tick(now);
+    if(previousBanner!==this.prayerDisplay.active)events.push({t:'prayer-banner',active:this.prayerDisplay.active,serverTime:now});
     if (previous !== active) events.push({ t: 'ritual', active, serverTime: now, queued: this.rituals.pending.length });
     return events;
   }
   serialize() { return { stats: this.stats, donors: [...this.donors.values()], startedAt: this.startedAt,
-    prayers:this.prayers.serialize(),eventSeen:[...this.eventSeen],comboSeen:[...this.comboSeen],
+    prayers:this.prayers.serialize(),prayerDisplay:this.prayerDisplay.serialize(),eventSeen:[...this.eventSeen],comboSeen:[...this.comboSeen],
     entrance: this.entrance.serialize(), seating: this.seating.serialize(), rituals: this.rituals.serialize(), choices: [...this.choices] }; }
 }

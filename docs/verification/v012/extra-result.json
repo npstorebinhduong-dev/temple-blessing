@@ -1,0 +1,18 @@
+{
+  "migration": true,
+  "guideSlots": 9,
+  "demoButtons": 9,
+  "unverifiedSlots": 2,
+  "nextFrame": {
+    "receiptFrame": 26,
+    "firstCameraFrame": 27,
+    "latencyMs": 52.90000000037253
+  },
+  "debugResetConsistent": true,
+  "newDonorsDuringLarge": 5,
+  "simultaneousNewDonorsInAisle": 1,
+  "prayerNoCommentCameraReleasedBeforeDeadline": true,
+  "defaultPrayer": "ขอให้มีสติ สุขภาพแข็งแรง และพบแต่ความสุขความเจริญ",
+  "errors": [],
+  "browser": "154.0.8037.57"
+}

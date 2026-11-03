@@ -1,0 +1,77 @@
+{
+  "version": "0.12",
+  "input": "Synthetic TikFinity WebSocket envelopes → production normalizer/onGift/queue. Not a paid TikTok LIVE. Lamp 900101 / Love Perfume 900105 were temporary test fixtures, not verified catalog IDs.",
+  "frames": 7712,
+  "turns": 25,
+  "fullyCompletedTurns": 23,
+  "resetOrMissingTargetTurns": 2,
+  "consecutiveSmallGifts": 10,
+  "actualDrawImageCallsChecked": 6443,
+  "drawsByKind": {
+    "lotus": 1737,
+    "lamp": 800,
+    "fragrance": 799,
+    "prayer": 813,
+    "incense": 811,
+    "marigold": 500,
+    "royal": 641,
+    "mushika": 175,
+    "galaxy": 167
+  },
+  "localContextScale": [
+    0.9999999633202183,
+    0.9999999633202188
+  ],
+  "worldBoundsMaxErrorPx": 0.0003825589296866383,
+  "smallGiftTiming": {
+    "lotus": {
+      "receiptToFirstMovedFrameMs": 75.59999999962747,
+      "receiptToAisleMs": 441.1999999997206,
+      "receiptToOfferMs": 4706.299999999814
+    },
+    "lamp": {
+      "receiptToFirstMovedFrameMs": 65.5,
+      "receiptToAisleMs": 458.0,
+      "receiptToOfferMs": 4728.200000000186
+    },
+    "fragrance": {
+      "receiptToFirstMovedFrameMs": 69.20000000018626,
+      "receiptToAisleMs": 418.40000000037253,
+      "receiptToOfferMs": 4497.600000000093
+    },
+    "prayer": {
+      "receiptToFirstMovedFrameMs": 84.29999999981374,
+      "receiptToAisleMs": 435.09999999962747,
+      "receiptToOfferMs": 4686.0
+    },
+    "incense": {
+      "receiptToFirstMovedFrameMs": 57.799999999813735,
+      "receiptToAisleMs": 427.39999999990687,
+      "receiptToOfferMs": 4617.199999999721
+    }
+  },
+  "unknownGifts": 4,
+  "unknownCoinsCounted": 36,
+  "largeKindsPreserved": [
+    "marigold",
+    "royal",
+    "mushika",
+    "galaxy"
+  ],
+  "largeLotusCalls": 0,
+  "initialDebugIssue": {
+    "staleResetSnapshots": [
+      {
+        "at": 311978.3999999999,
+        "renderState": "reset",
+        "debugState": "small-aisle"
+      }
+    ],
+    "resolution": "CameraDebug.reset now updates immediately; final targeted browser check in extra-result.json"
+  },
+  "finalWorld": {
+    "scale": 0.84,
+    "x": 86.4,
+    "y": 270
+  }
+}
